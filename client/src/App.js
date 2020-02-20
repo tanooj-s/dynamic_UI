@@ -29,30 +29,32 @@ class App extends React.Component {
   handleSubmit(event) {
     event.preventDefault()
     this.getResponse("http://127.0.0.1:5000/", this.state)
+    console.log("REQUEST")
     console.log(this.state)
   }
 
   async getResponse (url, data) {
-    let out_data = [] // try to not make this an array
+    let out_data = [] // try to set this as a string instead
     const response = await fetch(url, {
       method: 'POST',
       mode: 'cors',
       redirect: 'follow',
       body: JSON.stringify(data),
     })
-    .then(response => response.body.getReader().read())
-    .then(({ done, value }) => {
-      out_data.push(new TextDecoder().decode(value)) // value returned as uint8 arrays
+    .then(response => response.body.getReader().read()) // response comes in as ReadableStream() from fetch, attach reader object and read
+    .then(({ done, value }) => {                        // which yields done (boolean) and individual values as uint8
+      out_data.push(new TextDecoder().decode(value)) // push uint8 values to outdata
     })
-    this.setState({ response_data: this.cleanStringandJsonify(out_data[0]) })
-    console.log(this.state)
+    this.setState({ response_data: this.cleanStringandJsonify(out_data[0]) }) // instead of pushing to uint8, maybe do something like out_data = ''.join()
+    console.log("RESPONSE")
+    console.log(this.state.response_data)
   }
 
 
   cleanStringandJsonify(s) {
-    s.replace('\\','')
-    var stringed = JSON.parse(s) // return JSON object, remove backslashes
-    return JSON.parse(stringed)
+    s.replace('\\','')          // remove backslashes
+    var stringed = JSON.parse(s) // first JSON parse returns a string
+    return JSON.parse(stringed) // second returns array of JS objects
   }
 
 
@@ -175,7 +177,11 @@ class App extends React.Component {
             <button>Submit</button>
           </form>
           <div className="example-output">
-
+            {this.state.response_data !== "" ?
+              (<ul>
+                  {this.state.response_data.map((item) => (<li key={item.Name}> {item.Name} </li>))}
+              </ul>)
+              :(<p>No data</p>)}
           </div>
           <div className="output-container">
             {(() => {
