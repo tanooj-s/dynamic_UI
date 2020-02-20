@@ -178,16 +178,19 @@ class App extends React.Component {
           </form>
           <div className="example-output">
             {this.state.response_data !== "" ?
-              (<table>
-                <tr>
-                  <th>Name</th>
-                  <th>Designation</th>
-                  <th>Company</th>
-                  <th>Phone</th>
-                  <th>PAN</th>
-                  <th>Address</th>
-                  <th>Email</th>
-                </tr>
+              (<Table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Company</th>
+                    <th>Phone</th>
+                    <th>PAN</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody>
                   {this.state.response_data.map((item) =>
                     (<tr>
                       <td>{item.Name}</td>
@@ -199,7 +202,8 @@ class App extends React.Component {
                       <td>{item.Email}</td>
                     </tr>)
                   )}
-              </table>)
+                  </tbody>
+              </Table>)
               :(<p>No data</p>)}
           </div>
           <div className="output-container">
