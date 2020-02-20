@@ -178,9 +178,28 @@ class App extends React.Component {
           </form>
           <div className="example-output">
             {this.state.response_data !== "" ?
-              (<ul>
-                  {this.state.response_data.map((item) => (<li key={item.Name}> {item.Name} </li>))}
-              </ul>)
+              (<table>
+                <tr>
+                  <th>Name</th>
+                  <th>Designation</th>
+                  <th>Company</th>
+                  <th>Phone</th>
+                  <th>PAN</th>
+                  <th>Address</th>
+                  <th>Email</th>
+                </tr>
+                  {this.state.response_data.map((item) =>
+                    (<tr>
+                      <td>{item.Name}</td>
+                      <td>{item.Designation}</td>
+                      <td>{item.Company}</td>
+                      <td>{item.Phone}</td>
+                      <td>{item.PAN}</td>
+                      <td>{item.Address}</td>
+                      <td>{item.Email}</td>
+                    </tr>)
+                  )}
+              </table>)
               :(<p>No data</p>)}
           </div>
           <div className="output-container">
