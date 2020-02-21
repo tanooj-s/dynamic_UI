@@ -10,26 +10,34 @@ import ast
 
 # each dataframe is a "table", could sql table later on
 
-broker_profiling_df = pd.read_excel(io='brokerage_data.xlsx',sheet_name='member_profiles')
-kmp_df = pd.read_excel(io='brokerage_data.xlsx',sheet_name='kmp')
-authorized_df = pd.read_excel(io='brokerage_data.xlsx',sheet_name='authorized_personnel')
+broker_profile_df = pd.read_excel(io='brokerage_data.xlsx',sheet_name='member_profiles')
+broker_kmp_df = pd.read_excel(io='brokerage_data.xlsx',sheet_name='kmp')
+broker_authorized_df = pd.read_excel(io='brokerage_data.xlsx',sheet_name='authorized_personnel')
+
+company_profile_df = pd.read_excel(io='company_data.xlsx',sheet_name='CompanyProfile')
+company_kmp_df = pd.read_excel(io='company_data.xlsx',sheet_name='KeyManagementPerson')
+company_shareholding_df = pd.read_excel(io='company_data.xlsx',sheet_name='ShareholdingPattern')
+company_events_df = pd.read_excel(io='company_data.xlsx',sheet_name='Events')
+company_compaints_df = pd.read_excel(io='company_data.xlsx',sheet_name='Complaints')
 
 #reformat dates as strings
-kmp_df['Date of Appointment'] = kmp_df['Date of Appointment'].apply(lambda x: x.strftime("%d-%m-%Y"))
-authorized_df['Date of Appointment'] = authorized_df['Date of Appointment'].apply(lambda x: x.strftime("%d-%m-%Y"))
+broker_kmp_df['Date of Appointment'] = broker_kmp_df['Date of Appointment'].apply(lambda x: x.strftime("%d-%m-%Y"))
+broker_authorized_df['Date of Appointment'] = broker_authorized_df['Date of Appointment'].apply(lambda x: x.strftime("%d-%m-%Y"))
 
+company_kmp_df['Date of Appointment'] = company_kmp_df['Date of Appointment'].apply(lambda x: x.strftime("%d-%m-%Y"))
+company_events_df['Date'] = company_events_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y %H:%M:%S"))
 
 # create a dict that maps query_tab strings to dataframes for each "table"
 table_map = {
-	'broker_profile': broker_profiling_df,
-	'broker_kmp': kmp_df,
-	'broker_authorized': authorized_df,
-	'company_profile': [],
-	'company_shareholding': [],
+	'broker_profile': broker_profile_df,
+	'broker_kmp': broker_kmp_df,
+	'broker_authorized': broker_authorized_df,
+	'company_profile': company_profile_df,
+	'company_shareholding': company_shareholding_df,
 	'company_board': [],
-	'company_kmp': [],
-	'company_events': [],
-	'company_complaints': [],
+	'company_kmp': company_kmp_df,
+	'company_events': company_events_df,
+	'company_complaints': company_complaints_df,
 	'indi_profile': [],
 	'indi_trade_data': [],
 	'indi_blacklist': [],
