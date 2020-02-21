@@ -7,41 +7,26 @@ import {
     CardTitle, CardSubtitle, Button
 } from 'reactstrap';
 
-class BProfile extends React.Component {
+function BProfile (props) {
 
-    constructor() {
-        super()
-    }
-
-    render() {
-        return (
-
-            <div className="bprofile">
-                <div className="p-3 my-2 rounded">
-                    <Card>
-                        <CardBody className="person-body">
-                            <CardTitle className="person-title"> <img src={Logo} />Broker Name Here</CardTitle>
-
-                            <CardText className="phone"> Phone Number Here</CardText>
-                            <CardText className="email">Email ID Here</CardText>
-                            <CardText className="address">Address Here</CardText>
-
-                        </CardBody>
-                        <CardText>
-                            <small className="text-muted">About Company Here</small>
-                        </CardText>
-                    </Card>
-                </div>
+    return (
+        <div className="bprofile">
+            <div className="p-3 my-2 rounded">
+                <Card>
+                    <CardBody className="person-body">
+                        <CardTitle className="person-title"> <img src={Logo} />{props.data[0].Name}</CardTitle>
+                        <CardText className="phone"> Phone Number Here</CardText>
+                        <CardText className="email">Email ID Here</CardText>
+                        <CardText className="address">{props.data[0].Address}</CardText>
+                    </CardBody>
+                    <CardText>
+                        <small className="text-muted">{props.data[0].Segments}</small>
+                    </CardText>
+                </Card>
             </div>
-
-        );
-    }
+        </div>
+    );
 }
-
-
-
-// render navbars as different classes within this file
-// add this.handleClick to each of them
 
 
 export default BProfile;

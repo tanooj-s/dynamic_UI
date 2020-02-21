@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import CompanyProfile from './components/company/company_profile'
+import BProfile from './components/broker/broker_profile'
 import KMP from './components/broker/kmp'
 import AP from './components/broker/authorized_person'
 import './App.css';
@@ -214,13 +215,13 @@ class App extends React.Component {
               ((() => {
                 switch(this.state.query_tab) {
                   case 'broker_profile':
-                    return <Card data={this.state.response_data} />
+                    return <BProfile data={this.state.response_data} />
                   case 'broker_kmp':
                     return <KMP data={this.state.response_data} />
                   case 'broker_authorized':
                     return <AP data={this.state.response_data} />
                   case 'company_profile':
-                    return <Card data={this.state.response_data} />
+                    return <CompanyProfile data={this.state.response_data} />
                   case 'company_shareholding':
                     return <Card data={this.state.response_data} />
                   case 'company_board':

@@ -1,17 +1,32 @@
-import React from 'react'
+import React from 'react';
+import '../../App.css';
+import { Toast } from 'reactstrap';
+import Logo from '../person.jpg'
+import {
+    Card, CardImg, CardText, CardBody,
+    CardTitle, CardSubtitle, Button
+} from 'reactstrap';
 
-class CompanyProfile extends React.Component {
-    constructor() {
-        super()
-    }
-    render(){
-    return(
-        <p>asd</p>
+function CompanyProfile (props) {
+
+    return (
+        <div className="bprofile">
+            <div className="p-3 my-2 rounded">
+                <Card>
+                    <CardBody className="person-body">
+                        <CardTitle className="person-title"> <img src={Logo} />{props.data[0].Name}</CardTitle>
+                        <CardText className="phone">{props.data[0].Phone}</CardText>
+                        <CardText className="email">Email ID Here</CardText>
+                        <CardText className="company-type">{props.data[0].Type}</CardText>
+                        <CardText className="address">{props.data[0].Address}</CardText>
+                    </CardBody>
+                    <CardText>
+                        <small className="text-muted">{props.data[0].About}</small>
+                    </CardText>
+                </Card>
+            </div>
+        </div>
     );
-    }
-        
-
-
 }
 
 export default CompanyProfile;
