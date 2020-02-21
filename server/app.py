@@ -18,7 +18,7 @@ company_profile_df = pd.read_excel(io='company_data.xlsx',sheet_name='CompanyPro
 company_kmp_df = pd.read_excel(io='company_data.xlsx',sheet_name='KeyManagementPerson')
 company_shareholding_df = pd.read_excel(io='company_data.xlsx',sheet_name='ShareholdingPattern')
 company_events_df = pd.read_excel(io='company_data.xlsx',sheet_name='Events')
-company_compaints_df = pd.read_excel(io='company_data.xlsx',sheet_name='Complaints')
+company_complaints_df = pd.read_excel(io='company_data.xlsx',sheet_name='Complaints')
 
 #reformat dates as strings
 broker_kmp_df['Date of Appointment'] = broker_kmp_df['Date of Appointment'].apply(lambda x: x.strftime("%d-%m-%Y"))

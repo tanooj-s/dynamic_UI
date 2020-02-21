@@ -1,7 +1,26 @@
 import React from 'react';
 import logo from './logo.svg';
+import CompanyProfile from './components/company/company_profile'
+import KMP from './components/broker/kmp'
+import AP from './components/broker/authorized_person'
 import './App.css';
-import { Form, Input, Button, Navbar, NavItem, Nav, NavLink, Table, Card } from 'reactstrap';
+import { Form,
+        Input,
+        Button,
+        Navbar,
+        NavItem,
+        Nav,
+        NavLink,
+        NavbarBrand,
+        UncontrolledDropdown,
+        Toast,
+        ToastBody,
+        DropdownToggle,
+        DropdownItem,
+        DropdownMenu,
+        Table,
+        Card
+      } from 'reactstrap';
 import Highcharts from 'highcharts';
 
 
@@ -62,23 +81,31 @@ class App extends React.Component {
     return (
       <div className="App">
         <div className="navbar">
-            <Nav tabs>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_type: "indi"})}>
-                  Individual
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_type: "broker"})}>
-                  Brokerage
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_type: "company"})}>
-                  Company
-                </NavLink>
-              </NavItem>
-            </Nav>
+            <Nav tabs >
+            {/* <NavbarBrand href="/">NSE Profiling</NavbarBrand> */}
+
+            <NavItem>
+              <UncontrolledDropdown nav tabs inNavbar >
+                <DropdownToggle caret >
+                  {this.state.query_type === "indi" ? <code className="code">Client</code>
+                    : (this.state.query_type === "broker" ? <code className="code">Brokerage</code>
+                      : <code className="code">Company</code>)
+                  }
+                </DropdownToggle>
+                <DropdownMenu left >
+                  <DropdownItem onClick={(e) => this.setState({ query_type: "indi" })}>
+                    Client
+                </DropdownItem>
+                  <DropdownItem onClick={(e) => this.setState({ query_type: "broker" })}>
+                    Brokerage
+                </DropdownItem>
+                <DropdownItem onClick={(e) => this.setState({ query_type: "company" })}>
+                    Company
+                </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            </NavItem>
+          </Nav>
 
           {this.state.query_type === "indi" ?
             (<Nav tabs>
@@ -170,81 +197,60 @@ class App extends React.Component {
                 </Nav>)
               )
           }
+          <div className="searchform">
+            <Toast>
+              <ToastBody>
+                <form onSubmit = {this.handleSubmit} encType="multipart/form-data">
+                  <input type="text" name="search_term" value={this.state.search_term} placeholder="Search by name" onChange = {this.handleChange} className="finput"/>
+                  <button className="fbutton">Submit</button>
+                </form>
+              </ToastBody>
+            </Toast>
+          </div>
         </div>
         <div className="App-container">
-          <form onSubmit = {this.handleSubmit} encType="multipart/form-data">
-            <input type="text" name="search_term" value={this.state.search_term} placeholder="Search by name" onChange = {this.handleChange} />
-            <button>Submit</button>
-          </form>
-          <div className="example-output">
-            {this.state.response_data !== "" ?
-              (<Table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Designation</th>
-                    <th>Company</th>
-                    <th>Phone</th>
-                    <th>PAN</th>
-                    <th>Address</th>
-                    <th>Email</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.state.response_data.map((item) =>
-                    (<tr>
-                      <td>{item.Name}</td>
-                      <td>{item.Designation}</td>
-                      <td>{item.Company}</td>
-                      <td>{item.Phone}</td>
-                      <td>{item.PAN}</td>
-                      <td>{item.Address}</td>
-                      <td>{item.Email}</td>
-                    </tr>)
-                  )}
-                  </tbody>
-              </Table>)
-              :(<p>No data</p>)}
-          </div>
           <div className="output-container">
-            {(() => {
-              switch(this.state.query_tab) {
-                case 'broker_profile':
-                  return <Card data={this.state.response_data} />
-                case 'broker_kmp':
-                  return <Table data={this.state.response_data} />
-                case 'broker_authorized':
-                  return <Table data={this.state.response_data} />
-                case 'company_profile':
-                  return <Card data={this.state.response_data} />
-                case 'company_shareholding':
-                  return <Card data={this.state.response_data} />
-                case 'company_board':
-                  return <Table data={this.state.response_data} />
-                case 'company_kmp':
-                  return <Table data={this.state.response_data} />
-                case 'company_events':
-                  return <Card data={this.state.response_data} />
-                case 'company_complaints':
-                  return <Table data={this.state.response_data} />
-                case 'indi_profile':
-                  return <Card data={this.state.response_data} />
-                case 'indi_trade_data':
-                  return <Card data={this.state.response_data} />
-                case 'indi_blacklist':
-                  return <Table data={this.state.response_data} />
-                case 'indi_alerts':
-                  return <Table data={this.state.response_data} />
-                case 'indi_balances':
-                  return <Card data={this.state.response_data} />
-                case 'indi_monthly_balances':
-                  return <Card data={this.state.response_data} />
-                case 'indi_m2m':
-                  return <Card data={this.state.response_data} />
-                default:
-                  return null;
-              }
-            })()}
+            {this.state.response_data !== "" ?
+              ((() => {
+                switch(this.state.query_tab) {
+                  case 'broker_profile':
+                    return <Card data={this.state.response_data} />
+                  case 'broker_kmp':
+                    return <KMP data={this.state.response_data} />
+                  case 'broker_authorized':
+                    return <AP data={this.state.response_data} />
+                  case 'company_profile':
+                    return <Card data={this.state.response_data} />
+                  case 'company_shareholding':
+                    return <Card data={this.state.response_data} />
+                  case 'company_board':
+                    return <Table data={this.state.response_data} />
+                  case 'company_kmp':
+                    return <KMP data={this.state.response_data} />
+                  case 'company_events':
+                    return <Card data={this.state.response_data} />
+                  case 'company_complaints':
+                    return <Table data={this.state.response_data} />
+                  case 'indi_profile':
+                    return <Card data={this.state.response_data} />
+                  case 'indi_trade_data':
+                    return <Card data={this.state.response_data} />
+                  case 'indi_blacklist':
+                    return <Table data={this.state.response_data} />
+                  case 'indi_alerts':
+                    return <Table data={this.state.response_data} />
+                  case 'indi_balances':
+                    return <Card data={this.state.response_data} />
+                  case 'indi_monthly_balances':
+                    return <Card data={this.state.response_data} />
+                  case 'indi_m2m':
+                    return <Card data={this.state.response_data} />
+                  default:
+                    return null;
+                }
+              })())
+              :(<div></div>)
+            }
           </div>
         </div>
       </div>
