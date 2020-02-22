@@ -108,3 +108,11 @@
 .person-title {
   width: 30%;
 }
+
+/* Pie Charts Styling From Here  */
+.highcharts-credits{
+  display: none;
+}
+.piechart{
+width: 50%;
+}

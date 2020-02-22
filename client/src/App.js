@@ -6,6 +6,9 @@ import CompanyProfile from './components/company/company_profile'
 import KMP from './components/broker/kmp'
 import AP from './components/broker/authorized_person'
 import BProfile from './components/broker/broker_profile'
+import Chart from './components/chart/chart'
+import PieChart from './components/chart/piechart'
+
 class App extends React.Component {
 
   constructor() {
@@ -60,7 +63,8 @@ class App extends React.Component {
           {/* <KMP/> */}
           {/* <AP/> */}
           {/* <BProfile/> */}
-          
+          <Chart/>
+          <PieChart/>
         </div>
       </div>
 
