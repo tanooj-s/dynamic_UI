@@ -1,9 +1,11 @@
 import React from 'react';
 import logo from './logo.svg';
 import CompanyProfile from './components/company/company_profile'
+import Events from './components/company/events'
 import BProfile from './components/broker/broker_profile'
 import KMP from './components/broker/kmp'
 import AP from './components/broker/authorized_person'
+
 import './App.css';
 import { Form,
         Input,
@@ -229,7 +231,7 @@ class App extends React.Component {
                   case 'company_kmp':
                     return <KMP data={this.state.response_data} />
                   case 'company_events':
-                    return <Card data={this.state.response_data} />
+                    return <Events data={this.state.response_data} />
                   case 'company_complaints':
                     return <Table data={this.state.response_data} />
                   case 'indi_profile':

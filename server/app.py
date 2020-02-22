@@ -47,11 +47,21 @@ table_map = {
 	'indi_m2m': []
 }
 
+# create a dictionary to map individual company names to CompanyIDs, then search every company df by CompanyID
+unique_companies = list(set(company_profile_df.Name.values))
+company_to_id = {company:idx for (idx,company) in enumerate(unique_companies)}
+
 def get_data(search_term, query_tab):
 	# based on which query_tab is selected (from React state), select different table to return values from
 	# only querying the name column right now
 	this_df = table_map[query_tab]
-	results = this_df.query('Name.str.contains("%s")' % (search_term), engine='python') # only query the dataframe based on Name column
+	if (query_tab == 'company_events'):
+		results = this_df.query('Description.str.contains("%s")' % (search_term), engine='python') # if events search by description
+	# quick hack, should get companyID search working instead
+	elif (query_tab == 'company_kmp'):
+		results = this_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python')
+	else:
+		results = this_df.query('Name.str.contains("%s")' % (search_term), engine='python') # else by Name column
 	result_json = results.to_json(orient='records') # return results as a json of records (list of dicts where each dict is a row from the df)
 	return result_json
 #-----BACKEND---------
