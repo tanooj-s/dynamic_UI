@@ -74,68 +74,53 @@ class Navigation extends React.Component {
                 <DropdownMenu left >
                   <DropdownItem onClick={(e) => this.setState({ query_type: "indi" })}>
                     Client
-        </DropdownItem>
+                </DropdownItem>
                   <DropdownItem onClick={(e) => this.setState({ query_type: "broker" })}>
                     Brokerage
-        </DropdownItem>
-                  <DropdownItem />
-                  <DropdownItem onClick={(e) => this.setState({ query_type: "company" })}>
+                </DropdownItem>
+                <DropdownItem onClick={(e) => this.setState({ query_type: "company" })}>
                     Company
-        </DropdownItem>
+                </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
             </NavItem>
-            {/* Chnaged This to a drop down menu */}
-            {/* <NavLink onClick={(e) => this.setState({ query_type: "indi" })}>
-      Individual
-      </NavLink> */}
-            {/* <NavItem>
-    <NavLink onClick={(e) => this.setState({ query_type: "broker" })}>
-      Brokerage
-      </NavLink>
-  </NavItem>
-  <NavItem>
-    <NavLink onClick={(e) => this.setState({ query_type: "company" })}>
-      Company
-      </NavLink>
-  </NavItem> */}
           </Nav>
           {this.state.query_type == "indi" ?
             (<Nav tabs>
               <NavItem>
                 <NavLink onClick={(e) => this.setState({ query_tab: "client_profile" })}>
                   Client Profile
-      </NavLink>
+                </NavLink>
               </NavItem>
               <NavItem>
                 <NavLink onClick={(e) => this.setState({ query_tab: "trade_data" })}>
                   Trade Data
-      </NavLink>
+                </NavLink>
               </NavItem>
               <NavItem>
                 <NavLink onClick={(e) => this.setState({ query_tab: "blacklist" })}>
                   Blacklisted PAN
-      </NavLink>
+                </NavLink>
               </NavItem>
               <NavItem>
                 <NavLink onClick={(e) => this.setState({ query_tab: "alerts" })}>
                   Alerts
-      </NavLink>
+                </NavLink>
               </NavItem>
               <NavItem>
                 <NavLink onClick={(e) => this.setState({ query_tab: "balances" })}>
                   Balances
-      </NavLink>
+                </NavLink>
               </NavItem>
               <NavItem>
                 <NavLink onClick={(e) => this.setState({ query_tab: "monthly_balances" })}>
                   Monthly Balances
-      </NavLink>
+                </NavLink>
               </NavItem>
               <NavItem>
                 <NavLink onClick={(e) => this.setState({ query_tab: "m2m" })}>
                   M2M Loss
-      </NavLink>
+                </NavLink>
               </NavItem>
             </Nav>)
             : (this.state.query_type == "company" ?
@@ -143,49 +128,49 @@ class Navigation extends React.Component {
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "company_profile" })}>
                     Company Profile
-        </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "company_shareholding" })}>
                     Shareholding Pattern
-        </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "company_board" })}>
                     Board Meetings
-        </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "company_kmp" })}>
                     Key Management Personnel
-        </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "company_events" })}>
                     Events/Alerts
-        </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "company_complaints" })}>
                     Complaints
-        </NavLink>
+                  </NavLink>
                 </NavItem>
               </Nav>)
               : (<Nav tabs>
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "broker_profile" })}>
                     Brokerage Profile
-          </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "broker_kmp" })}>
                     Key Management Personnel
-          </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "broker_authorized" })}>
                     Authorized Personnel
-          </NavLink>
+                  </NavLink>
                 </NavItem>
               </Nav>)
             )

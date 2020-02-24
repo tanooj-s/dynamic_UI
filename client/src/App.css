@@ -68,11 +68,11 @@
 }
 
 /* KMP */
-
-.KMP {
-  width: 100%;
+.small-logo{
+  width: 55px;
+  height: 55px;
+  margin-right: 5px;
 }
-
 .kmp-table {
   background: #5f666b;
   color: white;
@@ -94,12 +94,13 @@
 }
 
 .phone, .address, .email {
-  margin-top: 7.5%;
   padding-right: 20px;
 }
-.text-muted{
+
+.text-muted {
   margin-top: 10%;
 }
+
 .person-body {
   top: 150px;
   display: flex;
@@ -107,4 +108,101 @@
 
 .person-title {
   width: 30%;
+  font-size: 30px;
+}
+
+.about-title, .contact-title {
+  font-size: 23px;
+}
+
+.About-company {
+  padding: 15px;
+}
+
+.social {
+  padding: 2px;
+  float: right;
+  margin-top: 95px;
+}
+
+.em, .fb, .lk {
+  margin-left: 40px;
+}
+
+.profiling {
+  display: flex;
+  width: 100%;
+}
+
+.profile2 {
+  width: 100%;
+  height: 100%;
+}
+
+.section {
+  margin-left: 8px;
+}
+
+.company-type {
+  padding: 15px;
+  margin-top: 10px;
+}
+/* broker profile */
+
+.bprofiling{
+  display: flex;
+  width: 100%;
+  margin-left: 15%;
+}
+.Broker-title{
+  font-size: 27px;
+  width: 100%;
+}
+/* Pie Charts Styling From Here  */
+
+.Chart {
+  margin-top: 7%;
+  display: flex;
+  padding-left: 5%;
+}
+
+.HighchartsReact {
+  margin-right: 1%;
+  border: 2px solid lightgray;
+}
+
+.highcharts-credits {
+  display: none;
+}
+
+.piechart {
+  width: 50%;
+}
+
+#piecont {
+  width: 50%;
+  display: flex;
+}
+
+#barcont {
+  margin-left: 50%;
+  bottom: 425px;
+  width: 45%;
+}
+
+/* table Styling */
+
+.table-header {
+  background-color: #e97e62;
+  color: white;
+  font-size: 16px;
+}
+
+.AP, .KMP, .Events {
+  width: 96%;
+  height: 80%;
+  margin-left: 2%;
+  border: 2px solid lightgray;
+  margin-top: 22px;
+  font-size: 12px;
 }
