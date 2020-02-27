@@ -22,6 +22,13 @@ company_events_df = pd.read_excel(io='company_data.xlsx',sheet_name='Events')
 company_board_meetings_df = pd.read_excel(io='company_data.xlsx',sheet_name='BoardMeetings')
 company_complaints_df = pd.read_excel(io='company_data.xlsx',sheet_name='Complaints')
 
+client_securities_df = pd.read_excel(io='client_data.xlsx',sheet_name='Securities')
+client_m2m_df = pd.read_excel(io='client_data.xlsx',sheet_name='M2M')
+client_alerts_df = pd.read_excel(io='client_data.xlsx',sheet_name='NCLAlertFile')
+client_trades_df = pd.read_excel(io='client_data.xlsx',sheet_name='Trades')
+client_holdings_df = pd.read_excel(io='client_data.xlsx',sheet_name='HoldingStatement')
+client_securities_df = pd.read_excel(io='client_data.xlsx',sheet_name='Securities')
+
 #reformat dates as strings
 broker_kmp_df['Date of Appointment'] = broker_kmp_df['Date of Appointment'].apply(lambda x: x.strftime("%d-%m-%Y"))
 broker_authorized_df['Date of Appointment'] = broker_authorized_df['Date of Appointment'].apply(lambda x: x.strftime("%d-%m-%Y"))
@@ -32,10 +39,21 @@ company_board_meetings_df['MeetingDate'] = company_board_meetings_df['MeetingDat
 company_board_meetings_df['BroadcastDate'] = company_board_meetings_df['BroadcastDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
 company_complaints_df['Date'] = company_complaints_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
 
+client_securities_df['LastBalancedDate'] = client_securities_df['LastBalancedDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
+client_securities_df['FileUploadDate'] = client_securities_df['FileUploadDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
+client_m2m_df['Date'] = client_m2m_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y")) 
+client_alerts_df['Date'] = client_alerts_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
+client_alerts_df['LastUpdatedDate'] = client_alerts_df['LastUpdatedDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
+client_alerts_df['TDate'] = client_alerts_df['TDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
+client_alerts_df['NextTDate'] = client_alerts_df['NextTDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
+client_trades_df['Date'] = client_trades_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
+client_holdings_df['Date'] = client_holdings_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
+
+
 # create a dict that maps query_type strings to profile dataframes for each 
 profile_map = {
 	'company': company_profile_df,
-	#'client': client_profile_df,
+	'indi': client_securities_df,
 	'broker': broker_profile_df
 }
 
@@ -48,10 +66,10 @@ def get_data(search_term, query_type):
 	# only querying the name column right now
 	result_json = dict()
 	profile_df = profile_map[query_type]
-	profile_results = profile_df.query('Name.str.contains("%s")' % (search_term), engine='python') # search by name regardless of query type
-	result_json['profile'] = ast.literal_eval(profile_results.to_json(orient='records')) # add profile dict to results
+	
 	# should somehow be doing some kind of search by ID instead - or joining SQL tables
 	if (query_type == 'company'):
+		profile_results = profile_df.query('Name.str.contains("%s")' % (search_term), engine='python').to_json(orient='records') # search by name regardless of query type
 		company_kmp_results = company_kmp_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		company_shareholding_results = company_shareholding_df.query('Name.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		company_events_results = company_events_df.query('Name.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
@@ -59,6 +77,7 @@ def get_data(search_term, query_type):
 		company_board_meetings_results = company_board_meetings_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 
 
+		result_json['profile'] = ast.literal_eval(profile_results) # add profile dict to results
 		result_json['kmp'] = ast.literal_eval(company_kmp_results)
 		result_json['shareholding'] = ast.literal_eval(company_shareholding_results)
 		result_json['events'] = ast.literal_eval(company_events_results)
@@ -66,10 +85,30 @@ def get_data(search_term, query_type):
 		result_json['complaints'] = ast.literal_eval(company_complaints_results)
 
 	elif (query_type == 'broker'):
+		profile_results = profile_df.query('Name.str.contains("%s")' % (search_term), engine='python').to_json(orient='records') # search by name regardless of query type
 		broker_kmp_results = broker_kmp_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		broker_authorized_results = broker_authorized_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		
+		result_json['profile'] = ast.literal_eval(profile_results) # add profile dict to results
 		result_json['kmp'] = ast.literal_eval(broker_kmp_results)
 		result_json['authorized'] = ast.literal_eval(broker_authorized_results)
+
+	elif (query_type == 'indi'):
+		profile_df = client_securities_df[['ClientName', 'UCC', 'TMCode', 'PAN', 'Email', 'Phone', 'EODFundBalance', 'FundBalanceNSE']]
+		profile_results = profile_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		client_securities_results = client_securities_df.query('ClientName.str.contains("%s")' % (search_term), engine='python')
+		client_m2m_results = client_m2m_df.query('MemberName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		client_alerts_results = client_alerts_df.query('MemberName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		client_trades_results = client_trades_df.query('TradingMember.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		client_holdings_results = client_holdings_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+
+		result_json['profile'] = ast.literal_eval(profile_results)
+		result_json['securities'] = ast.literal_eval(client_securities_results.to_json(orient='records'))
+		result_json['m2m'] = ast.literal_eval(client_m2m_results)
+		result_json['alerts'] = ast.literal_eval(client_alerts_results)
+		result_json['trades'] = ast.literal_eval(client_trades_results)
+		result_json['holdings'] = ast.literal_eval(client_holdings_results)
+
 	return result_json
 #-----BACKEND---------
 

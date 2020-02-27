@@ -2,12 +2,12 @@ import React from 'react';
 import '../../App.css';
 import { Toast } from 'reactstrap';
 import Logo from '../person.jpg'
-import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
-import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md'
 import {
     Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button
 } from 'reactstrap';
+import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
+import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md'
 
 function CompanyProfile(props) {
 

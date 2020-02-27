@@ -1,34 +1,47 @@
 import React from 'react';
 import logo from './logo.svg';
+
 import CompanyProfile from './components/company/company_profile'
 import Events from './components/company/events'
 import Complaints from './components/company/complaints'
 import BoardMeetings from './components/company/board_meetings'
+
 import BProfile from './components/broker/broker_profile'
-import KMP from './components/broker/kmp'
 import AP from './components/broker/authorized_person'
+
+import ClientProfile from './components/client/client_profile'
+import Securities from './components/client/securities'
+import Holdings from './components/client/holdings'
+import Trades from './components/client/trades'
+import Alerts from './components/client/alerts'
+import M2M from './components/client/m2m'
+
 import PieChart from './components/chart/piechart'
 import Chart from './components/chart/chart'
 
+import KMP from './components/kmp'
+
+
 
 import './App.css';
-import { Form,
-        Input,
-        Button,
-        Navbar,
-        NavItem,
-        Nav,
-        NavLink,
-        NavbarBrand,
-        UncontrolledDropdown,
-        Toast,
-        ToastBody,
-        DropdownToggle,
-        DropdownItem,
-        DropdownMenu,
-        Table,
-        Card
-      } from 'reactstrap';
+import {
+  Form,
+  Input,
+  Button,
+  Navbar,
+  NavItem,
+  Nav,
+  NavLink,
+  NavbarBrand,
+  UncontrolledDropdown,
+  Toast,
+  ToastBody,
+  DropdownToggle,
+  DropdownItem,
+  DropdownMenu,
+  Table,
+  Card
+} from 'reactstrap';
 import Highcharts from 'highcharts';
 
 
@@ -41,6 +54,7 @@ class App extends React.Component {
       search_term: "", // should take on value on input
       query_tab: "", // value taken on by navbar
       response_data: "", // take in response from flask server, should be json records
+      tab_display: 0,
       // only render navbar for display options if this is true
     }
     this.handleChange = this.handleChange.bind(this)
@@ -60,10 +74,21 @@ class App extends React.Component {
     this.getResponse("http://127.0.0.1:5000/", this.state)
     console.log("REQUEST")
     console.log(this.state)
+    if (this.state.query_type === 'company') {
+      this.setState({ query_tab: 'company_profile' })
+    }
+    else if (this.state.query_type === 'broker') {
+      this.setState({ query_tab: 'broker_profile' })
+    }
+    else if (this.state.query_type === 'indi') {
+      this.setState({ query_tab: 'indi_profile' })
+    }
+    this.setState({ tab_display: this.state.tab_display + 1 })
+
   }
 
 
-  async getResponse (url, data) {
+  async getResponse(url, data) {
     let out_data = [] // try to set this as a string instead
     const response = await fetch(url, {
       method: 'POST',
@@ -71,10 +96,10 @@ class App extends React.Component {
       redirect: 'follow',
       body: JSON.stringify(data),
     })
-    .then(response => response.body.getReader().read()) // response comes in as ReadableStream() from fetch, attach reader object and read
-    .then(({ done, value }) => {                        // which yields done (boolean) and individual values as uint8
-      out_data.push(new TextDecoder().decode(value)) // push uint8 values to outdata
-    })
+      .then(response => response.body.getReader().read()) // response comes in as ReadableStream() from fetch, attach reader object and read
+      .then(({ done, value }) => {                        // which yields done (boolean) and individual values as uint8
+        out_data.push(new TextDecoder().decode(value)) // push uint8 values to outdata
+      })
     this.setState({ response_data: JSON.parse(out_data[0]) }) // instead of pushing to uint8, maybe do something like out_data = ''.join()
     console.log("RESPONSE")
     console.log(this.state.response_data)
@@ -82,38 +107,41 @@ class App extends React.Component {
 
 
   cleanStringandJsonify(s) {
-    s.replace('\\','')          // remove backslashes
+    s.replace('\\', '')          // remove backslashes
     var stringed = JSON.parse(s) // first JSON parse returns a string
     return JSON.parse(stringed) // second returns array of JS objects
   }
 
 
-  render () {
+  render() {
     return (
       <div className="App">
         <div className="navbar">
-            <Nav tabs >
+          <Nav tabs >
             {/* <NavbarBrand href="/">NSE Profiling</NavbarBrand> */}
 
             <NavItem>
               <UncontrolledDropdown nav tabs inNavbar >
-                <DropdownToggle caret >
-                  {this.state.query_type === "indi" ? <code className="code">CLIENT</code>
-                    : (this.state.query_type === "broker" ? <code className="code">BROKER</code>
-                      : <code className="code">COMPANY</code>)
-                  }
-                </DropdownToggle>
-                <DropdownMenu left >
-                  <DropdownItem onClick={(e) => this.setState({ query_type: "indi", search_term: "", query_tab: "", response_data: "" })}>
-                    CLIENT
-                </DropdownItem>
-                  <DropdownItem onClick={(e) => this.setState({ query_type: "broker", search_term: "", query_tab: "", response_data: "" })}>
-                    BROKER
-                </DropdownItem>
-                <DropdownItem onClick={(e) => this.setState({ query_type: "company", search_term: "", query_tab: "", response_data: "" })}>
-                    COMPANY
-                </DropdownItem>
-                </DropdownMenu>
+                  <DropdownToggle caret  >
+                    {this.state.query_type === "indi" ? <code className="code">CLIENT</code>
+                      : (this.state.query_type === "broker" ? <code className="code">BROKER</code>
+                        : (this.state.query_type === "company" ? <code className="code">COMPANY</code>
+                          : <code className="code">SELECT</code>
+                        )
+                      )
+                    }
+                  </DropdownToggle>
+                  <DropdownMenu left >
+                    <DropdownItem onClick={(e) => this.setState({ query_type: "indi", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
+                      CLIENT
+               	  </DropdownItem>
+                    <DropdownItem onClick={(e) => this.setState({ query_type: "broker", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
+                      BROKER
+                  </DropdownItem>
+                    <DropdownItem onClick={(e) => this.setState({ query_type: "company", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
+                      COMPANY
+                  </DropdownItem>
+                  </DropdownMenu>
               </UncontrolledDropdown>
             </NavItem>
           </Nav>
@@ -121,152 +149,146 @@ class App extends React.Component {
           <div className="searchform">
             <Toast>
               <ToastBody>
-                <form onSubmit = {this.handleSubmit} encType="multipart/form-data">
-                  <input type="text" name="search_term" value={this.state.search_term} placeholder="Search by name" onChange = {this.handleChange} className="finput"/>
+                <form onSubmit={this.handleSubmit} encType="multipart/form-data">
+                  <input type="text" name="search_term" value={this.state.search_term} placeholder="Search by name" onChange={this.handleChange} className="finput" />
                   <button className="fbutton">Submit</button>
                 </form>
               </ToastBody>
             </Toast>
           </div>
 
-          {this.state.query_type === "indi" ?
-            (<Nav tabs>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_profile"})}>
-                  Client Profile
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_trade_data"})}>
-                  Trade Data
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_blacklist"})}>
-                  Blacklisted PANs
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_alerts"})}>
-                  Alerts
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_balances"})}>
-                  Balances
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_monthly_balances"})}>
-                  Monthly Balances
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_m2m"})}>
-                  M2M Loss
-                </NavLink>
-              </NavItem>
-            </Nav>)
-            :(this.state.query_type === "company" ?
+
+          {this.state.tab_display === 0 ? (<Nav></Nav>)
+            : (this.state.query_type === "indi" ?
               (<Nav tabs>
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_profile"})}>
-                    Company Profile
-                  </NavLink>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_trades" })}>
+                    Trade Data
+                          </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_shareholding"})}>
-                    Shareholding Pattern
-                  </NavLink>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_alerts" })}>
+                    NCL Alerts
+                          </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_board"})}>
-                    Board Meetings
-                  </NavLink>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_holdings" })}>
+                    Holdings
+                          </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_kmp"})}>
-                    Key Management Personnel
-                  </NavLink>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_securities" })}>
+                    Securities
+                          </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_events"})}>
-                    Events/Alerts
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_complaints"})}>
-                    Complaints
-                  </NavLink>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_m2m" })}>
+                    M2M Loss
+                          </NavLink>
                 </NavItem>
               </Nav>)
-              :(this.state.query_type === "broker" ? 
+              : (this.state.query_type === "company" ?
                 (<Nav tabs>
+                  <NavItem>
+                    <NavLink onClick={(e) => this.setState({ query_tab: "company_shareholding" })}>
+                      Shareholding Pattern
+                            </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink onClick={(e) => this.setState({ query_tab: "company_board" })}>
+                      Board Meetings
+                            </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink onClick={(e) => this.setState({ query_tab: "company_kmp" })}>
+                      Key Management Personnel
+                            </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink onClick={(e) => this.setState({ query_tab: "company_events" })}>
+                      Events/Alerts
+                            </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink onClick={(e) => this.setState({ query_tab: "company_complaints" })}>
+                      Complaints
+                            </NavLink>
+                  </NavItem>
+                </Nav>)
+                : (this.state.query_type === "broker" ?
+                  (<Nav tabs>
                     <NavItem>
-                      <NavLink onClick = {(e) => this.setState({query_tab: "broker_profile"})}>
-                        Broker Profile
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink onClick = {(e) => this.setState({query_tab: "broker_kmp"})}>
+                      <NavLink onClick={(e) => this.setState({ query_tab: "broker_kmp" })}>
                         Key Management Personnel
-                      </NavLink>
+                                </NavLink>
                     </NavItem>
                     <NavItem>
-                      <NavLink onClick = {(e) => this.setState({query_tab: "broker_authorized"})}>
+                      <NavLink onClick={(e) => this.setState({ query_tab: "broker_authorized" })}>
                         Authorized Personnel
-                      </NavLink>
+                                </NavLink>
                     </NavItem>
                   </Nav>)
-                :(<Nav tabs>
+                  : (<Nav tabs>
                   </Nav>)
                 )
               )
+            )
           }
-          
+
         </div>
         <div className="App-container">
-          <div className="output-container">
+          <div className="profile-container">
             {this.state.response_data !== "" ?
               ((() => {
-                switch(this.state.query_tab) {
-                  case 'broker_profile':
+                switch (this.state.query_type) {
+                  case 'broker':
                     return <BProfile data={this.state.response_data.profile} />
-                  case 'broker_kmp':
-                    return <KMP data={this.state.response_data.kmp}/>
-                  case 'broker_authorized':
-                    return <AP data={this.state.response_data.authorized} />
-                  case 'company_profile':
+                  case 'company':
                     return <CompanyProfile data={this.state.response_data.profile} />
-                  case 'company_shareholding':
-                    return <PieChart data={this.state.response_data} company_name={this.state.response_data.profile[0].Name}/>
-                  case 'company_board':
-                    return <BoardMeetings data={this.state.response_data.board_meetings} company_name={this.state.response_data.profile[0].Name}/>
-                  case 'company_kmp':
-                    return <KMP data={this.state.response_data.kmp} company_name={this.state.response_data.profile[0].Name}/>
-                  case 'company_events':
-                    return <Events data={this.state.response_data.events} company_name={this.state.response_data.profile[0].Name}/>
-                  case 'company_complaints':
-                    return <Complaints data={this.state.response_data.complaints} company_name={this.state.response_data.profile[0].Name}/>
-                  case 'indi_profile':
-                    return <Card data={this.state.response_data} />
-                  case 'indi_trade_data':
-                    return <Card data={this.state.response_data} />
-                  case 'indi_blacklist':
-                    return <Table data={this.state.response_data} />
-                  case 'indi_alerts':
-                    return <Table data={this.state.response_data} />
-                  case 'indi_balances':
-                    return <Card data={this.state.response_data} />
-                  case 'indi_monthly_balances':
-                    return <Card data={this.state.response_data} />
-                  case 'indi_m2m':
-                    return <Card data={this.state.response_data} />
+                  case 'indi':
+                    return <ClientProfile data={this.state.response_data.profile} />
                   default:
                     return null;
                 }
               })())
-              :(<div></div>)
+              : (<div></div>)
+            }
+          </div>
+          <div className="output-container">
+            {this.state.response_data !== "" ?
+              ((() => {
+                switch (this.state.query_tab) {
+                  case 'broker_kmp':
+                    return <KMP data={this.state.response_data.kmp} />
+                  case 'broker_authorized':
+                    return <AP data={this.state.response_data.authorized} />
+
+                  case 'company_shareholding':
+                    return <PieChart data={this.state.response_data.shareholding} company_name={this.state.response_data.profile[0].Name} />
+                  case 'company_board':
+                    return <BoardMeetings data={this.state.response_data.board_meetings} company_name={this.state.response_data.profile[0].Name} />
+                  case 'company_kmp':
+                    return <KMP data={this.state.response_data.kmp} company_name={this.state.response_data.profile[0].Name} />
+                  case 'company_events':
+                    return <Events data={this.state.response_data.events} company_name={this.state.response_data.profile[0].Name} />
+                  case 'company_complaints':
+                    return <Complaints data={this.state.response_data.complaints} company_name={this.state.response_data.profile[0].Name} />
+
+                  case 'indi_trades':
+                    return <Trades data={this.state.response_data.trades} client_name={this.state.response_data.profile[0].Name} />
+                  case 'indi_alerts':
+                    return <Alerts data={this.state.response_data.alerts} client_name={this.state.response_data.profile[0].Name} />
+                  case 'indi_securities':
+                    return <Securities data={this.state.response_data.securities} client_name={this.state.response_data.profile[0].Name} />
+                  case 'indi_holdings':
+                    return <Holdings data={this.state.response_data.holdings} client_name={this.state.response_data.profile[0].Name} />
+                  case 'indi_m2m':
+                    return <M2M data={this.state.response_data.m2m} client_name={this.state.response_data.profile[0].Name} />
+                  default:
+                    return null;
+                }
+              })())
+              : (<div></div>)
             }
           </div>
         </div>

@@ -31,7 +31,7 @@ function BProfile(props) {
 
                         <div>
                             <CardTitle className="contact-title"><strong>Details </strong></CardTitle>
-                            <CardText className="phone"> <MdPhone /> <strong>Sebi Registration Number: </strong>{props.data[0].SEBIRegistrationNo}</CardText>
+                            <CardText className="phone"> <strong>Sebi Registration Number: </strong>{props.data[0].SEBIRegistrationNo}</CardText>
                             <CardText className="address"><MdLocationOn /> {props.data[0].Address}</CardText>
                         </div>
                     </CardBody>

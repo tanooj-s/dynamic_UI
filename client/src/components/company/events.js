@@ -8,7 +8,7 @@ import Logo from '../../components/person.jpg'
 function Events(props) {
     return (
         <div className="Events">
-          <h2>{props.company_name}</h2>
+          <h5>Events</h5>
             <Table hover>
                 <thead className="table-header">
                   <tr>
