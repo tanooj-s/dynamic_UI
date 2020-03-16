@@ -31,7 +31,7 @@ class M2MClient extends React.Component{
             },
             tooltip: {
               headerFormat: '<b>{series.name}</b><br>',
-              pointFormat: '{point.x}, {point.y} Lakhs'
+              pointFormat: '{point.x:%Y-%m-%d}, {point.y} Lakhs'
             },           
             series: [{
                       name:"M2M",

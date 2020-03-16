@@ -42,7 +42,8 @@ class ClientProfile extends React.Component {
                                 </CardTitle>
 
                                 <div className="contact-details">
-                                    <CardText className="pan"><FaAddressCard className="icons" />PAN {this.props.data.profile[0].PAN} </CardText>
+
+                                    <CardText className="pan"><FaAddressCard className="icons" />PAN {this.props.data.profile[0].PAN}</CardText>
                                     <CardText className="phone"><MdDateRange />DOB 06:02:1998</CardText>
                                     <CardText className="email"><MdEmail className="icons" />{this.props.data.profile[0].Email}</CardText>
                                     <CardText className="phone"> <MdPhone className="icons" /> 91 {this.props.data.profile[0].Phone}</CardText>
@@ -59,13 +60,13 @@ class ClientProfile extends React.Component {
 
                                 <CardText className="ucc"><strong className="company-name">Address</strong>
                                 </CardText>
-                                <CardText> {this.props.data.profile[0].Address} {this.props.data.profile[0].UCC} <span className="vertical-line"></span></CardText>
+                                <CardText> {this.props.data.profile[0].Address} <span className="vertical-line"></span></CardText>
 
                                 <CardText className="tmcode"><strong>Bank Name:</strong> {this.props.data.profile[0].BankName}
                                     <br /> <strong>Account Number:</strong> {this.props.data.profile[0].AccountNumber}
                                     {/* {this.props.data.profile[0].TMCode} */}
                                 </CardText>
-                                {/* <CardText className="tmcode"> 
+                                {/* <CardText className="tmcode">
                                 {this.props.data.profile[0].TMCode}
                                 </CardText> */}
 

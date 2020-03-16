@@ -5,7 +5,8 @@ import { Table } from 'reactstrap';
 function M2M(props) {
     return (
         <div className="Events">
-          <h4 className="m2m-title">M2M Losses</h4>
+          <h4 className="m2m-title">{props.client_name}</h4>
+          <h4 className="m2m-title">M2M</h4>
             <Table hover>
                 <thead className="table-header">
                   <tr>
@@ -14,6 +15,8 @@ function M2M(props) {
                     <th>Member Name</th>
                     <th>Date</th>
                     <th>M2M Loss(lacs)</th>
+                    <th>Net Buy</th>
+                    <th>Rank</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -21,10 +24,11 @@ function M2M(props) {
                     (<tr>
                       <td>{item.MemberName}</td>
                       <td>{item.MemberPan}</td>
-                      <td>{item.TMCD}</td>
+                      <td>{item.TM}</td>
                       <td>{item.Date}</td>
                       <td>{item.M2MLoss}</td>
-
+                      <td>{item.NetBuy}</td>
+                      <td>{item.Rank}</td>
                     </tr>)
                   )}
                   </tbody>

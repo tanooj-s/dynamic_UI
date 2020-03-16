@@ -13,7 +13,7 @@ import networkx
 
 # each dataframe is a "table", could sql table later on
 # load all data for selected company/brokerage/client
-
+print ("reading excel sheets......")
 broker_profile_df = pd.read_excel(io='brokerage_data.xlsx',sheet_name='member_profiles')
 broker_kmp_df = pd.read_excel(io='brokerage_data.xlsx',sheet_name='kmp')
 broker_authorized_df = pd.read_excel(io='brokerage_data.xlsx',sheet_name='authorized_personnel')
@@ -47,7 +47,7 @@ company_complaints_df['Date'] = company_complaints_df['Date'].apply(lambda x: x.
 
 client_securities_df['LastBalancedDate'] = client_securities_df['LastBalancedDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
 client_securities_df['FileUploadDate'] = client_securities_df['FileUploadDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
-client_m2m_df['Date'] = client_m2m_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y")) 
+client_m2m_df['Date'] = client_m2m_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
 client_alerts_df['Date'] = client_alerts_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
 client_alerts_df['LastUpdatedDate'] = client_alerts_df['LastUpdatedDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
 client_alerts_df['TDate'] = client_alerts_df['TDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
@@ -57,18 +57,13 @@ client_holdings_df['Date'] = client_holdings_df['Date'].apply(lambda x: x.strfti
 client_top_trades_df['Date'] = client_top_trades_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
 
 
-# create multiedge weighted directed graph in networkx that will be pushed to neo4j after
-graph = networkx.MultiDiGraph()
-# df, results orient as records and ast.literal_eval to JSON for the whole graph
-nodes = [] # add nodes based on wichever relevant attributes we want from the graph
-edges = [] # add edges based on :WORKS_FOR, weighted :OWNS_SHARES_IN
-# then later in push_to_db iterate through these and push to graph db
+
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
-
-
-# create a dict that maps query_type strings to profile dataframes for each 
+# create a dict that maps query_type strings to profile dataframes for each
 profile_map = {
 	'company': company_profile_df,
 	'indi': client_securities_df,
@@ -84,7 +79,7 @@ def get_data(search_term, query_type):
 	# only querying the name column right now
 	result_json = dict()
 	profile_df = profile_map[query_type]
-	
+
 	# should somehow be doing some kind of search by ID instead - or joining SQL tables
 	if (query_type == 'company'):
 		profile_results = profile_df.query('Name.str.contains("%s")' % (search_term), engine='python').to_json(orient='records') # search by name regardless of query type
@@ -106,13 +101,13 @@ def get_data(search_term, query_type):
 		profile_results = profile_df.query('Name.str.contains("%s")' % (search_term), engine='python').to_json(orient='records') # search by name regardless of query type
 		broker_kmp_results = broker_kmp_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		broker_authorized_results = broker_authorized_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
-		
+
 		result_json['profile'] = ast.literal_eval(profile_results) # add profile dict to results
 		result_json['kmp'] = ast.literal_eval(broker_kmp_results)
 		result_json['authorized'] = ast.literal_eval(broker_authorized_results)
 
 
-	# may need to orient records as values instead - but first get a handle on what the data will look like and what format is wanted before modifying anything	
+	# may need to orient records as values instead - but first get a handle on what the data will look like and what format is wanted before modifying anything
 	elif (query_type == 'indi'):
 		profile_df = client_securities_df[['ClientName', 'UCC', 'TMCode', 'PAN', 'Email', 'Phone', 'EODFundBalance', 'FundBalanceNSE', 'Address', 'BankName', 'AccountNumber', 'BeneficiaryName', 'DepositoryName', 'TradeMemberName', 'ClientCategory', 'DematAccountNo']]
 		profile_results = profile_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
@@ -135,7 +130,7 @@ def get_data(search_term, query_type):
 
 	return result_json
 #-----BACKEND---------
-
+print("initializing backend....")
 app = Flask(__name__, template_folder="../client/public", static_folder="../client/src")
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS - need to add config options for security reasons
 
@@ -165,7 +160,7 @@ def cors_preflight_response():
 	resp.headers.add("Access-Control-Allow-Methods", "*")
 	return resp
 
-# function that gets called immediately and pushes all company-client relationship data to a neo4j instance 
+# function that gets called immediately and pushes all company-client relationship data to a neo4j instance
 def push_to_db():
 	return 0
 

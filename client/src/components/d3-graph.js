@@ -33,7 +33,7 @@ class D3Graph extends React.Component {
 		var radius = 15
 		var employer = this.props.data.securities[0].WorksFor;
 		var broker = this.props.data.securities[0].TradeMemberName;
-		var client = this.props.client_name
+		var client = this.props.data.securities[0].ClientName
 
 		let nodes = [
 			{
@@ -49,22 +49,44 @@ class D3Graph extends React.Component {
 				type: 'broker'
 			},
 		]
-
-		trades.forEach(trade => nodes.push({ id: trade.company, type: 'company' }))
+		// make sure only unique companies are added
+    for (var i = 0; i < trades.length;i++) {
+      var is_present = false;
+      for (var j = 0; j < nodes.length;j++) {
+        if (nodes[j].id == trades[i].company) {
+          is_present = true
+        }
+      }
+      if (is_present === false) {
+          nodes.push({ id: trades[i].company, type: 'company' })
+      }
+    }
+    console.log(nodes)
 
 		let links = [
 			{
 				source: client,
 				target: employer,
-				type: "PAN"
+				type: "works_for",
+				id: 0
 			},
 			{
 				source: broker,
 				target: client,
-				type: "brokers_for"
+				type: "brokers_for",
+				id: 1
 			},
 		]
-
+		for (var i = 0; i < trades.length; i++) {
+      links.push( {
+        source: client,
+        target: trades[i].company,
+        type: "trade",
+        volume: trades[i].volume/1000, // can use this to modify stroke width
+        id: i + 2
+      })
+    }
+    console.log(links)
 
 
 		// let nodes = [
@@ -75,16 +97,12 @@ class D3Graph extends React.Component {
 		// 	{ id: 5, type: 'Company', name: 'ITC' },
 		// ]
 
-		trades.forEach(trade => nodes.push({ id: trade.company, type: 'company' }))
-
 		// let links = [
 		// 	{ source: 1, target: 2, linkage: "Is_Broker" },
 		// 	{ source: 2, target: 3, linkage: "Has_PAN" },
 		// 	{ source: 4, target: 3, linkage: "Has_PAN" },
 		// 	{ source: 4, target: 5, linkage: "KMP_OF" },
 		// ]
-
-		trades.forEach(trade => links.push({ source: client, target: trade.company, type: 'trade' }))
 
 		//const links = this.props.data.links.map(d => Object.create(d));
 		//const nodes = this.props.data.nodes.map(d => Object.create(d));
@@ -111,14 +129,17 @@ class D3Graph extends React.Component {
 			.selectAll("line")
 			.data(links)
 			.join("line")
-			.attr("stroke-width", d => Math.sqrt(d.value))
+			.attr("stroke-width", 1)
 			.attr("marker-end", "url(#arrowhead)")
 			.style("stroke", function (d) {
-				if (d.linkage == "Has_PAN") {
-					return "red"
+				if (d.type == "works_for") {
+					return "#0e033c"
+				} else if (d.type == "brokers_for") {
+					return "#1d2d7e"
 				} else {
-					return "green"
+					return "#dddddd"
 				}
+
 			});
 
 		var linkText = svg.selectAll("line")
@@ -161,32 +182,62 @@ class D3Graph extends React.Component {
 			.selectAll("circle")
 			.data(nodes)
 			.join("circle")
-			.attr("r", 6)
-			.attr("fill", function (d) { return colors(d.group); })
+			.attr("r", function (d) {
+				if (d.type == 'client') {
+          return 10
+        }
+        else {
+          return 7
+        }
+			})
+			.style("fill", function(d) {
+        if (d.type == 'client') {
+          return '#2db660'
+        }
+        else if (d.type == 'broker') {
+          return '#1d2d7e'
+        }
+        else if (d.type == 'company') {
+          return '#1b72b4'
+        }
+      })
 			.call(this.drag(simulation));
 
 
 		node.append("svg:title")
 			.text(function (d) {
-				return d.name;
+				return d.id;
 			})
 			.style('text-anchor', 'middle')
 			.style('cursor', 'pointer')
 			.style("fill", "#555555")
 			.style("font-family", "Arial")
-			.style("font-size", 12)
+			.style("font-size", 9)
 			.attr("stroke-width", 0)
 			.attr('x', 6)
 			.attr('y', 3);
-		;
+
 		// Text to nodes
 		const text = svg.append("g")
 			.attr("class", "text")
 			.selectAll("text")
 			.data(nodes)
 			.enter().append("text")
-			.text(d => d.type + ":" + d.name)
-			.style('font-size', 3)
+			.text(d => d.type + ": " + d.id)
+			.style('font-size', '6px')
+			.style("font-family", "Arial")
+			.style("fill", "#333333")
+			
+		// text for links
+		const link_text = svg.append("g")
+			.attr("class", "text")
+			.selectAll("text")
+			.data(links)
+			.enter().append("text")
+			.text(d => d.type)
+			.style("font-size", '3px')
+			.style("font-family", "Arial")
+			.style("fill","#555555")
 
 		simulation.on("tick", () => {
 			link
@@ -200,10 +251,10 @@ class D3Graph extends React.Component {
 				.attr("cx", function (d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
 				.attr("cy", function (d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
 
-			text.attr("x", d => d.x - 8) //position of the lower left point of the text
+			text.attr("x", d => d.x - 10) //position of the lower left point of the text
 				.attr("y", d => d.y + 10); //position of the lower left point of the text
 
-			linkText
+			link_text
 				.attr("x", function (d) { return (d.source.x + (d.target.x - d.source.x) * 0.5); })
 				.attr("y", function (d) { return (d.source.y + (d.target.y - d.source.y) * 0.5); });
 			// text1.attr("x", d => d.x - 8) //position of the lower left point of the text

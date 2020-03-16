@@ -30,7 +30,7 @@ body {
 /* Conatiner Styling Here */
 
 .App-container {
-  background:white;
+  background:ivory;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -46,11 +46,8 @@ body {
 
 .searchform {
   position: relative;
-  right: 10px;
   height: 100%;
-  width: 30%;
   padding: 5px;
-  margin-left: 1.75%;
 }
 
 form {
@@ -66,7 +63,7 @@ form {
 
 .finput, .fbutton {
   color: #212529;
-  margin-left: 25px;
+  margin-left: 15px;
   border-radius: 25px;
   background: #fff;
 }
@@ -376,29 +373,30 @@ display: flex;
   font-size: 16px;
 }
 
-.AP, .KMP{
+.AP, .KMP {
   width: 100%;
-  height: 80%;
-  margin-left: 2%;
+  height: 100%;
   border: 1px solid rgba(72,94,144,0.16);
   margin-top: 22px;
   font-size: 12px;
-}
-.Events {
-  border: 2px solid rgba(72,94,144,0.16);
-  margin-top: 22px;
-  font-size: 12px;
-  border-radius: 1rem;
-  margin: 15px;
-}
-.m2m-title{
-  color:  #2f353a ;
-  font-size: 25px;
-  font-family: "Roboto";
-  position: relative;
-  text-align: center;
-}
+  overflow: scroll;
 
+}
+ .Events {
+    border: 2px solid rgba(72,94,144,0.16);
+    overflow: auto;
+    margin-top: 22px;
+    font-size: 12px;
+    border-radius: 1rem;
+    margin: 15px;
+  }
+  .m2m-title{
+    color:  #2f353a ;
+    font-size: 25px;
+    font-family: "Roboto";
+    position: relative;
+    text-align: center;
+  }
 /* .card{
   margin: auto;
 } */
@@ -670,38 +668,4 @@ display: flex;
   background-color: red;
   color: white;
   text-align: center;
-}
-
-.start-search{
-  width: 100%;
-  align-items: center;
-}
-
-.search-form{
-  width: 500px;
-  display: flex;
-  color: #5f666b;
-  border-radius: 1rem;
-  border: 2px solid ;
-}
-
-
-.d3-graph{
-  width: 100%;
-}
-.d3-graph-container{
-  padding: 25px;
-}
-
-
-text {
-  font-family: sans-serif;
-  font-size: 10px;
-}
-
-
-.text1 {
-  fill: #444;
-  font-family: helvetica;
-  font-size: 8pt;
 }

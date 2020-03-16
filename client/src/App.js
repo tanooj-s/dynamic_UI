@@ -21,6 +21,8 @@ import HorizontalBarChart from './components/chart/horizontal-barchart'
 
 import KMP from './components/kmp'
 import PopotoGraph from './components/popoto-graph'
+import D3Graph from './components/d3-graph.js'
+
 
 
 import './App.css';
@@ -44,7 +46,6 @@ import {
   CardFooter
 } from 'reactstrap';
 import Highcharts from 'highcharts';
-import D3Graph from './components/d3-graph';
 
 
 class App extends React.Component {
@@ -58,8 +59,6 @@ class App extends React.Component {
       response_data: "", // take in response from flask server, should be json records
       tab_display: 0,
       graph_display: 0,
-      m2m_display: 0
-
       // only render navbar for display options if this is true
     }
     this.handleChange = this.handleChange.bind(this)
@@ -126,7 +125,7 @@ class App extends React.Component {
 
         <div className="navbar" id="navbar" sticky="top">
           <div className="logo">
-            <img src={companylogo} className="small-logo"></img>
+            <img src={companylogo} className="small-logo" />
           </div>
 
           <Nav tabs>
@@ -145,7 +144,7 @@ class App extends React.Component {
                 <DropdownMenu left >
                   <DropdownItem onClick={(e) => this.setState({ query_type: "indi", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
                     CLIENT
-               	  </DropdownItem>
+                  </DropdownItem>
                   <DropdownItem onClick={(e) => this.setState({ query_type: "broker", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
                     BROKER
                   </DropdownItem>
@@ -168,7 +167,12 @@ class App extends React.Component {
             : (this.state.query_type === "indi" ?
               (<Nav tabs >
                 <NavItem>
-                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_trades", graph_display: 0, m2m_display: 1 })}>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_dashboard", graph_display: 0 })}>
+                    Dashboard
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_trades", graph_display: 0 })}>
                     Trade Data
                   </NavLink>
                 </NavItem>
@@ -249,25 +253,6 @@ class App extends React.Component {
 
         </div>
         <div className="App-container">
-          <div className="profile-container">
-            {this.state.graph_display === 0 ?
-              (this.state.response_data !== "" ?
-                ((() => {
-                  switch (this.state.query_type) {
-                    case 'broker':
-                      return <BProfile data={this.state.response_data} />
-                    case 'company':
-                      return <CompanyProfile data={this.state.response_data} />
-                    case 'indi':
-                      return <ClientProfile data={this.state.response_data} />
-                    default:
-                      return null;
-                  }
-                })())
-                : (<div></div>)
-              )
-              : (<D3Graph data={this.state.response_data} search={this.state.search_term} />)}
-          </div>
           <div className="output-container">
             {this.state.response_data !== "" ?
               ((() => {
@@ -288,17 +273,21 @@ class App extends React.Component {
                   case 'company_complaints':
                     return <Complaints data={this.state.response_data.complaints} company_name={this.state.response_data.profile[0].Name} />
                   case 'indi_trades':
-                    return <Trades data={this.state.response_data.trades} client_name={this.state.response_data.profile[0].Name} />
+                    return <Trades data={this.state.response_data.trades} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_alerts':
-                    return <Alerts data={this.state.response_data.alerts} client_name={this.state.response_data.profile[0].Name} />
+                    return <Alerts data={this.state.response_data.alerts} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_securities':
-                    return <Securities data={this.state.response_data.securities} client_name={this.state.response_data.profile[0].Name} />
+                    return <Securities data={this.state.response_data.securities} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_holdings':
-                    return <Holdings data={this.state.response_data.holdings} client_name={this.state.response_data.profile[0].Name} />
+                    return <Holdings data={this.state.response_data.holdings} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_m2m':
-                    return <M2M data={this.state.response_data.m2m} client_name={this.state.response_data.profile[0].Name} />
+                    return <M2M data={this.state.response_data.m2m} client_name={this.state.response_data.profile[0].ClientName} />
+                  case 'indi_graph':
+                    return <D3Graph data={this.state.response_data} />
+                  case 'indi_dashboard':
+                    return <ClientProfile data={this.state.response_data} />;
                   default:
-                    return null;
+                    return <ClientProfile data={this.state.response_data} />;
                 }
               })())
               : (<div></div>)

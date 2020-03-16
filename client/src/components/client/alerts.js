@@ -5,7 +5,8 @@ import { Table } from 'reactstrap';
 function Alerts(props) {
     return (
         <div className="Events">
-          <h4>Alerts</h4> 
+          <h4>{props.client_name}</h4>
+          <h4>Alerts</h4>
             <Table hover>
                 <thead className="table-header">
                   <tr>

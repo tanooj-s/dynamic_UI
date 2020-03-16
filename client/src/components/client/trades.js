@@ -5,6 +5,7 @@ import { Table } from 'reactstrap';
 function Trades(props) {
     return (
         <div className="Events">
+          <h4>{props.client_name}</h4>
           <h4>Trade Data</h4>
             <Table hover>
                 <thead className="table-header">
@@ -13,14 +14,10 @@ function Trades(props) {
                     <th>Trading Member</th>
                     <th>Client Code</th>
                     <th>Symbol</th>
-                    <th>Security</th>
                     <th>ISIN</th>
-                    <th>Buy Traded Value</th>
-                    <th>Sell Trade Value</th>
-                    <th>Buy Trade Quantity</th>
-                    <th>Sell Trade Quantity</th>
-                    <th>Dealer User Id</th>
-                    <th>Dealer User Name</th>
+                    <th>Share Volume</th>
+                    <th>Buy Price</th>
+                    <th>Sell Price</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -29,15 +26,12 @@ function Trades(props) {
                       <td>{item.Date}</td>
                       <td>{item.TradingMember}</td>
                       <td>{item.ClientCode}</td>
-                      <td>{item.Symbol}</td>
-                      <td>{item.Security}</td>
+                      <td>{item.OwnsSymbol}</td>
                       <td>{item.ISIN}</td>
-                      <td>{item.BuyTradeValue}</td>
-                      <td>{item.SellTradeValue}</td>
-                      <td>{item.BuyTradeQuantity}</td>
-                      <td>{item.SellTradeQuantity}</td>
-                      <td>{item.DealerUserId}</td>
-                      <td>{item.DealerUserName}</td>
+                      <td>{item.Volume}</td>
+                      <td>{item.BuyPrice}</td>
+                      <td>{item.SellPrice}</td>
+
                     </tr>)
                   )}
                   </tbody>

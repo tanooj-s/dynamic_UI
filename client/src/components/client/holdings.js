@@ -5,6 +5,7 @@ import { Table } from 'reactstrap';
 function Holdings(props) {
     return (
         <div className="Events">
+          <h4>{props.client_name}</h4>
           <h4 id="holding-title">Holdings</h4>
             <Table hover>
                 <thead className="table-header">
