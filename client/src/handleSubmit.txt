@@ -1,0 +1,17 @@
+  handleSubmit(event) {
+    event.preventDefault()
+    //this.setState({ submitted: true })
+    this.getResponse("http://127.0.0.1:5000/", this.state)
+    console.log("REQUEST")
+    console.log(this.state)
+    if (this.state.query_type === 'company') {
+    	this.setState({ query_tab: 'company_profile' })
+    }
+    else if (this.state.query_type === 'broker') {
+    	this.setState({ query_tab: 'broker_profile' })	
+    }
+    else if (this.state.query_type === 'indi') {
+    	this.setState({ query_tab: 'indi_profile' })	
+    }
+
+  }

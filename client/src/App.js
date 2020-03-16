@@ -1,29 +1,50 @@
 import React from 'react';
-import logo from './logo.svg';
+import companylogo from './components/logo_white.png'
 import CompanyProfile from './components/company/company_profile'
 import Events from './components/company/events'
+import Complaints from './components/company/complaints'
+import BoardMeetings from './components/company/board_meetings'
+
 import BProfile from './components/broker/broker_profile'
-import KMP from './components/broker/kmp'
 import AP from './components/broker/authorized_person'
 
+import ClientProfile from './components/client/client_profile'
+import Securities from './components/client/securities'
+import Holdings from './components/client/holdings'
+import Trades from './components/client/trades'
+import Alerts from './components/client/alerts'
+import M2M from './components/client/m2m'
+
+import PieChart from './components/chart/piechart'
+import Chart from './components/chart/chart'
+import HorizontalBarChart from './components/chart/horizontal-barchart'
+
+import KMP from './components/kmp'
+import PopotoGraph from './components/popoto-graph'
+import D3Graph from './components/d3-graph.js'
+
+
+
 import './App.css';
-import { Form,
-        Input,
-        Button,
-        Navbar,
-        NavItem,
-        Nav,
-        NavLink,
-        NavbarBrand,
-        UncontrolledDropdown,
-        Toast,
-        ToastBody,
-        DropdownToggle,
-        DropdownItem,
-        DropdownMenu,
-        Table,
-        Card
-      } from 'reactstrap';
+import {
+  Form,
+  Input,
+  Button,
+  Navbar,
+  NavItem,
+  Nav,
+  NavLink,
+  NavbarBrand,
+  UncontrolledDropdown,
+  Toast,
+  ToastBody,
+  DropdownToggle,
+  DropdownItem,
+  DropdownMenu,
+  Table,
+  Card,
+  CardFooter
+} from 'reactstrap';
 import Highcharts from 'highcharts';
 
 
@@ -32,10 +53,13 @@ class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      query_type: "indi", // indi by default, or broker, or company, change navbar as appropriate
+      query_type: "", // indi by default, or broker, or company, change navbar as appropriate
       search_term: "", // should take on value on input
-      query_tab: "client_profile", // value taken on by navbar
-      response_data: "" // take in response from flask server, should be json records
+      query_tab: "", // value taken on by navbar
+      response_data: "", // take in response from flask server, should be json records
+      tab_display: 0,
+      graph_display: 0,
+      // only render navbar for display options if this is true
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -50,12 +74,26 @@ class App extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault()
+    //this.setState({ submitted: true })
+    this.setState({ response_data: "" })
     this.getResponse("http://127.0.0.1:5000/", this.state)
     console.log("REQUEST")
     console.log(this.state)
+    if (this.state.query_type === 'company') {
+      this.setState({ query_tab: 'company_profile' })
+    }
+    else if (this.state.query_type === 'broker') {
+      this.setState({ query_tab: 'broker_profile' })
+    }
+    else if (this.state.query_type === 'indi') {
+      this.setState({ query_tab: 'indi_profile' })
+    }
+    this.setState({ tab_display: this.state.tab_display + 1 })
+
   }
 
-  async getResponse (url, data) {
+
+  async getResponse(url, data) {
     let out_data = [] // try to set this as a string instead
     const response = await fetch(url, {
       method: 'POST',
@@ -63,200 +101,202 @@ class App extends React.Component {
       redirect: 'follow',
       body: JSON.stringify(data),
     })
-    .then(response => response.body.getReader().read()) // response comes in as ReadableStream() from fetch, attach reader object and read
-    .then(({ done, value }) => {                        // which yields done (boolean) and individual values as uint8
-      out_data.push(new TextDecoder().decode(value)) // push uint8 values to outdata
-    })
-    this.setState({ response_data: this.cleanStringandJsonify(out_data[0]) }) // instead of pushing to uint8, maybe do something like out_data = ''.join()
+      .then(response => response.body.getReader().read()) // response comes in as ReadableStream() from fetch, attach reader object and read
+      .then(({ done, value }) => {                        // which yields done (boolean) and individual values as uint8
+        out_data.push(new TextDecoder().decode(value)) // push uint8 values to outdata
+      })
+    this.setState({ response_data: JSON.parse(out_data[0]) }) // instead of pushing to uint8, maybe do something like out_data = ''.join()
     console.log("RESPONSE")
     console.log(this.state.response_data)
   }
 
 
   cleanStringandJsonify(s) {
-    s.replace('\\','')          // remove backslashes
+    s.replace('\\', '')          // remove backslashes
     var stringed = JSON.parse(s) // first JSON parse returns a string
     return JSON.parse(stringed) // second returns array of JS objects
   }
 
 
-  render () {
+  render() {
     return (
       <div className="App">
-        <div className="navbar">
-            <Nav tabs >
-            {/* <NavbarBrand href="/">NSE Profiling</NavbarBrand> */}
 
-            <NavItem>
-              <UncontrolledDropdown nav tabs inNavbar >
-                <DropdownToggle caret >
-                  {this.state.query_type === "indi" ? <code className="code">Client</code>
-                    : (this.state.query_type === "broker" ? <code className="code">Brokerage</code>
-                      : <code className="code">Company</code>)
+
+        <div className="navbar" id="navbar" sticky="top">
+          <div className="logo">
+            <img src={companylogo} className="small-logo" />
+          </div>
+
+          <Nav tabs>
+            {/* <NavbarBrand href="/">NSE Profiling</NavbarBrand> */}
+            <NavItem className="searchitem">
+              <UncontrolledDropdown >
+                <DropdownToggle caret>
+                  {this.state.query_type === "indi" ? <code className="code">CLIENT</code>
+                    : (this.state.query_type === "broker" ? <code className="code">BROKER</code>
+                      : (this.state.query_type === "company" ? <code className="code">COMPANY</code>
+                        : <code className="code">SELECT</code>
+                      )
+                    )
                   }
                 </DropdownToggle>
                 <DropdownMenu left >
-                  <DropdownItem onClick={(e) => this.setState({ query_type: "indi" })}>
-                    Client
-                </DropdownItem>
-                  <DropdownItem onClick={(e) => this.setState({ query_type: "broker" })}>
-                    Brokerage
-                </DropdownItem>
-                <DropdownItem onClick={(e) => this.setState({ query_type: "company" })}>
-                    Company
-                </DropdownItem>
+                  <DropdownItem onClick={(e) => this.setState({ query_type: "indi", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
+                    CLIENT
+                  </DropdownItem>
+                  <DropdownItem onClick={(e) => this.setState({ query_type: "broker", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
+                    BROKER
+                  </DropdownItem>
+                  <DropdownItem onClick={(e) => this.setState({ query_type: "company", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
+                    COMPANY
+                  </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
             </NavItem>
           </Nav>
+          <div className="searchform">
+            <form onSubmit={this.handleSubmit} encType="multipart/form-data" >
+              <input type="text" name="search_term" value={this.state.search_term} placeholder="  Search by name" onChange={this.handleChange} className="finput" />
+              <button className="fbutton">Submit</button>
+            </form>
+          </div>
 
-          {this.state.query_type === "indi" ?
-            (<Nav tabs>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_profile"})}>
-                  Client Profile
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_trade_data"})}>
-                  Trade Data
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_blacklist"})}>
-                  Blacklisted PANs
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_alerts"})}>
-                  Alerts
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_balances"})}>
-                  Balances
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_monthly_balances"})}>
-                  Monthly Balances
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick = {(e) => this.setState({query_tab: "indi_m2m"})}>
-                  M2M Loss
-                </NavLink>
-              </NavItem>
-            </Nav>)
-            :(this.state.query_type === "company" ?
-              (<Nav tabs>
+
+          {this.state.tab_display === 0 ? (<Nav></Nav>)
+            : (this.state.query_type === "indi" ?
+              (<Nav tabs >
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_profile"})}>
-                    Company Profile
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_dashboard", graph_display: 0 })}>
+                    Dashboard
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_shareholding"})}>
-                    Shareholding Pattern
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_trades", graph_display: 0 })}>
+                    Trade Data
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_board"})}>
-                    Board Meetings
+                  {/* <NavLink onClick={(e) => this.setState({ query_tab: "indi_graph" })}> */}
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_graph", graph_display: 1 })} id="relationgraph">
+                    Relationship Graph
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_kmp"})}>
-                    Key Management Personnel
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_alerts", graph_display: 0 })}>
+                    NCL Alerts
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_events"})}>
-                    Events/Alerts
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_holdings", graph_display: 0 })}>
+                    Holdings
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick = {(e) => this.setState({query_tab: "company_complaints"})}>
-                    Complaints
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_securities", graph_display: 0 })}>
+                    Securities
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_m2m", graph_display: 0 })}>
+                    M2M Loss
                   </NavLink>
                 </NavItem>
               </Nav>)
-              :(<Nav tabs>
+              : (this.state.query_type === "company" ?
+                (<Nav tabs >
                   <NavItem>
-                    <NavLink onClick = {(e) => this.setState({query_tab: "broker_profile"})}>
-                      Brokerage Profile
+                    <NavLink onClick={(e) => this.setState({ query_tab: "company_shareholding" })}>
+                      Shareholding Pattern
                     </NavLink>
                   </NavItem>
                   <NavItem>
-                    <NavLink onClick = {(e) => this.setState({query_tab: "broker_kmp"})}>
+                    <NavLink onClick={(e) => this.setState({ query_tab: "company_board" })}>
+                      Board Meetings
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink onClick={(e) => this.setState({ query_tab: "company_kmp" })}>
                       Key Management Personnel
                     </NavLink>
                   </NavItem>
                   <NavItem>
-                    <NavLink onClick = {(e) => this.setState({query_tab: "broker_authorized"})}>
-                      Authorized Personnel
+                    <NavLink onClick={(e) => this.setState({ query_tab: "company_events" })}>
+                      Events/Alerts
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink onClick={(e) => this.setState({ query_tab: "company_complaints" })}>
+                      Complaints
                     </NavLink>
                   </NavItem>
                 </Nav>)
+                : (this.state.query_type === "broker" ?
+                  (<Nav tabs >
+                    <NavItem>
+                      <NavLink onClick={(e) => this.setState({ query_tab: "broker_kmp" })}>
+                        Key Management Personnel
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink onClick={(e) => this.setState({ query_tab: "broker_authorized" })}>
+                        Authorized Personnel
+                      </NavLink>
+                    </NavItem>
+                  </Nav>)
+                  : (<Nav tabs>
+                  </Nav>)
+                )
               )
+            )
           }
-          <div className="searchform">
-            <Toast>
-              <ToastBody>
-                <form onSubmit = {this.handleSubmit} encType="multipart/form-data">
-                  <input type="text" name="search_term" value={this.state.search_term} placeholder="Search by name" onChange = {this.handleChange} className="finput"/>
-                  <button className="fbutton">Submit</button>
-                </form>
-              </ToastBody>
-            </Toast>
-          </div>
+
         </div>
         <div className="App-container">
           <div className="output-container">
             {this.state.response_data !== "" ?
               ((() => {
-                switch(this.state.query_tab) {
-                  case 'broker_profile':
-                    return <BProfile data={this.state.response_data} />
+                switch (this.state.query_tab) {
                   case 'broker_kmp':
-                    return <KMP data={this.state.response_data} />
+                    return <KMP data={this.state.response_data.kmp} />
                   case 'broker_authorized':
-                    return <AP data={this.state.response_data} />
-                  case 'company_profile':
-                    return <CompanyProfile data={this.state.response_data} />
+                    return <AP data={this.state.response_data.authorized} />
+
                   case 'company_shareholding':
-                    return <Card data={this.state.response_data} />
+                    return <PieChart data={this.state.response_data.shareholding} company_name={this.state.response_data.profile[0].Name} />
                   case 'company_board':
-                    return <Table data={this.state.response_data} />
+                    return <BoardMeetings data={this.state.response_data.board_meetings} company_name={this.state.response_data.profile[0].Name} />
                   case 'company_kmp':
-                    return <KMP data={this.state.response_data} />
+                    return <KMP data={this.state.response_data.kmp} company_name={this.state.response_data.profile[0].Name} />
                   case 'company_events':
-                    return <Events data={this.state.response_data} />
+                    return <Events data={this.state.response_data.events} company_name={this.state.response_data.profile[0].Name} />
                   case 'company_complaints':
-                    return <Table data={this.state.response_data} />
-                  case 'indi_profile':
-                    return <Card data={this.state.response_data} />
-                  case 'indi_trade_data':
-                    return <Card data={this.state.response_data} />
-                  case 'indi_blacklist':
-                    return <Table data={this.state.response_data} />
+                    return <Complaints data={this.state.response_data.complaints} company_name={this.state.response_data.profile[0].Name} />
+                  case 'indi_trades':
+                    return <Trades data={this.state.response_data.trades} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_alerts':
-                    return <Table data={this.state.response_data} />
-                  case 'indi_balances':
-                    return <Card data={this.state.response_data} />
-                  case 'indi_monthly_balances':
-                    return <Card data={this.state.response_data} />
+                    return <Alerts data={this.state.response_data.alerts} client_name={this.state.response_data.profile[0].ClientName} />
+                  case 'indi_securities':
+                    return <Securities data={this.state.response_data.securities} client_name={this.state.response_data.profile[0].ClientName} />
+                  case 'indi_holdings':
+                    return <Holdings data={this.state.response_data.holdings} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_m2m':
-                    return <Card data={this.state.response_data} />
+                    return <M2M data={this.state.response_data.m2m} client_name={this.state.response_data.profile[0].ClientName} />
+                  case 'indi_graph':
+                    return <D3Graph data={this.state.response_data} />
+                  case 'indi_dashboard':
+                    return <ClientProfile data={this.state.response_data} />;
                   default:
-                    return null;
+                    return <ClientProfile data={this.state.response_data} />;
                 }
               })())
-              :(<div></div>)
+              : (<div></div>)
             }
+
           </div>
         </div>
       </div>
+
     );
   }
 }

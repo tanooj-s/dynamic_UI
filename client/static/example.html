@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Popoto example</title>
+    <link rel="stylesheet" href="node_modules/popoto/dist/popoto.min.css">
+    <script ></script>
+</head>
+<body class="ppt-body">
+<section class="ppt-section-main" style="background: #73879C;">
+
+    <div class="ppt-container-graph">
+        <nav id="popoto-taxonomy" class="ppt-taxo-nav">
+            <!-- Label/taxonomy filter will be generated here -->
+        </nav>
+        <div id="popoto-graph" class="ppt-div-graph">
+            <!-- Graph will be generated here-->
+        </div>
+    </div>
+
+    
+
+    <div id="popoto-cypher" class="ppt-container-cypher">
+        <!-- Cypher query viewer will be generated here -->
+    </div>
+
+    <div class="ppt-section-header">
+        <!-- The total results count is updated with a listener defined below -->
+        RESULTS <span id="result-total-count" class="ppt-count"></span>
+    </div>
+
+    <div id="popoto-results" class="ppt-container-results">
+        <!-- Results will be generated here -->
+    </div>
+
+</section>
+<script src="node_modules/jquery/dist/jquery.min.js" charset="utf-8"></script>
+<script src="node_modules/d3/dist/d3.min.js" charset="utf-8"></script>
+<script src="node_modules/popoto/dist/popoto.js" charset="utf-8"></script>
+
+<script>
+    
+    /* url to access Neo4j instance, popoto does not support bolt right now so will need to use http */
+    popoto.rest.CYPHER_URL = "http://localhost:7474/db/data/transaction/commit"
+
+    /* JS func to encrypt login credentials */
+    popoto.rest.AUTHORIZATION = "Basic " + btoa("neo4j:12345")
+
+    /* define the labels needed in the application, this config is mandatory and should contain all the labels that could be in the graph model */
+    popoto.provider.node.Provider = {
+            "Client" : {
+                "returnAttributes": ["name"],
+                "constraintAttribute": "name",
+                "autoExpandRelations": true, // automatically expand nodes in graph
+            },
+            "Company": {
+                "returnAttributes": ["name"],
+                "constraintAttribute": "name",
+                "autoExpandRelations": true,
+            },
+    };
+    /* relationships in the application */
+    popoto.provider.link.Provider = {
+        /*customize the text displayed in relationships */
+        "getTextValue": function (link) {
+            if (link.type === popoto.graph.link.LinkTypes.RELATION || link.type === popoto.graph.link.LinkTypes.SEGMENTS) {
+
+                var targetName = "";
+                if (link.type === popoto.graph.link.LinkTypes.SEGMENT) {
+                    targetName = " " + popoto.provider.node.getTextValue(link.target);
+                }
+                switch (link.label) {
+                    default : //could probably just use this 
+                        return link.label + targetName;
+                } 
+            }
+        }
+    };
+
+    popoto.tools.TOGGLE_TAXONOMY = true;
+    popoto.tools.SAVE_GRAPH = true;
+    popoto.cypherviewer.containerId = "popoto-cypher"; // display Cypher query
+    popoto.queryviewer.containerId = "popoto-query"; // show query in plain English
+    popoto.queryviewer.QUERY_STARTER = "Searching for";
+
+
+    /* use an event listener to retreive the total results count */
+    /* gets called on every graph modification */
+    popoto.result.onTotalResultCount(function (count) {
+        document.getElementById("result-total-count").innerHTML = "(" + count + ")";
+    });
+
+    /* set number of results returned */
+    popoto.query.RESULTS_PAGE_SIZE = 100;
+
+    popoto.start("Client"); // should change based on state 
+
+
+</script>
+
+</body>
+
+</html>

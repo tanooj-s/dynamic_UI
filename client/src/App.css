@@ -1,38 +1,659 @@
-.App {
-  text-align: center;
+* {
+  font-family: "Roboto";
+  box-sizing: border-box;
+}
+::-webkit-scrollbar {
+  width: 15px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #2f353a; 
+  border-radius: 10px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #272c30; 
+}
+body {
+  background: rgb(247, 248, 250);
+  ;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Conatiner Styling Here */
+
+.App-container {
+  background:white;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(4px + 2vmin);
+  color: black;
+  padding: 2px;
+  margin: 0;
+}
+
+.toasts-body {
+  padding: 0px;
+}
+
+.searchform {
+  position: relative;
+  right: 10px;
+  height: 100%;
+  width: 30%;
+  padding: 5px;
+  margin-left: 1.75%;
+}
+
+form {
+  display: flex;
+  position: relative;
+  right: 50px;
+  width: 120%;
+}
+
+.finput {
+  width: 100%
+}
+
+.finput, .fbutton {
+  color: #212529;
+  margin-left: 25px;
+  border-radius: 25px;
+  background: #fff;
+}
+
+.fbutton {
+  width: 80px;
+}
+
+/* Navbar Styling here */
+
+.dropdown-menu.show {
+  width: 90px;
+  min-width: 0;
+  font-size: 0.7rem;
+  padding: 0;
+  margin-left: -1px;
+  border: 1px solid black;
+}
+
+.title-Nav {
+  color: #fff;
+  color: #3a2d7d;
+  height: 38px;
+  background: #fff;
+  width: 100%;
+  text-align: center;
+}
+.navbar {
+  display: flex;
+  background-color: #2f353a;
+  background-image:linear-gradient(10deg, #3e5d7e 0%, #2f353a 100%);
+  width: 100%;
+}
+
+.code {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.selection {
+  width: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.nav-item {
+  color: white;
+}
+
+#pag-link{
+  border:none
+}
+.page-range{
+  font-size: 18px;
+  position: relative;
+  top: 2px;
+}
+#alerts-toast{
+  background: white;
+  max-width: 100%;
+  width:100%;
+  border: 1px solid rgba(72,94,144,0.16);
+}
+
+
+.toast-body {
+  background: rgb(228, 235, 250);
+}
+.toast.show {
+  border-radius: 1rem;
+  width: 100%;
+  height: 405px;
+  position: relative;
+}
+.drop-btn {
+  background: black;
+}
+.data-row-1,.data-row-2,.data-row-3{
+display: flex;
+}
+
+.m2mclient{
+  width: 100%;
+  position: relative;
+  height: 100%;
+  margin-right: 10px;
+}
+
+.data-row-3{
+  position: relative;
+  top: 25px;
+}
+.m2mclient-container{
+  position: relative;
+  border: 1px solid rgba(72,94,144,0.16);
+  border-radius: 1rem;
+}
+.ncl-container{
+  width: 100%;
+  position: relative;
+}
+.nclalerts{
+  position: relative;
+  width:100%;
+}
+/* KMP */
+
+.logo {
+  width: 55px;
+}
+.small-logo{
+  width: 87px;
+  position: relative;
+  top: 10px;
+  right: 15px;
+}
+
+.kmp-table {
+  background: #5f666b;
+  color: white;
+}
+
+.profile-img {
+  border-radius: 100%;
+  height: 55px;
+  width: 55px;
+  margin: 0;
+  padding: 0;
+}
+
+.profile-img1 {
+  height: 250px;
+  width: 90px;
+  margin: 0;
+  padding: 0;
+}
+
+.phone, .address, .email {
+  padding-right: 20px;
+}
+
+.text-muted {
+  margin-top: 10%;
+}
+
+.person-body {
+  top: 150px;
+  margin: auto;
+  display: flex;
+}
+
+.person-title {
+  width: 100%;
+  font-size: 30px;
+}
+
+.about-title, .contact-title {
+  font-size: 20px;
+}
+
+.About-company {
+  padding: 15px;
+}
+
+.social {
+  padding: 2px;
+  float: right;
+  margin-top: 95px;
+}
+
+.em, .fb, .lk {
+  margin-left: 40px;
+}
+
+.profiling {
+  margin: auto;
+  display: flex;
+  width: 100%;
+}
+
+.profile2 {
+  margin: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.section {
+  margin-left: 8px;
+}
+
+.company-type {
+  padding: 15px;
+  margin-top: 10px;
+}
+
+/* broker profile */
+
+.bprofiling {
+  margin: auto;
+  display: flex;
+  width: 100%;
+  margin-left: 15%;
+}
+
+.Broker-title {
+  margin: auto;
+  font-size: 27px;
+  width: 100%;
+}
+
+/* Pie Charts Styling From Here  */
+.highcharts-container {
+  border-radius: 1rem;
+}
+
+.TradeData{
+  width: 420px;
+  border-radius: 1rem;
+  position: relative;
+}
+.data-row-2{
+  top: 18px;
+  position: relative;
+}
+.daily{
+  position: relative;
+  
+  right: 1px;
+  border:1px solid rgba(72,94,144,0.16);
+  border-radius: 1rem;
+  float: left;
+  width: 100%;
+}
+
+.pledged {
+  
+  position: relative;
+  margin-right: 10px;
+  float: left;
+  width: 100%;
+}
+
+.graphs {
+  display: flex;
+  position: relative;
+}
+
+.trades {
+  border-radius: 1rem;
+  width: 100%;
+}
+
+
+.highcharts-title{
+  font-size: 125px; 
+}
+.Chart {
+  display: flex;
+}
+
+.HighchartsReact {
+  margin-right: 2px;
+  border: 1px solid rgba(72,94,144,0.16);
+  border-radius: 1rem;
+  background: white
+}
+
+.HighchartsReact1 {
+  margin-right: 2px;
+  border-radius: 1rem;
+  background: white;
+}
+.HorizontalBarChart {
+  border-radius: 1rem;
+  width: 430px;
+  position: relative;
+  top: 10px;
+  left:12px
+}
+
+.clientchart {
+  border-radius: 1rem;
+  width: 420px;
+}
+
+.highcharts-credits {
+  display: none;
+}
+
+.piechart {
+  width: 58%;
+}
+
+#piecont {
+  height: 10px;
+  display: flex;
+}
+
+#barcont {
+  margin-left: 50%;
+  bottom: 425px;
+  width: 45%;
+}
+
+/* table Styling */
+
+.table-header { 
+  background-image:linear-gradient(10deg, #3e5d7e 0%, #2f353a 100%);
+  color: rgb(224, 214, 214);
+  font-size: 16px;
+}
+
+.AP, .KMP, .Events {
+  width: 100%;
+  height: 80%;
+  margin-left: 2%;
+  border: 1px solid rgba(72,94,144,0.16);
+  margin-top: 22px;
+  font-size: 12px;
+}
+
+/* .card{
+  margin: auto;
+} */
+
+.card-body {
+  margin: auto;
+  width: 75%;
+}
+
+/* Styling Client Card Here */
+.seperator-client{
+  width: 95%;
+  border-bottom: 2px solid turquoise;
+  position: relative;
+  bottom:12px;
+  right: 1px;
+}
+.client-profiling {
+  width: 100%;
+  position: relative;
+}
+
+.client-detail {
+  color: #73879C;
+  display: flex;
+  position: relative;
+}
+
+.client-card1 {
+  flex-direction: row;
+  height: 150px;
+  margin-right: 10px;
+  width: 100%;
+}
+
+.client-card {
+  flex-direction: row;
+  height: 250px;
+  width: 100%;
+  margin-right: 10px;
+}
+
+#client-card {
+  border-radius: 1rem;
+  border: 1px solid rgba(72,94,144,0.16);
+}
+
+.client-body {
+  display: flex;
+}
+
+.client-title {
+  flex-direction: row;
+  width: 100%;
+  height: 40px;
+  position: relative;
+  left: 50px;
+  top: 4%;
+  font-size: 28px;
+}
+
+.contact-details {
+  position: relative;
+  top: 68px;
+  right: 160px;
+  height: 100%;
+  width: 100%;
+}
+
+.client-card2 {
+  flex-direction: row;
+  height: 250px;
+  width: 100%;
+  position: relative;
+  margin-right: 10px;
+}
+
+#client-card2 {
+  border:1px solid rgba(72,94,144,0.16);
+  border-radius: 1rem;
+}
+
+.contact-details2 {
+  top: 10px;
+  position: relative;
+  left: 10px;
+  height: 100%;
+  width: 100%;
+}
+
+.client-card3 {
+  flex-direction: row;
+  height: 250px;
+  width: 100%;
+  position: relative;
+  
+}
+
+#client-card3 {
+  border: 1px solid rgba(72,94,144,0.16);
+  border-radius: 1rem;
+}
+
+/* 
+.ucc, .tmcode {
+  float: left;
+  position: relative;
+  top: 40px;
+  right: 460px
+} */
+
+.funds-title {
+  font-size: 20px;
+  position: relative;
+  width: 100%;
+}
+
+.fund-details {
+  top: 10px;
+  left: 10px;
+  height: 50%;
+  bottom: 10px;
+  position: relative;
+}
+
+.icons {
+  margin-right: 2px;
+}
+
+.vertical-line {
+  margin-left: 10px;
+}
+
+
+.company-logo {
+  max-width: 100%;
+  margin: 1rem;
+}
+
+.logo {
+  position: relative;
+  bottom: 10px;
+  left: 15px;
+  width: 100px;
+}
+
+.profile-container{
+  width: 100%;
+}
+ .output-container {
+  width: 100%;
+  position: relative;
+}
+
+.sidebar-item {
+  position: relative;
+  top: 30px
+}
+
+.searchitem {
+  background: #2f353a;
+}
+
+.third-section{
+  display: flex;
+  position: relative;
+  bottom: 3px;
+}
+
+
+.secnfund{
+  position: relative;
+  top:25px;
+  left: 25px;
+  width: 100%;
+  height: 405px;
+  border: 1px solid rgba(72,94,144,0.16);
+  border-radius: 1rem;
+  background-color: white;
+}
+
+.fundsnsec-chart{
+ position: relative;
+ 
+}
+.alerts-title{
+  position: relative;
+  top: 1px;
+  left: 250px;
+  font-size: 18px;
+}
+.HighchartsReact-funds{
+  height:405px;
+  position: relative;
+  
+  border: 1px solid rgba(72,94,144,0.16);
+  border-radius: 1rem;
+  
+}
+.fundsnsec-chart{
+  width: 100%;
+  height: 100%;
+  border-radius: 1px solid rgba(72,94,144,0.16) ;
+}
+.company-name{
+  font-size: 20px;
+}
+.alerts-table{
+  background: white;
+  position: relative;
+}
+
+.pagination{
+  position: relative;
+
+  bottom:10px;
+  height: 10px;
+}
+
+.Trade-data1{
+  width: 100%;
+  position: relative;
+  
+  top: 10px;
+  border-radius: 1rem;
+  border: 1px solid rgba(72,94,144,0.16);
+  height: 400px;
+  overflow: hidden;
+}
+
+
+
+/* Popoto Css */
+.graph-container{
+  width: 100%;
+  position: relative;
+  
+  border: 1px solid rgba(72,94,144,0.16);
+  border-radius: 1rem;
+  background-color: white;
+  color: #212529;
+  top: 20px;
+}
+#popoto-taxonomy{
+  color: #212529;
+  background-color: white;
+}
+.ppt-taxo-nav,.ppt-container-results,.ppt-div-graph,.ppt-container-query{
+  border-radius: 1rem;
+}
+.ppt-svg-graph{
+  background-color: #fff;
+  height: 500px;
+}
+
+#popoto-graph{
+  height: 500px;
+}
+
+/**
+ * Footer Styles
+ */
+
+ .footer {
+  position: relative;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: red;
+  color: white;
+  text-align: center;
 }
