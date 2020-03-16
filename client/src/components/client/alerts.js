@@ -1,12 +1,11 @@
 import React from 'react';
 import '../../App.css';
 import { Table } from 'reactstrap';
-import Logo from '../../components/person.jpg'
 
 function Alerts(props) {
     return (
         <div className="Events">
-          <h4>Alerts</h4>
+          <h4>Alerts</h4> 
             <Table hover>
                 <thead className="table-header">
                   <tr>

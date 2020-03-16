@@ -4,6 +4,9 @@ import json
 import numpy as np
 import pandas as pd
 import ast
+from neo4j import GraphDatabase
+import networkx
+
 
 
 # -----"DATABASE"------
@@ -28,6 +31,9 @@ client_alerts_df = pd.read_excel(io='client_data.xlsx',sheet_name='NCLAlertFile'
 client_trades_df = pd.read_excel(io='client_data.xlsx',sheet_name='Trades')
 client_holdings_df = pd.read_excel(io='client_data.xlsx',sheet_name='HoldingStatement')
 client_securities_df = pd.read_excel(io='client_data.xlsx',sheet_name='Securities')
+client_top_trades_df = pd.read_excel(io='client_data.xlsx',sheet_name='TopTradingStocks')
+client_pledged_df = pd.read_excel(io='client_data.xlsx',sheet_name='Pledged')
+
 
 #reformat dates as strings
 broker_kmp_df['Date of Appointment'] = broker_kmp_df['Date of Appointment'].apply(lambda x: x.strftime("%d-%m-%Y"))
@@ -48,6 +54,18 @@ client_alerts_df['TDate'] = client_alerts_df['TDate'].apply(lambda x: x.strftime
 client_alerts_df['NextTDate'] = client_alerts_df['NextTDate'].apply(lambda x: x.strftime("%d-%m-%Y"))
 client_trades_df['Date'] = client_trades_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
 client_holdings_df['Date'] = client_holdings_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
+client_top_trades_df['Date'] = client_top_trades_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
+
+
+# create multiedge weighted directed graph in networkx that will be pushed to neo4j after
+graph = networkx.MultiDiGraph()
+# df, results orient as records and ast.literal_eval to JSON for the whole graph
+nodes = [] # add nodes based on wichever relevant attributes we want from the graph
+edges = [] # add edges based on :WORKS_FOR, weighted :OWNS_SHARES_IN
+# then later in push_to_db iterate through these and push to graph db
+
+
+
 
 
 # create a dict that maps query_type strings to profile dataframes for each 
@@ -93,14 +111,18 @@ def get_data(search_term, query_type):
 		result_json['kmp'] = ast.literal_eval(broker_kmp_results)
 		result_json['authorized'] = ast.literal_eval(broker_authorized_results)
 
+
+	# may need to orient records as values instead - but first get a handle on what the data will look like and what format is wanted before modifying anything	
 	elif (query_type == 'indi'):
-		profile_df = client_securities_df[['ClientName', 'UCC', 'TMCode', 'PAN', 'Email', 'Phone', 'EODFundBalance', 'FundBalanceNSE']]
+		profile_df = client_securities_df[['ClientName', 'UCC', 'TMCode', 'PAN', 'Email', 'Phone', 'EODFundBalance', 'FundBalanceNSE', 'Address', 'BankName', 'AccountNumber', 'BeneficiaryName', 'DepositoryName', 'TradeMemberName', 'ClientCategory', 'DematAccountNo']]
 		profile_results = profile_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		client_securities_results = client_securities_df.query('ClientName.str.contains("%s")' % (search_term), engine='python')
 		client_m2m_results = client_m2m_df.query('MemberName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		client_alerts_results = client_alerts_df.query('MemberName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		client_trades_results = client_trades_df.query('TradingMember.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		client_holdings_results = client_holdings_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		client_top_trades_results = client_top_trades_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		client_pledged_results = client_pledged_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 
 		result_json['profile'] = ast.literal_eval(profile_results)
 		result_json['securities'] = ast.literal_eval(client_securities_results.to_json(orient='records'))
@@ -108,6 +130,8 @@ def get_data(search_term, query_type):
 		result_json['alerts'] = ast.literal_eval(client_alerts_results)
 		result_json['trades'] = ast.literal_eval(client_trades_results)
 		result_json['holdings'] = ast.literal_eval(client_holdings_results)
+		result_json['top_trades'] = ast.literal_eval(client_top_trades_results)
+		result_json['pledged'] = ast.literal_eval(client_pledged_results)
 
 	return result_json
 #-----BACKEND---------
@@ -140,6 +164,13 @@ def cors_preflight_response():
 	resp.headers.add("Access-Control-Allow-Headers", "*")
 	resp.headers.add("Access-Control-Allow-Methods", "*")
 	return resp
+
+# function that gets called immediately and pushes all company-client relationship data to a neo4j instance 
+def push_to_db():
+	return 0
+
+
+
 
 if __name__ == "__main__":
 	app.run(debug=True)

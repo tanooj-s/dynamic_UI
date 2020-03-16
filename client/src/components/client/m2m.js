@@ -1,36 +1,29 @@
 import React from 'react';
 import '../../App.css';
 import { Table } from 'reactstrap';
-import Logo from '../../components/person.jpg'
 
 function M2M(props) {
     return (
         <div className="Events">
-          <h4>M2M</h4>
+          <h4 className="m2m-title">M2M Losses</h4>
             <Table hover>
                 <thead className="table-header">
                   <tr>
-                    <th>Date</th>
-                    <th>Member ID</th>
-                    <th>TMCD</th>
+                    <th>Client Name</th>
+                    <th>Client PAN</th>
                     <th>Member Name</th>
-                    <th>Client Value</th>
-                    <th>Product Value</th>
-                    <th>Net Buy</th>
-                    <th>Rank</th>
+                    <th>Date</th>
+                    <th>M2M Loss(lacs)</th>
                   </tr>
                 </thead>
                 <tbody>
                   {props.data.map((item) =>
                     (<tr>
-                      <td>{item.Date}</td>
-                      <td>{item.MemberID}</td>
-                      <td>{item.TMCD}</td>
                       <td>{item.MemberName}</td>
-                      <td>{item.ClientValue}</td>
-                      <td>{item.ProductValue}</td>
-                      <td>{item.NetBuy}</td>
-                      <td>{item.Rank}</td>
+                      <td>{item.MemberPan}</td>
+                      <td>{item.TMCD}</td>
+                      <td>{item.Date}</td>
+                      <td>{item.M2MLoss}</td>
 
                     </tr>)
                   )}

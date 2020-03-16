@@ -1,8 +1,6 @@
 import React from 'react';
 import '../../App.css';
 import { Table } from 'reactstrap';
-import Logo from '../../components/person.jpg'
-
 
 
 function KMP(props) {

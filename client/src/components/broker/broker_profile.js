@@ -17,22 +17,22 @@ function BProfile(props) {
             <div className="p-3 my-2 rounded bprofiling">
                 <Card>
                     <CardBody className="person-body">
-                        <CardTitle className="Broker-title"><strong> {props.data[0].Name}
+                        <CardTitle className="Broker-title"><strong> {props.data.profile[0].Name}
                         </strong>
                         </CardTitle>
                     </CardBody>
 
                     <CardText className="About-company">
                         <CardTitle className="about-title"><strong>Segments</strong></CardTitle>
-                        {props.data[0].Segments}
+                        {props.data.profile[0].Segments}
                     </CardText>
 
                     <CardBody className="person-body">
 
                         <div>
                             <CardTitle className="contact-title"><strong>Details </strong></CardTitle>
-                            <CardText className="phone"> <strong>Sebi Registration Number: </strong>{props.data[0].SEBIRegistrationNo}</CardText>
-                            <CardText className="address"><MdLocationOn /> {props.data[0].Address}</CardText>
+                            <CardText className="phone"> <strong>Sebi Registration Number: </strong>{props.data.profile[0].SEBIRegistrationNo}</CardText>
+                            <CardText className="address"><MdLocationOn /> {props.data.profile[0].Address}</CardText>
                         </div>
                     </CardBody>
 
@@ -47,7 +47,7 @@ function BProfile(props) {
                             <FaLinkedinIn className="lk" />
                             <MdEmail className="em" />
                         </div>
-                        <CardText className="company-type"> <strong> Member Id:</strong> {props.data[0].MemberID}</CardText>
+                        <CardText className="company-type"> <strong> Member Id:</strong> {props.data.profile[0].MemberID}</CardText>
                     </Card>
                 </div>
             </div>

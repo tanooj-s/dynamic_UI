@@ -208,7 +208,7 @@ class LineChart extends React.Component {
 
   render() {
     return (
-      <HighchartsReact Highcharts={Highcharts} otpions={options} />
+      <HighchartsReact Highcharts={Highcharts} options={options} />
     )
   }
 }

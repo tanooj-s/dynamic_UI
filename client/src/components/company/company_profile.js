@@ -18,22 +18,22 @@ function CompanyProfile(props) {
 
                     <CardBody className="person-body">
 
-                        <CardTitle className="person-title"><strong> {props.data[0].Name}
+                        <CardTitle className="person-title"><strong> {props.data.profile[0].Name}
                         </strong>
                         </CardTitle>
                     </CardBody>
 
                     <CardText className="About-company">
                         <CardTitle className="about-title"><strong>About</strong></CardTitle>
-                        <small className="text-muted">{props.data[0].About}</small>
+                        <small className="text-muted">{props.data.profile[0].About}</small>
                     </CardText>
 
                     <CardBody className="person-body">
 
                         <div>
                             <CardTitle className="contact-title"><strong>Contact Details </strong></CardTitle>
-                            <CardText className="phone"> <MdPhone /> 91 {props.data[0].Phone}</CardText>
-                            <CardText className="address"><MdLocationOn /> {props.data[0].Address}</CardText>
+                            <CardText className="phone"> <MdPhone /> 91 {props.data.profile[0].Phone}</CardText>
+                            <CardText className="address"><MdLocationOn /> {props.data.profile[0].Address}</CardText>
                         </div>
                     </CardBody>
 
@@ -48,7 +48,7 @@ function CompanyProfile(props) {
                             <FaLinkedinIn className="lk" />
                             <MdEmail className="em" />
                         </div>
-                        <CardText className="company-type"> <strong> Company Type:</strong> {props.data[0].Type}</CardText>
+                        <CardText className="company-type"> <strong> Company Type:</strong> {props.data.profile[0].Type}</CardText>
                     </Card>
                 </div>
             </div>

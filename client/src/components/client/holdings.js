@@ -1,12 +1,11 @@
 import React from 'react';
 import '../../App.css';
 import { Table } from 'reactstrap';
-import Logo from '../../components/person.jpg'
 
 function Holdings(props) {
     return (
         <div className="Events">
-          <h4>Holdings</h4>
+          <h4 id="holding-title">Holdings</h4>
             <Table hover>
                 <thead className="table-header">
                   <tr>

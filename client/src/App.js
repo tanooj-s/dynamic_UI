@@ -1,6 +1,5 @@
 import React from 'react';
-import logo from './logo.svg';
-
+import companylogo from './components/logo_white.png'
 import CompanyProfile from './components/company/company_profile'
 import Events from './components/company/events'
 import Complaints from './components/company/complaints'
@@ -18,9 +17,10 @@ import M2M from './components/client/m2m'
 
 import PieChart from './components/chart/piechart'
 import Chart from './components/chart/chart'
+import HorizontalBarChart from './components/chart/horizontal-barchart'
 
 import KMP from './components/kmp'
-
+import PopotoGraph from './components/popoto-graph'
 
 
 import './App.css';
@@ -40,9 +40,11 @@ import {
   DropdownItem,
   DropdownMenu,
   Table,
-  Card
+  Card,
+  CardFooter
 } from 'reactstrap';
 import Highcharts from 'highcharts';
+import D3Graph from './components/d3-graph';
 
 
 class App extends React.Component {
@@ -55,6 +57,9 @@ class App extends React.Component {
       query_tab: "", // value taken on by navbar
       response_data: "", // take in response from flask server, should be json records
       tab_display: 0,
+      graph_display: 0,
+      m2m_display: 0
+
       // only render navbar for display options if this is true
     }
     this.handleChange = this.handleChange.bind(this)
@@ -71,6 +76,7 @@ class App extends React.Component {
   handleSubmit(event) {
     event.preventDefault()
     //this.setState({ submitted: true })
+    this.setState({ response_data: "" })
     this.getResponse("http://127.0.0.1:5000/", this.state)
     console.log("REQUEST")
     console.log(this.state)
@@ -116,116 +122,122 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <div className="navbar">
-          <Nav tabs >
-            {/* <NavbarBrand href="/">NSE Profiling</NavbarBrand> */}
 
-            <NavItem>
-              <UncontrolledDropdown nav tabs inNavbar >
-                  <DropdownToggle caret  >
-                    {this.state.query_type === "indi" ? <code className="code">CLIENT</code>
-                      : (this.state.query_type === "broker" ? <code className="code">BROKER</code>
-                        : (this.state.query_type === "company" ? <code className="code">COMPANY</code>
-                          : <code className="code">SELECT</code>
-                        )
+
+        <div className="navbar" id="navbar" sticky="top">
+          <div className="logo">
+            <img src={companylogo} className="small-logo"></img>
+          </div>
+
+          <Nav tabs>
+            {/* <NavbarBrand href="/">NSE Profiling</NavbarBrand> */}
+            <NavItem className="searchitem">
+              <UncontrolledDropdown >
+                <DropdownToggle caret>
+                  {this.state.query_type === "indi" ? <code className="code">CLIENT</code>
+                    : (this.state.query_type === "broker" ? <code className="code">BROKER</code>
+                      : (this.state.query_type === "company" ? <code className="code">COMPANY</code>
+                        : <code className="code">SELECT</code>
                       )
-                    }
-                  </DropdownToggle>
-                  <DropdownMenu left >
-                    <DropdownItem onClick={(e) => this.setState({ query_type: "indi", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
-                      CLIENT
+                    )
+                  }
+                </DropdownToggle>
+                <DropdownMenu left >
+                  <DropdownItem onClick={(e) => this.setState({ query_type: "indi", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
+                    CLIENT
                	  </DropdownItem>
-                    <DropdownItem onClick={(e) => this.setState({ query_type: "broker", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
-                      BROKER
+                  <DropdownItem onClick={(e) => this.setState({ query_type: "broker", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
+                    BROKER
                   </DropdownItem>
-                    <DropdownItem onClick={(e) => this.setState({ query_type: "company", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
-                      COMPANY
+                  <DropdownItem onClick={(e) => this.setState({ query_type: "company", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
+                    COMPANY
                   </DropdownItem>
-                  </DropdownMenu>
+                </DropdownMenu>
               </UncontrolledDropdown>
             </NavItem>
           </Nav>
-
           <div className="searchform">
-            <Toast>
-              <ToastBody>
-                <form onSubmit={this.handleSubmit} encType="multipart/form-data">
-                  <input type="text" name="search_term" value={this.state.search_term} placeholder="Search by name" onChange={this.handleChange} className="finput" />
-                  <button className="fbutton">Submit</button>
-                </form>
-              </ToastBody>
-            </Toast>
+            <form onSubmit={this.handleSubmit} encType="multipart/form-data" >
+              <input type="text" name="search_term" value={this.state.search_term} placeholder="  Search by name" onChange={this.handleChange} className="finput" />
+              <button className="fbutton">Submit</button>
+            </form>
           </div>
 
 
           {this.state.tab_display === 0 ? (<Nav></Nav>)
             : (this.state.query_type === "indi" ?
-              (<Nav tabs>
+              (<Nav tabs >
                 <NavItem>
-                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_trades" })}>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_trades", graph_display: 0, m2m_display: 1 })}>
                     Trade Data
-                          </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_alerts" })}>
+                  {/* <NavLink onClick={(e) => this.setState({ query_tab: "indi_graph" })}> */}
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_graph", graph_display: 1 })} id="relationgraph">
+                    Relationship Graph
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_alerts", graph_display: 0 })}>
                     NCL Alerts
-                          </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_holdings" })}>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_holdings", graph_display: 0 })}>
                     Holdings
-                          </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_securities" })}>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_securities", graph_display: 0 })}>
                     Securities
-                          </NavLink>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_m2m" })}>
+                  <NavLink onClick={(e) => this.setState({ query_tab: "indi_m2m", graph_display: 0 })}>
                     M2M Loss
-                          </NavLink>
+                  </NavLink>
                 </NavItem>
               </Nav>)
               : (this.state.query_type === "company" ?
-                (<Nav tabs>
+                (<Nav tabs >
                   <NavItem>
                     <NavLink onClick={(e) => this.setState({ query_tab: "company_shareholding" })}>
                       Shareholding Pattern
-                            </NavLink>
+                    </NavLink>
                   </NavItem>
                   <NavItem>
                     <NavLink onClick={(e) => this.setState({ query_tab: "company_board" })}>
                       Board Meetings
-                            </NavLink>
+                    </NavLink>
                   </NavItem>
                   <NavItem>
                     <NavLink onClick={(e) => this.setState({ query_tab: "company_kmp" })}>
                       Key Management Personnel
-                            </NavLink>
+                    </NavLink>
                   </NavItem>
                   <NavItem>
                     <NavLink onClick={(e) => this.setState({ query_tab: "company_events" })}>
                       Events/Alerts
-                            </NavLink>
+                    </NavLink>
                   </NavItem>
                   <NavItem>
                     <NavLink onClick={(e) => this.setState({ query_tab: "company_complaints" })}>
                       Complaints
-                            </NavLink>
+                    </NavLink>
                   </NavItem>
                 </Nav>)
                 : (this.state.query_type === "broker" ?
-                  (<Nav tabs>
+                  (<Nav tabs >
                     <NavItem>
                       <NavLink onClick={(e) => this.setState({ query_tab: "broker_kmp" })}>
                         Key Management Personnel
-                                </NavLink>
+                      </NavLink>
                     </NavItem>
                     <NavItem>
                       <NavLink onClick={(e) => this.setState({ query_tab: "broker_authorized" })}>
                         Authorized Personnel
-                                </NavLink>
+                      </NavLink>
                     </NavItem>
                   </Nav>)
                   : (<Nav tabs>
@@ -238,21 +250,23 @@ class App extends React.Component {
         </div>
         <div className="App-container">
           <div className="profile-container">
-            {this.state.response_data !== "" ?
-              ((() => {
-                switch (this.state.query_type) {
-                  case 'broker':
-                    return <BProfile data={this.state.response_data.profile} />
-                  case 'company':
-                    return <CompanyProfile data={this.state.response_data.profile} />
-                  case 'indi':
-                    return <ClientProfile data={this.state.response_data.profile} />
-                  default:
-                    return null;
-                }
-              })())
-              : (<div></div>)
-            }
+            {this.state.graph_display === 0 ?
+              (this.state.response_data !== "" ?
+                ((() => {
+                  switch (this.state.query_type) {
+                    case 'broker':
+                      return <BProfile data={this.state.response_data} />
+                    case 'company':
+                      return <CompanyProfile data={this.state.response_data} />
+                    case 'indi':
+                      return <ClientProfile data={this.state.response_data} />
+                    default:
+                      return null;
+                  }
+                })())
+                : (<div></div>)
+              )
+              : (<D3Graph data={this.state.response_data} search={this.state.search_term} />)}
           </div>
           <div className="output-container">
             {this.state.response_data !== "" ?
@@ -273,7 +287,6 @@ class App extends React.Component {
                     return <Events data={this.state.response_data.events} company_name={this.state.response_data.profile[0].Name} />
                   case 'company_complaints':
                     return <Complaints data={this.state.response_data.complaints} company_name={this.state.response_data.profile[0].Name} />
-
                   case 'indi_trades':
                     return <Trades data={this.state.response_data.trades} client_name={this.state.response_data.profile[0].Name} />
                   case 'indi_alerts':
@@ -290,9 +303,11 @@ class App extends React.Component {
               })())
               : (<div></div>)
             }
+
           </div>
         </div>
       </div>
+
     );
   }
 }
