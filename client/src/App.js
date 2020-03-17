@@ -23,6 +23,8 @@ import KMP from './components/kmp'
 import PopotoGraph from './components/popoto-graph'
 import D3Graph from './components/d3-graph.js'
 
+import SebiAlerts from './components/chart/sebialerts';
+import TradeDiscrepancy from './components/chart/tradediscrepancy'
 
 
 import './App.css';
@@ -46,7 +48,6 @@ import {
   CardFooter
 } from 'reactstrap';
 import Highcharts from 'highcharts';
-
 
 class App extends React.Component {
 
@@ -261,7 +262,6 @@ class App extends React.Component {
                     return <KMP data={this.state.response_data.kmp} />
                   case 'broker_authorized':
                     return <AP data={this.state.response_data.authorized} />
-
                   case 'company_shareholding':
                     return <PieChart data={this.state.response_data.shareholding} company_name={this.state.response_data.profile[0].Name} />
                   case 'company_board':
@@ -284,7 +284,11 @@ class App extends React.Component {
                     return <M2M data={this.state.response_data.m2m} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_graph':
                     return <D3Graph data={this.state.response_data} />
-                  case 'indi_dashboard':
+                  case 'indi_sebialerts':
+                    return <SebiAlerts data={this.state.response_data.sebialerts} client_name={this.state.response_data.profile[0].ClientName} />
+                  case'indi_tradedesc':
+                    return <TradeDiscrepancy data={this.state.response_data.tradedesc} client_name={this.state.response_data.profile[0].ClientName} />
+                    case 'indi_dashboard':
                     return <ClientProfile data={this.state.response_data} />;
                   default:
                     return <ClientProfile data={this.state.response_data} />;

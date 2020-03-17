@@ -19,8 +19,8 @@ import M2MClient from '../chart/M2MChart';
 import SecurityBalance from '../chart/fundnsec';
 import TradeData1 from '../chart/TradeData1';
 import ShareholdingVolume from '../chart/shareholding_volume';
-import Sebi from "../chart/Sebi";
-import SebiNCL from "../chart/SebiNCL";
+import SebiAlerts from "../chart/sebialerts";
+import TradeDiscrepancy from "../chart/tradediscrepancy";
 
 
 class ClientProfile extends React.Component {
@@ -100,22 +100,26 @@ class ClientProfile extends React.Component {
                         <div className="daily">
                             <ShareholdingVolume data={this.props.data.trades} />
                         </div>
-                        <div className="m2mclient" >
-                            <M2MClient data={this.props.data.m2m} />
-                        </div>
                     </div>
 
                     <div className="data-row-3">
-                        <div className="nclalerts">
-                            <NclAlerts data={this.props.data.alerts} />
+                        <div className="m2mclient" >
+                            <M2MClient data={this.props.data.m2m} />
                         </div>
 
-                        <div className="nclalerts">
-                            <Sebi data={this.props.data.alerts} />
-                        </div>
+                            <div className="alerts-row-1">
+                            <div className="nclalerts">
+                                <NclAlerts data={this.props.data.alerts} />
+                            </div>
+                        <div className="data-row-3-1">
+                                <div className="nclalerts">
+                                    <SebiAlerts data={this.props.data.sebialerts} />
+                                </div>
 
-                        <div className="nclalerts1">
-                            <SebiNCL data={this.props.data.alerts} />
+                                <div className="nclalerts1">
+                                    <TradeDiscrepancy data={this.props.data.tradedesc} />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

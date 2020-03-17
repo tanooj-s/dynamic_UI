@@ -33,7 +33,8 @@ client_holdings_df = pd.read_excel(io='client_data.xlsx',sheet_name='HoldingStat
 client_securities_df = pd.read_excel(io='client_data.xlsx',sheet_name='Securities')
 client_top_trades_df = pd.read_excel(io='client_data.xlsx',sheet_name='TopTradingStocks')
 client_pledged_df = pd.read_excel(io='client_data.xlsx',sheet_name='Pledged')
-
+client_sebialerts_df=pd.read_excel(io='client_data.xlsx',sheet_name="SebiAlerts")
+client_tradedesc_df=pd.read_excel(io='client_data.xlsx',sheet_name="TradeDiscrepancyReport")
 
 #reformat dates as strings
 broker_kmp_df['Date of Appointment'] = broker_kmp_df['Date of Appointment'].apply(lambda x: x.strftime("%d-%m-%Y"))
@@ -55,8 +56,8 @@ client_alerts_df['NextTDate'] = client_alerts_df['NextTDate'].apply(lambda x: x.
 client_trades_df['Date'] = client_trades_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
 client_holdings_df['Date'] = client_holdings_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
 client_top_trades_df['Date'] = client_top_trades_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
-
-
+client_sebialerts_df['Date'] = client_sebialerts_df['Date'].apply(lambda x: x.strftime("%d-%m-%Y"))
+client_tradedesc_df['Date']= client_tradedesc_df['Date'].apply(lambda x:x.strftime("%d-%m-%Y"))
 
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -118,6 +119,8 @@ def get_data(search_term, query_type):
 		client_holdings_results = client_holdings_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		client_top_trades_results = client_top_trades_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		client_pledged_results = client_pledged_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		client_sebialerts_results = client_sebialerts_df.query('ClientName.str.contains("%s")'% (search_term),engine='python').to_json(orient='records')
+		client_tradedesc_results = client_tradedesc_df.query('ClientName.str.contains("%s")'%(search_term),engine='python').to_json(orient='records')
 
 		result_json['profile'] = ast.literal_eval(profile_results)
 		result_json['securities'] = ast.literal_eval(client_securities_results.to_json(orient='records'))
@@ -127,6 +130,8 @@ def get_data(search_term, query_type):
 		result_json['holdings'] = ast.literal_eval(client_holdings_results)
 		result_json['top_trades'] = ast.literal_eval(client_top_trades_results)
 		result_json['pledged'] = ast.literal_eval(client_pledged_results)
+		result_json['sebialerts'] = ast.literal_eval(client_sebialerts_results)
+		result_json['tradedesc'] = ast.literal_eval(client_tradedesc_results)
 
 	return result_json
 #-----BACKEND---------

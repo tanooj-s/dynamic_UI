@@ -1,5 +1,5 @@
 * {
-  font-family: "Roboto";
+  /* font-family: "Roboto"; */
   box-sizing: border-box;
 }
 
@@ -167,6 +167,7 @@ form {
   position: relative;
   border: 1px solid rgba(72, 94, 144, 0.16);
   border-radius: 1rem;
+  margin-right: 10px;
 }
 
 .ncl-container {
@@ -180,7 +181,6 @@ form {
   margin-right: 10px;
 }
 .nclalerts1 {
-  position: relative;
   width: 100%;
 }
 
@@ -233,7 +233,9 @@ form {
 
 .person-title {
   width: 100%;
-  font-size: 30px;
+  font-size: 0.8em;
+  font-family: Poppins,sans-serif;
+  font-weight: bolder;
 }
 
 .about-title, .contact-title {
@@ -313,7 +315,7 @@ form {
   border-radius: 1rem;
   float: left;
   width: 100%;
-  margin-right: 10px;
+  /* margin-right: 10px; */
 }
 
 .pledged {
@@ -479,7 +481,8 @@ form {
   height: 40px;
   position: relative;
   left: 50px;
-  top: 4%;
+  font-family: Poppins,sans-serif;
+  color: #303742;
   font-size: 28px;
 }
 
@@ -696,6 +699,8 @@ form {
 
 .sebi-container {
   font-weight: 0.5rem;
+  height: 200px;
+  overflow: hidden;
 }
 
 .tab-2 {
@@ -735,4 +740,18 @@ form {
     }
   }
 
+  .alerts-row-1{
+    display: flex;
+    width: 100%;
+  }
+  .data-row-3-1{
+    width: 100%;
+  }
+
+  .sebi-ncl-container {
+    width: 100%;
+    position: relative;
+    height: 200px;
+    overflow: auto;
+  }
 
