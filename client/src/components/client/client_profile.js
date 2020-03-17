@@ -5,7 +5,7 @@ import {
     CardTitle, CardSubtitle, Button
 } from 'reactstrap';
 import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
-import { MdEmail, MdPhone, MdLocationOn, MdDateRange } from 'react-icons/md'
+import { MdEmail, MdPhone, MdLocationOn, MdDateRange, MdFlag } from 'react-icons/md'
 import { FaAddressCard } from 'react-icons/fa'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
@@ -19,8 +19,8 @@ import M2MClient from '../chart/M2MChart';
 import SecurityBalance from '../chart/fundnsec';
 import TradeData1 from '../chart/TradeData1';
 import ShareholdingVolume from '../chart/shareholding_volume';
-
-
+import Sebi from "../chart/Sebi";
+import SebiNCL from "../chart/SebiNCL";
 
 
 class ClientProfile extends React.Component {
@@ -42,8 +42,8 @@ class ClientProfile extends React.Component {
                                 </CardTitle>
 
                                 <div className="contact-details">
+                                    <CardText className="pan"><FaAddressCard className="icons" />PAN:{this.props.data.profile[0].PAN}    <span title="Duplicate PAN" class="tooltiptext"><MdFlag className="icons-flag" /></span></CardText>
 
-                                    <CardText className="pan"><FaAddressCard className="icons" />PAN {this.props.data.profile[0].PAN}</CardText>
                                     <CardText className="phone"><MdDateRange />DOB 06:02:1998</CardText>
                                     <CardText className="email"><MdEmail className="icons" />{this.props.data.profile[0].Email}</CardText>
                                     <CardText className="phone"> <MdPhone className="icons" /> 91 {this.props.data.profile[0].Phone}</CardText>
@@ -100,18 +100,26 @@ class ClientProfile extends React.Component {
                         <div className="daily">
                             <ShareholdingVolume data={this.props.data.trades} />
                         </div>
-                    </div>
-
-                    <div className="data-row-3">
                         <div className="m2mclient" >
                             <M2MClient data={this.props.data.m2m} />
                         </div>
+                    </div>
+
+                    <div className="data-row-3">
                         <div className="nclalerts">
                             <NclAlerts data={this.props.data.alerts} />
                         </div>
+
+                        <div className="nclalerts">
+                            <Sebi data={this.props.data.alerts} />
+                        </div>
+
+                        <div className="nclalerts1">
+                            <SebiNCL data={this.props.data.alerts} />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div >
         );
     }
 }

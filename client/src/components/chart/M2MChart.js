@@ -7,8 +7,8 @@ class M2MClient extends React.Component{
     constructor(props) {
       super(props)
       this.data_points = [] // = [[x,y], [x,y]]
-
-      props.data.map(record => this.data_points.push([Date.UTC(parseInt(record.Date.substring(6,10)),parseInt(record.Date.substring(3,5)),parseInt(record.Date.substring(0,2))), record.NetBuy]))
+// year month date
+      props.data.map(record => this.data_points.push([Date.UTC(parseInt(record.Date.substring(6,10)),parseInt(record.Date.substring(3,5))-1,parseInt(record.Date.substring(0,2))), record.M2MLoss]))
 
       this.options={
           chart: {

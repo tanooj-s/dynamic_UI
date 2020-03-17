@@ -24,7 +24,7 @@ class TradeData1 extends React.Component {
               type: 'column'
           },
           title: {
-              text: 'Trade Data',
+              text: 'Trade Data For March 2020',
               style: {
                 color: '#73879C',
                 fontWeight: 'bold'
