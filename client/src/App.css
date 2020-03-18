@@ -35,7 +35,7 @@ body {
 /* Conatiner Styling Here */
 
 .App-container {
-  background: white;
+  background: #fff;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -46,6 +46,7 @@ body {
 }
 
 .toasts-body {
+
   padding: 0px;
 }
 
@@ -122,13 +123,14 @@ form {
 .page-range {
   font-size: 18px;
   position: relative;
-  top: 2px;
+    /* top: 2px; */
 }
 
 #alerts-toast {
   background: white;
   max-width: 100%;
   width: 100%;
+  height: 100%;
   border: 1px solid rgba(72, 94, 144, 0.16);
 }
 
@@ -155,7 +157,7 @@ form {
   width: 100%;
   position: relative;
   height: 100%;
-
+margin-right: 10px;
 }
 
 .data-row-3 {
@@ -167,7 +169,6 @@ form {
   position: relative;
   border: 1px solid rgba(72, 94, 144, 0.16);
   border-radius: 1rem;
-  margin-right: 10px;
 }
 
 .ncl-container {
@@ -178,7 +179,8 @@ form {
 .nclalerts {
   position: relative;
   width: 100%;
-  margin-right: 10px;
+  /* margin-left: 10px; */
+  /* margin-bottom: 5px; */
 }
 .nclalerts1 {
   width: 100%;
@@ -484,6 +486,7 @@ form {
   font-family: Poppins,sans-serif;
   color: #303742;
   font-size: 28px;
+  font-weight: 400;
 }
 
 .contact-details {
@@ -699,8 +702,8 @@ form {
 
 .sebi-container {
   font-weight: 0.5rem;
-  height: 200px;
   overflow: hidden;
+  margin-right: 10px;
 }
 
 .tab-2 {
@@ -741,17 +744,19 @@ form {
   }
 
   .alerts-row-1{
-    display: flex;
     width: 100%;
   }
   .data-row-3-1{
     width: 100%;
+    display: flex;
+    flex: 1 1 auto;
   }
 
   .sebi-ncl-container {
     width: 100%;
     position: relative;
-    height: 200px;
+    height: 100%;
     overflow: auto;
+    margin-bottom: 5px;
   }
 

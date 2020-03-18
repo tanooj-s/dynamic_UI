@@ -42,7 +42,8 @@ class ClientProfile extends React.Component {
                                 </CardTitle>
 
                                 <div className="contact-details">
-                                    <CardText className="pan"><FaAddressCard className="icons" />PAN:{this.props.data.profile[0].PAN}    <span title="Duplicate PAN" class="tooltiptext"><MdFlag className="icons-flag" /></span></CardText>
+                                    <CardText className="pan"><FaAddressCard className="icons" />PAN:{this.props.data.profile[0].PAN}
+                                        <span title="Duplicate PAN" className="tooltiptext"><MdFlag className="icons-flag" /></span></CardText>
 
                                     <CardText className="phone"><MdDateRange />DOB 06:02:1998</CardText>
                                     <CardText className="email"><MdEmail className="icons" />{this.props.data.profile[0].Email}</CardText>
@@ -107,18 +108,18 @@ class ClientProfile extends React.Component {
                             <M2MClient data={this.props.data.m2m} />
                         </div>
 
-                            <div className="alerts-row-1">
-                            <div className="nclalerts">
-                                <NclAlerts data={this.props.data.alerts} />
+                        <div className="alerts-row-1">
+                            <div className="nclalerts1">
+                                <TradeDiscrepancy data={this.props.data.tradedesc} />
                             </div>
-                        <div className="data-row-3-1">
+                            <div className="data-row-3-1">
                                 <div className="nclalerts">
                                     <SebiAlerts data={this.props.data.sebialerts} />
                                 </div>
-
-                                <div className="nclalerts1">
-                                    <TradeDiscrepancy data={this.props.data.tradedesc} />
+                                <div className="nclalerts">
+                                    <NclAlerts data={this.props.data.alerts} />
                                 </div>
+
                             </div>
                         </div>
                     </div>
