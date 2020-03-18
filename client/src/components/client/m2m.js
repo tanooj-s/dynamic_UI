@@ -1,6 +1,7 @@
 import React from 'react';
 import '../../App.css';
 import { Table } from 'reactstrap';
+import BootstrapTable from 'react-bootstrap-table-next';
 
 const sortTypes = {
   up: {
@@ -44,6 +45,7 @@ class M2M extends React.Component {
   render() {
     const { data } = this.props;
     const { currentSort } = this.state;
+
     return (
       <div className="Events" >
         {/* <h4 className="m2m-title">{props.client_name}</h4> */}
@@ -60,7 +62,7 @@ class M2M extends React.Component {
               <th>Member Name</th>
               <th>Date</th>
               <th>M2M Loss(lakhs)</th>
-              
+
             </tr>
           </thead>
           <tbody>

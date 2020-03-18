@@ -1,8 +1,44 @@
 import React from 'react';
 import '../../App.css';
 import { Table } from 'reactstrap';
+import BootstrapTable from 'react-bootstrap-table-next';
 
 function Trades(props) {
+
+    const columns = [{
+              dataField: 'Date',
+              text: 'Date',
+              sort: true
+            },{
+              dataField: 'TradingMember',
+              text: 'Trading Member',
+              sort: true
+            },{
+              dataField: 'ClientCode',
+              text: 'Client Code',
+              sort: true
+            },{
+              dataField: 'OwnsSymbol',
+              text: 'Symbol',
+              sort: true
+            },{
+              dataField: 'ISIN',
+              text: 'ISIN',
+              sort: true
+            },{
+              dataField: 'Volume',
+              text: 'Volume',
+              sort: true
+            },{
+              dataField: 'BuyPrice',
+              text: 'Buy Price',
+              sort: true
+            },{
+              dataField: 'SellPrice',
+              text: 'Sell Price',
+              sort: true
+            }]
+
     return (
         <div className="Events">
           <h4>{props.client_name}</h4>
@@ -36,6 +72,7 @@ function Trades(props) {
                   )}
                   </tbody>
             </Table>
+            <BootstrapTable keyField="Date" data={props.data} columns = {columns} />
         </div>
     )
 }
