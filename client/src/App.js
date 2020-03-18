@@ -281,7 +281,7 @@ class App extends React.Component {
                   case 'indi_holdings':
                     return <Holdings data={this.state.response_data.holdings} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_m2m':
-                    return <M2M data={this.state.response_data.m2m} client_name={this.state.response_data.profile[0].ClientName} />
+                    return <M2M data={this.state.response_data.all_m2m} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_graph':
                     return <D3Graph data={this.state.response_data} />
                   case 'indi_sebialerts':

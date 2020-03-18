@@ -113,8 +113,8 @@ def get_data(search_term, query_type):
 		profile_df = client_securities_df[['ClientName', 'UCC', 'TMCode', 'PAN', 'Email', 'Phone', 'EODFundBalance', 'FundBalanceNSE', 'Address', 'BankName', 'AccountNumber', 'BeneficiaryName', 'DepositoryName', 'TradeMemberName', 'ClientCategory', 'DematAccountNo']]
 		profile_results = profile_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		client_securities_results = client_securities_df.query('ClientName.str.contains("%s")' % (search_term), engine='python')
-		#client_m2m_results = client_m2m_df.query('MemberName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
-		client_m2m_results = client_m2m_df.to_json(orient='records') # return m2m for all clients
+		client_m2m_results = client_m2m_df.query('MemberName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		all_client_m2m_results = client_m2m_df.to_json(orient='records') # return m2m for all clients
 		client_alerts_results = client_alerts_df.query('MemberName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		client_trades_results = client_trades_df.query('TradingMember.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		client_holdings_results = client_holdings_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
@@ -126,6 +126,7 @@ def get_data(search_term, query_type):
 		result_json['profile'] = ast.literal_eval(profile_results)
 		result_json['securities'] = ast.literal_eval(client_securities_results.to_json(orient='records'))
 		result_json['m2m'] = ast.literal_eval(client_m2m_results)
+		result_json['all_m2m'] = ast.literal_eval(all_client_m2m_results)
 		result_json['alerts'] = ast.literal_eval(client_alerts_results)
 		result_json['trades'] = ast.literal_eval(client_trades_results)
 		result_json['holdings'] = ast.literal_eval(client_holdings_results)
