@@ -28,84 +28,90 @@ class D3Graph extends React.Component {
 
 
 		var trades = []
-		// this.props.data.trades.forEach(trade => trades.push({ company: trade.OwnsSymbol, volume: trade.Volume }))
+		this.props.data.trades.forEach(trade => trades.push({ company: trade.OwnsSymbol, volume: trade.Volume }))
 		var colors = d3.scaleOrdinal(d3.schemeCategory10);
 		var radius = 15
 		var employer = this.props.data.securities[0].WorksFor;
 		var broker = this.props.data.securities[0].TradeMemberName;
 		var client = this.props.data.securities[0].ClientName
 
-	// 	let nodes = [
-	// 		{
-	// 			id: client,
-	// 			type: 'client'
-	// 		},
-	// 		{
-	// 			id: employer,
-	// 			type: 'company'
-	// 		},
-	// 		{
-	// 			id: broker,
-	// 			type: 'broker'
-	// 		},
-	// 	]
-	// 	// make sure only unique companies are added
-    // for (var i = 0; i < trades.length;i++) {
-    //   var is_present = false;
-    //   for (var j = 0; j < nodes.length;j++) {
-    //     if (nodes[j].id == trades[i].company) {
-    //       is_present = true
-    //     }
-    //   }
-    //   if (is_present === false) {
-    //       nodes.push({ id: trades[i].company, type: 'company' })
-    //   }
-    // }
-    // console.log(nodes)
 
-	// 	let links = [
-	// 		{
-	// 			source: client,
-	// 			target: employer,
-	// 			type: "works_for",
-	// 			id: 0
-	// 		},
-	// 		{
-	// 			source: broker,
-	// 			target: client,
-	// 			type: "brokers_for",
-	// 			id: 1
-	// 		},
-	// 	]
-	// 	for (var i = 0; i < trades.length; i++) {
-    //   links.push( {
-    //     source: client,
-    //     target: trades[i].company,
-    //     type: "trade",
-    //     volume: trades[i].volume/1000, // can use this to modify stroke width
-    //     id: i + 2
-    //   })
-    // }
-    // console.log(links)
-
-
+    // ------- NODES -------
 		let nodes = [
-			{ id: 1, type: 'Trading Member', name: 'Zerodha' },
-			{ id: 2, type: 'Client', name: 'Viral Sanghavi' },
-			{ id: 3, type: 'PAN', name: 'AMCPR8080R' },
-			{ id: 4, type: 'Client', name: 'Ravi Saxena' },
-			{ id: 5, type: 'Company', name: 'ITC' },
+			{
+				id: client,
+				type: 'client'
+			},
+			{
+				id: employer,
+				type: 'company'
+			},
+			{
+				id: broker,
+				type: 'broker'
+			},
 		]
+		// make sure only unique companies are added
+    for (var i = 0; i < trades.length;i++) {
+      var is_present = false;
+      for (var j = 0; j < nodes.length;j++) {
+        if (nodes[j].id == trades[i].company) {
+          is_present = true
+        }
+      }
+      if (is_present === false) {
+          nodes.push({ id: trades[i].company, type: 'company' })
+      }
+    }
+    console.log(nodes)
 
+
+    // --------- LINKS --------
 		let links = [
-			{ source: 1, target: 2, linkage: "Is_Broker" },
-			{ source: 2, target: 3, linkage: "Has_PAN" },
-			{ source: 4, target: 3, linkage: "Has_PAN" },
-			{ source: 4, target: 5, linkage: "KMP_OF" },
+			{
+				source: client,
+				target: employer,
+				type: "works_for",
+				id: 0
+			},
+			{
+				source: broker,
+				target: client,
+				type: "brokers_for",
+				id: 1
+			},
 		]
+		for (var i = 0; i < trades.length; i++) {
+      links.push( {
+        source: client,
+        target: trades[i].company,
+        type: "trade",
+        volume: trades[i].volume/1000, // can use this to modify stroke width
+        id: i + 2
+      })
+    }
+    console.log(links)
+
+    // static data if PAN will be a node
+		// let nodes = [
+		// 	{ id: 1, type: 'Trading Member', name: 'Zerodha' },
+		// 	{ id: 2, type: 'Client', name: 'Viral Sanghavi' },
+		// 	{ id: 3, type: 'PAN', name: 'AMCPR8080R' },
+		// 	{ id: 4, type: 'Client', name: 'Ravi Saxena' },
+		// 	{ id: 5, type: 'Company', name: 'ITC' },
+		// ]
+
+		// let links = [
+		// 	{ source: 1, target: 2, linkage: "Is_Broker" },
+		// 	{ source: 2, target: 3, linkage: "Has_PAN" },
+		// 	{ source: 4, target: 3, linkage: "Has_PAN" },
+		// 	{ source: 4, target: 5, linkage: "KMP_OF" },
+		// ]
 
 		//const links = this.props.data.links.map(d => Object.create(d));
 		//const nodes = this.props.data.nodes.map(d => Object.create(d));
+
+    // ----------- D3 SVG SETUP -----------
 		const graph = d3.select(this.refs.graph)
 
 		const simulation = d3.forceSimulation(nodes)
@@ -125,27 +131,25 @@ class D3Graph extends React.Component {
 			;
 
 		const link = svg.append("g")
-			.selectAll("line")
-			.data(links)
-			.join("line")
-			.attr("stroke-width", 1)
-			.attr("marker-end", "url(#arrowhead)")
-			.style("stroke", function (d) {
-				if (d.linkage == "Has_PAN") {
-					return "red"
-				}
-				//  else if (d.linkage == "brokers_for") {
-				// 	return "#1d2d7e"}
-			 else {
-					return "#dddddd"
-				}
-
-			});
+      .selectAll("line")
+      .data(links)
+      .join("line")
+      .attr("stroke-width", 1)
+      .attr("marker-end", "url(#arrowhead)")
+      .style("stroke", function (d) {
+        if (d.type == "works_for") {
+          return "#8b0000"
+        } else if (d.type == "brokers_for") {
+          return "#1d2d7e"
+        } else {
+          return "#dddddd"
+        }
+      });
 
 		var linkText = svg.selectAll("line")
 			.append("text")
 			.data(links)
-			.text(function (d) { return d.linkage == "visible" ? "edge" : ""; })
+			.text(function (d) { return d.value == "visible" ? "edge" : ""; })
 			.attr("x", function (d) { return (d.source.x + (d.target.x - d.source.x) * 0.5); })
 			.attr("y", function (d) { return (d.source.y + (d.target.y - d.source.y) * 0.5); })
 			.attr("dy", ".25em")
@@ -191,22 +195,26 @@ class D3Graph extends React.Component {
         }
 			})
 			.style("fill", function(d) {
-        if (d.type == 'Client') {
+        if (d.type == 'client') {
           return '#2db660'
         }
         else if (d.type == 'PAN') {
           return '#1d2d7e'
         }
-        else if (d.type == 'Company') {
+        else if (d.type == 'company') {
           return '#1b72b4'
         }
+        else if (d.type == 'broker') {
+          return '#013220'
+        }
+
       })
 			.call(this.drag(simulation));
 
 
 		node.append("svg:title")
 			.text(function (d) {
-				return d.name;
+				return d.id;
 			})
 			.style('text-anchor', 'middle')
 			.style('cursor', 'pointer')
@@ -223,21 +231,27 @@ class D3Graph extends React.Component {
 			.selectAll("text")
 			.data(nodes)
 			.enter().append("text")
-			.text(d => d.type + ": " + d.name)
+			.text(d => d.type + ": " + d.id)
 			.style('font-size', '3px')
 			.style("font-family", "Arial")
 			.style("fill", "#333333")
-			
+
 		// text for links
 		const link_text = svg.append("g")
 			.attr("class", "text")
 			.selectAll("text")
 			.data(links)
 			.enter().append("text")
-			.text(d => d.linkage)
+			.text(d => d.type)
 			.style("font-size", '3px')
 			.style("font-family", "Arial")
 			.style("fill","#555555")
+
+    // white shadow for link text
+    // link_text.append("svg:text")
+    //   .attr("class","shadow")
+    //   .attr("x", 8)
+    //   .text(d => d.type)
 
 		simulation.on("tick", () => {
 			link
@@ -247,7 +261,6 @@ class D3Graph extends React.Component {
 				.attr("y2", d => d.target.y);
 
 			node
-
 				.attr("cx", function (d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
 				.attr("cy", function (d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
 
