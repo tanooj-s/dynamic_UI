@@ -11,7 +11,7 @@ function SebiAlerts(props) {
             SEBI Alerts
             </p>
         </ToastHeader>
-        <Table className="alerts-table">
+        <Table className="alerts-table" size="sm" borderless responsive>
           <thead>
             <tr>
               <th>Details</th>
