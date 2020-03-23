@@ -7,6 +7,7 @@ import SearchForm from './search-form'
 import SearchList from './search-list'
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import NotFound from './404NotFound';
 
 
 const routing = (
@@ -16,6 +17,7 @@ const routing = (
         <Route path="/" component={App} />
         <Route path="/search-form" component={SearchForm} />
         <Route path="/search-list" component={SearchList} />
+        <Route path="/404NotFound" component={NotFound}/>
       </div>
     </Router>
   )

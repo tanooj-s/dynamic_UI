@@ -1,5 +1,9 @@
 import React from 'react'
 import { Alert, Toast, ToastHeader, ToastBody, PaginationItem, Pagination, PaginationLink, Table } from 'reactstrap';
+import BootstrapTable from 'react-bootstrap-table-next';
+import filterFactory, { textFilter, selectFilter, numberFilter, Comparator } from 'react-bootstrap-table2-filter';
+import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
+
 
 
 class NclAlerts extends React.Component {
@@ -9,84 +13,65 @@ class NclAlerts extends React.Component {
   }
 
   render() {
+    
+    const customTotal = (from, to, size) => (
+      <span className="react-bootstrap-table-pagination-total">
+        Showing { from} to { to} of { size} Results
+      </span>
+    );
+    const options = {
+      paginationSize: 4,
+      pageStartIndex: 1,
+      // alwaysShowAllBtns: true, // Always show next and previous button
+      // withFirstAndLast: false, // Hide the going to First and Last page button
+      hideSizePerPage: true, // Hide the sizePerPage dropdown always
+      hidePageListOnlyOnePage: true, // Hide the pagination list when only one page
+      firstPageText: '<<',
+      prePageText: '<',
+      nextPageText: '>',
+      lastPageText: '>>',
+      nextPageTitle: 'First page',
+      prePageTitle: 'Pre page',
+      firstPageTitle: 'Next page',
+      lastPageTitle: 'Last page',
+      // showTotal: true,
+      paginationTotalRenderer: customTotal,
+      disablePageTitle: true,
+      sizePerPageList: [{
+        text: '2', value: 2
+      }, {
+        text: '10', value: 10
+      }, {
+        text: 'All', value: this.props.data.length
+      }] // A numeric array is also available. the purpose of above example is custom the text
+    };
+
+    const columns = [
+      {
+        dataField: 'Terms',
+        text: 'Details',
+        // filter: textFilter({ caseSensitive: false }),
+        // sort: true
+      },
+      {
+        dataField: 'Date',
+        text: 'Date',
+        sort: true
+      }]
+
     return (
       <div className="ncl-container">
         <Toast id="alerts-toast">
           <ToastHeader>
-              NCL Alerts
-            <p className="alerts-title">
-            </p>
-
-            <div className="pagination">
-
-              <Pagination aria-label="Page navigation example" size="sm">
-                <PaginationItem>
-                  <PaginationLink previous href="#" id="pag-link" />
-                </PaginationItem>
-                <p className="page-range">1-5</p>
-
-                <PaginationItem>
-                  <PaginationLink next href="#" id="pag-link" />
-                </PaginationItem>
-
-              </Pagination>
-            </div>
+            NCL Alerts
           </ToastHeader>
 
 
-          <Table className="alerts-table" size="sm" hover borderless responsive>
-            <thead>
-              <tr>
-                <th></th>
-                <th>Details</th>
-                {/* <th></th> */}
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Same Date Free Balance:</td>
-                {/* <td>{this.props.data[0].SameDayFreeBalance}</td> */}
-                <td>{this.props.data[0].Date}</td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Next Date Free Bal:</td>
-                {/* <td>{this.props.data[0].NextDayFreeBalance}</td> */}
-                <td>{this.props.data[0].Date}</td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td>Mismatch Value:</td>
-                {/* <td>{this.props.data[0].MismatchedValue}</td> */}
-                <td>{this.props.data[0].Date}</td>
-              </tr>
-              <tr>
-                <th scope="row">4</th>
-                <td>  Clearing Member ID:</td>
-                {/* <td>{this.props.data[0].ClearingMemberCode}</td> */}
-                <td>{this.props.data[0].Date}</td>
-              </tr>
-              <tr>
-                <th scope="row">5</th>
-                <td>CDSL remarks:</td>
-                {/* <td>{this.props.data[0].CDSLRemarks}</td> */}
-                <td>{this.props.data[0].Date}</td>
-              </tr>
-              
-              <tr>
-                <th scope="row">6</th>
-                <td>NSDL remarks:</td>
-                {/* <td>{this.props.data[0].NSDLRemarks}</td> */}
-                <td>{this.props.data[0].Date}</td>
-              </tr>
-            </tbody>
-          </Table>
+          <BootstrapTable keyField={'id'} data={this.props.data} columns={columns} filter={filterFactory()}  pagination={paginationFactory(options)}/>
         </Toast>
 
       </div>
-     
+
     )
   }
 }

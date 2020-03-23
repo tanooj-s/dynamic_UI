@@ -27,7 +27,7 @@ class TopTradeColumn extends React.Component {
 			chart: {
 				type: 'column',
 				inverted: true,
-			}
+			},
 			title: {
 				text: "Trade Quantities"
 			},
@@ -37,14 +37,14 @@ class TopTradeColumn extends React.Component {
 			yAxis: {
 				title: "Trade Quantity",
 				min: 0,
-			}
+			},
 			plotOptions: {
 				column: {
 					grouping: false,
 					shadow: true,
 					borderWidth: 0,
 				}
-			}
+			},
 			series: [{
 				name: 'Buy',
 				data: this.buy_data,

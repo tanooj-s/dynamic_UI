@@ -2,6 +2,10 @@
   /* font-family: "Roboto"; */
   box-sizing: border-box;
 }
+::selection {
+  color: white;
+  background:  #3e5d7e;
+}
 
 ::-webkit-scrollbar {
   width: 15px;
@@ -46,19 +50,18 @@ body {
 }
 
 .toasts-body {
-
   padding: 0px;
 }
 
 .searchform {
-  position: relative;
+  /* position: relative; */
   height: 100%;
   padding: 5px;
 }
 
 form {
   display: flex;
-  position: relative;
+  /* position: relative; */
   width: 100%;
 }
 
@@ -69,7 +72,7 @@ form {
 .finput, .fbutton {
   color: #212529;
   margin-left: 15px;
-  border-radius: 25px;
+  border-radius: 5px;
   background: #fff;
 }
 
@@ -123,7 +126,7 @@ form {
 .page-range {
   font-size: 18px;
   position: relative;
-    /* top: 2px; */
+  /* top: 2px; */
 }
 
 #alerts-toast {
@@ -132,6 +135,7 @@ form {
   width: 100%;
   height: 100%;
   border: 1px solid rgba(72, 94, 144, 0.16);
+  border-radius: 12px;
 }
 
 .toast-body {
@@ -139,7 +143,7 @@ form {
 }
 
 .toast.show {
-  border-radius: 1rem;
+  border-radius: 12px;
   width: 100%;
   height: 100%;
   position: relative;
@@ -157,7 +161,7 @@ form {
   width: 100%;
   position: relative;
   height: 100%;
-margin-right: 10px;
+  margin-right: 10px;
 }
 
 .data-row-3 {
@@ -182,6 +186,7 @@ margin-right: 10px;
   /* margin-left: 10px; */
   /* margin-bottom: 5px; */
 }
+
 .nclalerts1 {
   width: 100%;
 }
@@ -236,7 +241,7 @@ margin-right: 10px;
 .person-title {
   width: 100%;
   font-size: 0.8em;
-  font-family: Poppins,sans-serif;
+  font-family: Poppins, sans-serif;
   font-weight: bolder;
 }
 
@@ -434,13 +439,16 @@ margin-right: 10px;
 }
 
 /* Styling Client Card Here */
+.vl {
+  border-left: 1px solid white;
+  height: 30px;
+}
 
 .seperator-client {
   width: 100%;
   border-bottom: 2px solid turquoise;
   position: relative;
   bottom: 12px;
-  right: 1px;
 }
 
 .client-profiling {
@@ -480,11 +488,10 @@ margin-right: 10px;
 .client-title {
   flex-direction: row;
   width: 100%;
-  height: 40px;
   position: relative;
   left: 50px;
-  font-family: Poppins,sans-serif;
-  color: #303742;
+  font-family: Poppins, sans-serif;
+  color: #2f353a;
   font-size: 28px;
   font-weight: 400;
 }
@@ -613,8 +620,7 @@ margin-right: 10px;
 
 .alerts-title {
   position: relative;
-  top: 1px;
- text-align: center;
+  text-align: center;
   font-size: 18px;
 }
 
@@ -704,6 +710,7 @@ margin-right: 10px;
   font-weight: 0.5rem;
   overflow: hidden;
   margin-right: 10px;
+  border-radius: 12px;
 }
 
 .tab-2 {
@@ -727,36 +734,60 @@ margin-right: 10px;
   text-align: center;
 }
 
-.icons-flag{
+.icons-flag {
   color: red;
-    animation: blink 2s steps(5, start) infinite;
-    -webkit-animation: blink 1s steps(5, start) infinite;
-  }
-  @keyframes blink {
-    to {
-      visibility: hidden;
-    }
-  }
-  @-webkit-keyframes blink {
-    to {
-      visibility: hidden;
-    }
-  }
+  animation: blink 2s steps(5, start) infinite;
+  -webkit-animation: blink 1s steps(5, start) infinite;
+}
 
-  .alerts-row-1{
-    width: 100%;
+@keyframes blink {
+  to {
+    visibility: hidden;
   }
-  .data-row-3-1{
-    width: 100%;
-    display: flex;
-    flex: 1 1 auto;
-  }
+}
 
-  .sebi-ncl-container {
-    width: 100%;
-    position: relative;
-    height: 100%;
-    overflow: auto;
-    margin-bottom: 5px;
+@-webkit-keyframes blink {
+  to {
+    visibility: hidden;
   }
+}
 
+.alerts-row-1 {
+  width: 100%;
+}
+
+.data-row-3-1 {
+  width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.sebi-ncl-container {
+  width: 100%;
+  position: relative;
+  height: 100%;
+  overflow: auto;
+  margin-bottom: 5px;
+  border-radius: 12px;
+}
+
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  margin: 20px 0;
+  border-radius: 4px;
+}
+
+.react-bootstrap-table-page-btns-ul {
+  float: right;
+  margin-top: 0px !important;
+
+}
+.react-bootstrap-table-pagination-list-hidden {
+  display: none;
+}
+
+
+.table-header-common{
+  text-align: center;
+}

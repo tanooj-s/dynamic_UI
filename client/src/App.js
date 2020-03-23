@@ -126,7 +126,7 @@ class App extends React.Component {
 
         <div className="navbar" id="navbar" sticky="top">
           <div className="logo">
-            <img src={companylogo} className="small-logo" />
+            <a href={""} ><img src={companylogo}  className="small-logo" /></a>
           </div>
 
           <Nav tabs>
@@ -158,12 +158,13 @@ class App extends React.Component {
           </Nav>
           <div className="searchform">
             <form onSubmit={this.handleSubmit} encType="multipart/form-data" >
-              <input type="text" name="search_term" value={this.state.search_term} placeholder="  Search by name" onChange={this.handleChange} className="finput" />
-              <button className="fbutton">Submit</button>
+              <input type="text" name="search_term" value={this.state.search_term} placeholder="  Search by Name" onChange={this.handleChange} className="finput" />
+              <button className="fbutton">Search</button>
             </form>
           </div>
-
-
+          {this.state.tab_display >0?
+          <div className="vl" ></div>:<div></div>
+          }
           {this.state.tab_display === 0 ? (<Nav></Nav>)
             : (this.state.query_type === "indi" ?
               (<Nav tabs >

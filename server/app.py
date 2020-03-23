@@ -89,7 +89,7 @@ def get_data(search_term, query_type):
 		company_events_results = company_events_df.query('Name.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		company_complaints_results = company_complaints_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		company_board_meetings_results = company_board_meetings_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
-
+		print('reading company')
 
 		result_json['profile'] = ast.literal_eval(profile_results) # add profile dict to results
 		result_json['kmp'] = ast.literal_eval(company_kmp_results)
@@ -102,6 +102,7 @@ def get_data(search_term, query_type):
 		profile_results = profile_df.query('Name.str.contains("%s")' % (search_term), engine='python').to_json(orient='records') # search by name regardless of query type
 		broker_kmp_results = broker_kmp_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		broker_authorized_results = broker_authorized_df.query('CompanyName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		print('reading broker')
 
 		result_json['profile'] = ast.literal_eval(profile_results) # add profile dict to results
 		result_json['kmp'] = ast.literal_eval(broker_kmp_results)
@@ -122,6 +123,7 @@ def get_data(search_term, query_type):
 		client_pledged_results = client_pledged_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		client_sebialerts_results = client_sebialerts_df.query('ClientName.str.contains("%s")'% (search_term),engine='python').to_json(orient='records')
 		client_tradedesc_results = client_tradedesc_df.query('ClientName.str.contains("%s")'%(search_term),engine='python').to_json(orient='records')
+		print('reading client')
 
 		result_json['profile'] = ast.literal_eval(profile_results)
 		result_json['securities'] = ast.literal_eval(client_securities_results.to_json(orient='records'))

@@ -5,13 +5,14 @@ import { Table } from 'reactstrap';
 function Alerts(props) {
     return (
         <div className="Events">
-          <h4>{props.client_name}</h4>
-          <h4>Alerts</h4>
+          <h4 className="table-header-common">Alerts for {props.client_name}</h4>
+          
             <Table hover>
                 <thead className="table-header">
                   <tr>
                     <th>Bhavcopy</th>
                     <th>Date</th>
+                    <th>Details</th>
                     <th>Obligation Quantity</th>
                     <th>Total Quantity</th>
                     <th>NSDL Quantity</th>
@@ -51,8 +52,9 @@ function Alerts(props) {
                 <tbody>
                   {props.data.map((item) =>
                     (<tr>
-                      <td>{item.Bhavcopy}</td>
+                      <td><a href={"#"}>{item.Bhavcopy}</a></td>
                       <td>{item.Date}</td>
+                      <td>{item.Terms}</td>
                       <td>{item.ObligationQuantity}</td>
                       <td>{item.TotalQuantity}</td>
                       <td>{item.NSDLQuantity}</td>

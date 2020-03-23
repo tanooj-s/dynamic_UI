@@ -42,11 +42,13 @@ class ClientProfile extends React.Component {
                                 </CardTitle>
 
                                 <div className="contact-details">
-                                    <CardText className="pan"><FaAddressCard className="icons" />PAN:{this.props.data.profile[0].PAN}
+                                    <CardText className="pan"><FaAddressCard className="icons"/><strong>PAN:</strong> {this.props.data.profile[0].PAN}
                                         <span title="Duplicate PAN" className="tooltiptext"><MdFlag className="icons-flag" /></span></CardText>
 
-                                    <CardText className="phone"><MdDateRange />DOB 06:02:1998</CardText>
-                                    <CardText className="email"><MdEmail className="icons" />{this.props.data.profile[0].Email}</CardText>
+                                    <CardText className="phone"><MdDateRange /><strong>DOB: </strong>06/02/1998</CardText>
+                                    <CardText className="email"><MdEmail className="icons" />
+                                    <a href={"mailto:" + this.props.data.profile[0].Email}>{this.props.data.profile[0].Email}</a>
+                                     </CardText>
                                     <CardText className="phone"> <MdPhone className="icons" /> 91 {this.props.data.profile[0].Phone}</CardText>
                                 </div>
 
@@ -59,14 +61,14 @@ class ClientProfile extends React.Component {
 
                             <div className="contact-details2">
 
-                                <CardText className="ucc"><strong className="company-name">Address</strong>
+                                <CardText className="ucc"><strong className="company-name">Address </strong> 
                                 </CardText>
                                 <CardText> {this.props.data.profile[0].Address} <span className="vertical-line"></span></CardText>
 
                                 <CardText className="tmcode"><strong>Bank Name:</strong> {this.props.data.profile[0].BankName}
-                                    <br /> <strong>Account Number:</strong> {this.props.data.profile[0].AccountNumber}
                                     {/* {this.props.data.profile[0].TMCode} */}
                                 </CardText>
+                                <CardText> <strong>Account Number:</strong> {this.props.data.profile[0].AccountNumber}</CardText>
                                 {/* <CardText className="tmcode">
                                 {this.props.data.profile[0].TMCode}
                                 </CardText> */}
@@ -79,11 +81,11 @@ class ClientProfile extends React.Component {
                             <div className="fund-details">
                                 <CardTitle className="funds-title"><strong></strong></CardTitle>
                                 {/* <CardText className="phone">End of Day Fund Balance: {this.props.data.profile[0].EODFundBalance}</CardText> */}
-                                <CardText><strong>Demat A/c:</strong>{this.props.data.profile[0].DematAccountNo}</CardText>
-                                <CardText><strong>Client Category:</strong>{this.props.data.profile[0].ClientCategory}</CardText>
-                                <CardText><strong>Trade Member Name:</strong>{this.props.data.profile[0].TradeMemberName}</CardText>
-                                <CardText><strong>Depository Name:</strong>{this.props.data.profile[0].DepositoryName}</CardText>
-                                <CardText><strong>Beneficiary Name:</strong>{this.props.data.profile[0].BeneficiaryName}</CardText>
+                                <CardText><strong>Demat A/c:</strong> {this.props.data.profile[0].DematAccountNo}</CardText>
+                                <CardText><strong>Client Category:</strong> {this.props.data.profile[0].ClientCategory}</CardText>
+                                <CardText><strong>Trade Member Name:</strong> {this.props.data.profile[0].TradeMemberName}</CardText>
+                                <CardText><strong>Depository Name:</strong> {this.props.data.profile[0].DepositoryName}</CardText>
+                                <CardText><strong>Beneficiary Name:</strong> {this.props.data.profile[0].BeneficiaryName}</CardText>
                                 {/* <CardText className="address">NSE Fund Balance: {this.props.data.profile[0].FundBalanceNSE}</CardText> */}
                             </div>
 

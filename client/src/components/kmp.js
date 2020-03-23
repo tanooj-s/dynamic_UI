@@ -7,7 +7,7 @@ import { Table } from 'reactstrap';
 function KMP(props) {
   return (
     <div className="KMP">
-      <h5>Key Management Personnel</h5>
+      <h5 className="table-header-common">Key Management Personnel</h5>
 
       <Table hover>
         <thead className="table-header">

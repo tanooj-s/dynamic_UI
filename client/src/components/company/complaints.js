@@ -7,7 +7,7 @@ import { Table } from 'reactstrap';
 function Complaints(props) {
     return (
         <div className="KMP">
-          <h5>Complaints</h5>
+          <h5 className="table-header-common">Complaints</h5>
             <Table hover>
                 <thead className="table-header">
                   <tr>

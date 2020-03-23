@@ -6,7 +6,7 @@ import Logo from '../person.jpg'
 function BoardMeetings(props) {
     return (
         <div className="KMP">
-          <h5>Board Meetings</h5>
+          <h5 className="table-header-common">Board Meetings</h5>
           <Table hover>
               <thead className="table-header">
                 <tr>

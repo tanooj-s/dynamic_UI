@@ -3,7 +3,8 @@ import '../../m2m.css';
 import '../../App.css';
 import { Table } from 'reactstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter, selectFilter, numberFilter,Comparator  } from 'react-bootstrap-table2-filter';
+import filterFactory, { textFilter, selectFilter, numberFilter, Comparator } from 'react-bootstrap-table2-filter';
+import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
 
 
 class M2M extends React.Component {
@@ -15,8 +16,39 @@ class M2M extends React.Component {
 
   }
 
-
+  
   render() {
+    // const customTotal = (from, to, size) => (
+    //   <span className="react-bootstrap-table-pagination-total">
+    //     Showing { from} to { to} of { size} Results
+    //   </span>
+    // );
+    const options = {
+      paginationSize: 4,
+      // pageStartIndex: 1,
+      // alwaysShowAllBtns: true, // Always show next and previous button
+      // withFirstAndLast: false, // Hide the going to First and Last page button
+      hideSizePerPage: true, // Hide the sizePerPage dropdown always
+      hidePageListOnlyOnePage: true, // Hide the pagination list when only one page 
+      firstPageText: '<<',
+      prePageText: '<',
+      nextPageText: '>',
+      lastPageText: '>>',
+      // nextPageTitle: 'First page',
+      // prePageTitle: 'Pre page',
+      // firstPageTitle: 'Next page',
+      // lastPageTitle: 'Last page',
+      // showTotal: true,
+      // paginationTotalRenderer: customTotal,
+      disablePageTitle: true,
+      sizePerPageList: [{
+        text: '10', value: 10
+      }, {
+        text: 'All', value: this.props.data.length
+      }],
+      // A numeric array is also available. the purpose of above example is custom the text
+      
+    };
 
 
     const columns = [
@@ -43,7 +75,7 @@ class M2M extends React.Component {
       },
       {
         dataField: 'M2MLoss',
-        text: 'M2M Loss',
+        text: 'M2M Loss (lakhs)',
         sort: true,
         filter: numberFilter({ defaultValue: { number: 650, comparator: Comparator.GT } })
       }]
@@ -51,8 +83,8 @@ class M2M extends React.Component {
     return (
       <div className="Events" >
         {/* <h4 className="m2m-title">{props.client_name}</h4> */}
-        <div className="m2m-title" > M2M Loss For March 2020
-        </div>
+        <h4 className="table-header-common" > M2M Loss For March 2020
+        </h4>
         {/* <Table hover>
           <thead className="table-header">
             <tr>
@@ -66,7 +98,7 @@ class M2M extends React.Component {
           </thead>
         
         </Table> */}
-        <BootstrapTable keyField={'id'}  data={this.props.data} columns={columns} filter={filterFactory()}   id="table-class" headerClasses="header-class" rowClasses={ "row-class" } />
+        <BootstrapTable keyField={'id'}  data={this.props.data} columns={columns} filter={filterFactory()} id="table-class" headerClasses="header-class" rowClasses={"row-class"}  pagination={paginationFactory(options)} />
       </div >
     )
   }

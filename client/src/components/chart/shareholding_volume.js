@@ -15,7 +15,7 @@ class ShareholdingVolume extends React.Component {
 		        type: 'column'
 		    },
 		    title: {
-		        text: 'Share Holding',
+		        text: 'Share Holding (as on 5th March)',
 		        style: {
 		            color: '#73879C',
 		            fontWeight: 'bold'

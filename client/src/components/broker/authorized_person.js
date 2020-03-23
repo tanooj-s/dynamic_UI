@@ -7,7 +7,7 @@ import Logo from '../../components/person.jpg'
 function AP(props) {
   return (
     <div className="AP">
-      <h5>Authorized Personnel</h5>
+      <h5 className="table-header-common">Authorized Personnel</h5>
       <Table hover>
         <thead>
           <tr className="table-header">

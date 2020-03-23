@@ -5,8 +5,8 @@ import { Table } from 'reactstrap';
 function Securities(props) {
     return (
         <div className="Events">
-          <h4>{props.client_name}</h4>
-          <h4>Securities</h4>
+          <h4 className="table-header-common">Securities for {props.client_name}</h4>
+          
             <Table hover>
                 <thead className="table-header">
                   <tr>
