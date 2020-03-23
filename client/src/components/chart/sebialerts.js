@@ -41,8 +41,9 @@ function SebiAlerts(props) {
           SEBI Alerts
 
         </ToastHeader>
-
         <BootstrapTable keyField={'id'} data={props.data} columns={columns} filter={filterFactory()} pagination={paginationFactory(options)} />
+
+
 
       </Toast>
 
