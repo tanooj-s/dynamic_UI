@@ -34,27 +34,29 @@ class M2MClient extends React.Component {
         pointFormat: '{point.x:%Y-%m-%d}, {point.y} Lakhs'
       },
       series: [{
-        name: "M2M",
+        name: "M2M Loss",
         data: this.data_points,
         enabled: true,
         zones: [
           {
             value: 750,
             color: 'blue'
-          }, 
+          },
           {
             color: 'red'
           }
-        ]      }]
-    }
+        ]
+      }]
+        
   }
-  render() {
-    return (
-      <div className="m2mclient-container">
-        <HighchartsReact Highcharts={Highcharts} options={this.options} />
-      </div>
-    )
-  }
+}
+render(){
+  return (
+    <div className="m2mclient-container">
+      <HighchartsReact Highcharts={Highcharts} options={this.options} />
+    </div>
+  )
+}
 }
 
 export default M2MClient

@@ -46,8 +46,8 @@ function Trades(props) {
 
     return (
         <div className="Events">
-          <h4>{props.client_name}</h4>
-          <h4>Trade Data</h4>
+          <h4 className="table-header-common">Trade Data for {props.client_name}</h4>
+          
             {/*<Table hover>
                             <thead className="table-header">
                               <tr>
@@ -76,7 +76,7 @@ function Trades(props) {
                               )}
                               </tbody>
                         </Table> */}
-            <BootstrapTable keyField={'Date'}  data={props.data} columns={columns} filter={filterFactory()}   id="table-class" headerClasses="header-class" rowClasses={ "row-class" } />
+            <BootstrapTable keyField={'id'}  data={props.data} columns={columns} filter={filterFactory()}   id="table-class" headerClasses="header-class" rowClasses={ "row-class" } />
         </div>
     )
 }
