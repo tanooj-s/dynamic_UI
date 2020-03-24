@@ -3,15 +3,12 @@ import * as d3 from 'd3';
 import './../App.css';
 
 
-
-
 class D3Graph extends React.Component {
 	constructor(props) {
 		super(props)
 		this.createChart = this.createChart.bind(this)
 		this.drag = this.drag.bind(this)
 		this.color = this.color.bind(this)
-
 		// this.myConfig = this.myConfig.bind(this)
 	}
 
@@ -22,7 +19,7 @@ class D3Graph extends React.Component {
 	}
 
 	createChart() {
-		const width = 300;
+		const width = 400;
 		const height = 120;
 
 
@@ -36,8 +33,10 @@ class D3Graph extends React.Component {
 		var client = this.props.data.securities[0].ClientName
 
 
-		// ------- NODES ------- uncomment for making dynamic 
+		// ------- NODES ------- uncomment to make it dynamic 
 		// Commented to make a static graph for demo
+
+
 
 		// 	let nodes = [
 		// 		{
@@ -96,15 +95,15 @@ class D3Graph extends React.Component {
 
 		// static data if PAN will be a node
 		let nodes = [
-			{ id: 1, type: 'Trading Member', name: 'Zerodha' },
-			{ id: 2, type: 'Client', name: 'Viral Sanghavi'},
-			{ id: 3, type: 'PAN', name: 'AMCPR8080R' },
-			{ id: 4, type: 'Client', name: 'Ravi Saxena' },
-			{ id: 5, type: 'Company', name: 'ITC' },
-			{ id: 6, type: 'DOB', name: '6-2-1998' },
-			{ id: 7, type: 'Mobile', name: '8080626605' },
-			{ id: 8, type: 'Email', name: 'vs@gmail.com' },
-			{ id: 9, type: 'Company', name: 'ITC' }
+			{ id: 1, type: 'Trading Member', name: 'Zerodha', img: 'https://lh4.ggpht.com/Tr5sntMif9qOPrKV_UVl7K8A_V3xQDgA7Sw_qweLUFlg76d_vGFA7q1xIKZ6IcmeGqg=w300' },
+			{ id: 2, type: 'Client', name: 'Viral Sanghavi', img: 'pdf.jpg' },
+			{ id: 3, type: 'PAN', name: 'AMCPR8080R', img: 'pdf.jpg' },
+			{ id: 4, type: 'Client', name: 'Ravi Saxena', img: 'pdf.jpg' },
+			{ id: 5, type: 'Company', name: 'ITC', img: 'pdf.jpg' },
+			{ id: 6, type: 'DOB', name: '6-2-1998', img: 'pdf.jpg' },
+			{ id: 7, type: 'Mobile', name: '8080626605', img: 'pdf.jpg' },
+			{ id: 8, type: 'Email', name: 'vs@gmail.com', img: 'pdf.jpg' },
+			{ id: 9, type: 'Company', name: 'ITC', img: 'pdf.jpg' }
 		]
 
 		let links = [
@@ -127,7 +126,7 @@ class D3Graph extends React.Component {
 
 		const simulation = d3.forceSimulation(nodes)
 			.force("link", d3.forceLink(links).id(d => d.id))
-			.force("charge", d3.forceManyBody().strength(-100))
+			.force("charge", d3.forceManyBody().strength(-150))
 
 			.force("x", d3.forceX())
 			.force("y", d3.forceY())
@@ -195,19 +194,12 @@ class D3Graph extends React.Component {
 
 		const node = svg.append("g")
 			.attr("stroke", "yellow")
-			// .style("fill", function (d) { return '#1f77b4'; })
 			.attr("stroke-width", 0.1)
+			.style('cursor', 'pointer')
 			.selectAll("circle")
 			.data(nodes)
 			.join("circle")
-			.attr("r", function (d) {
-				if (d.type == 'Client') {
-					return 5
-				}
-				else {
-					return 5
-				}
-			})
+			.attr("r", 5)
 			.style("fill", function (d) {
 				if (d.type == 'Client') {
 					return '#2db660'
@@ -227,13 +219,12 @@ class D3Graph extends React.Component {
 			})
 			.call(this.drag(simulation));
 
-
+		// display when you hover 
 		node.append("svg:title")
 			.text(function (d) {
 				return d.name;
 			})
 			.style('text-anchor', 'middle')
-			.style('cursor', 'pointer')
 			.style("fill", "#555555")
 			.style("font-family", "Arial")
 			.style("font-size", 9)
@@ -251,6 +242,37 @@ class D3Graph extends React.Component {
 			.style('font-size', '3px')
 			.style("font-family", "Arial")
 			.style("fill", "#333333")
+
+
+		// make the image grow a little on mouse over and add the text details on click
+		var setEvents = node
+			// Append hero text
+			.on('dblclick', function (d) {
+				if (d.type == "Client") {
+					d3.select("h1").html(d.type);
+					// d3.select("h2").html(d.name);
+					d3.select("p").html("<a href='#' > " + d.name + " </a>");
+				}
+				else {
+					d3.select("h1").html(d.type);
+					// d3.select("h2").html(d.name);
+					d3.select("p").html(" " + d.name);
+				}
+			})
+
+			.on('mouseover', function () {
+				// select element in current context
+				d3.select(this).transition()
+					.attr('r', 8)
+				node.attr("xlink:href", function (d) { return d.img; })
+				console.log('Mouse entered');
+			})
+			// set back
+			.on('mouseout', function () {
+				d3.select(this).transition()
+					.attr('r', 5)
+				console.log('MouseLeft');
+			})
 
 		// text for links
 		const link_text = svg.append("g")
@@ -277,8 +299,7 @@ class D3Graph extends React.Component {
 				.attr("y2", d => d.target.y);
 
 			node
-				.attr("cx", function (d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-				.attr("cy", function (d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+				.attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
 
 			text.attr("x", d => d.x - 9) //position of the lower left point of the text
 				.attr("y", d => d.y + 9); //position of the lower left point of the text
@@ -332,9 +353,16 @@ class D3Graph extends React.Component {
 
 	render() {
 		return (<div>
-
 			<h2 className="d3Graph-title">Client Linkage</h2>
-			<div ref='graph' className="d3-graph"></div>
+			<header className="info-tab">
+				<h1>Client Profile</h1>
+				<div className="info-tab-row-1">
+					<h5>Click to view their identity</h5>
+					<p></p>
+				</div>
+			</header>
+			<div ref='graph' className="d3-graph">
+			</div>
 		</div>
 		)
 	}

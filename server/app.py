@@ -159,7 +159,7 @@ def index():
 		return cors_preflight_response()
 	elif request.method == 'POST':
 		print(request)
-		request_data = ast.literal_eval(request.get_data(as_text=True)) # request.get_data() returns a string so convert it to a dict using literal_eval
+		request_data = ast.literal_eval(request.get_data(as_text=True)) # reqsuest.get_data() returns a string so convert it to a dict using literal_eval
 		print(request_data) # output request to terminal window
 		response_data = get_data(search_term=request_data['search_term'], query_type=request_data['query_type'])
 		print(response_data) # output response to terminal window

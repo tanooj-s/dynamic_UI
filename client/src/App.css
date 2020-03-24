@@ -791,3 +791,15 @@ form {
 .table-header-common{
   text-align: center;
 }
+
+.info-tab{
+  color: black;
+  border: 1px solid rgba(72, 94, 144, 0.16);
+  width: fit-content;
+  /* background-color: #2f353a;
+  background-image: linear-gradient(10deg, #3e5d7e 0%, #2f353a 100%); */
+}
+
+.info-tab-row-1{
+display: flex;
+}
