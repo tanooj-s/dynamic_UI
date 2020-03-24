@@ -6,7 +6,7 @@ import pandas as pd
 import ast
 from neo4j import GraphDatabase
 import networkx
-
+import json
 
 
 # -----"DATABASE"------
@@ -111,17 +111,27 @@ def get_data(search_term, query_type):
 
 	# may need to orient records as values instead - but first get a handle on what the data will look like and what format is wanted before modifying anything
 	elif (query_type == 'indi'):
+		print("Getting profile results...")
 		profile_df = client_securities_df[['ClientName', 'UCC', 'TMCode', 'PAN', 'Email', 'Phone', 'EODFundBalance', 'FundBalanceNSE', 'Address', 'BankName', 'AccountNumber', 'BeneficiaryName', 'DepositoryName', 'TradeMemberName', 'ClientCategory', 'DematAccountNo']]
 		profile_results = profile_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		print("Getting securities results...")
 		client_securities_results = client_securities_df.query('ClientName.str.contains("%s")' % (search_term), engine='python')
+		print("Getting m2m results for all clients...")
 		client_m2m_results = client_m2m_df.query('MemberName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
 		all_client_m2m_results = client_m2m_df.to_json(orient='records') # return m2m for all clients
+		print("Getting alerts results...")
 		client_alerts_results = client_alerts_df.query('MemberName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		print("Getting trade results...")
 		client_trades_results = client_trades_df.query('TradingMember.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		print("Getting shareholding results...")
 		client_holdings_results = client_holdings_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		print("Getting top trade results...")
 		client_top_trades_results = client_top_trades_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		print("Getting pledged results...")
 		client_pledged_results = client_pledged_df.query('ClientName.str.contains("%s")' % (search_term), engine='python').to_json(orient='records')
+		print("Getting SEBI alerts results...")
 		client_sebialerts_results = client_sebialerts_df.query('ClientName.str.contains("%s")'% (search_term),engine='python').to_json(orient='records')
+		print("Getting trade descending results...")
 		client_tradedesc_results = client_tradedesc_df.query('ClientName.str.contains("%s")'%(search_term),engine='python').to_json(orient='records')
 		print('reading client')
 
@@ -153,6 +163,8 @@ def index():
 		print(request_data) # output request to terminal window
 		response_data = get_data(search_term=request_data['search_term'], query_type=request_data['query_type'])
 		print(response_data) # output response to terminal window
+		with open('response.json','w') as f: # for debugging
+			json.dump(response_data, f)
 		return add_cors_headers(jsonify(response_data))
 	return 0
 

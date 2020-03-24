@@ -77,9 +77,9 @@ class App extends React.Component {
     event.preventDefault()
     //this.setState({ submitted: true })
     this.setState({ response_data: "" })
-    this.getResponse("http://127.0.0.1:5000/", this.state)
     console.log("REQUEST")
     console.log(this.state)
+    this.getResponse("http://127.0.0.1:5000/", this.state)
     if (this.state.query_type === 'company') {
       this.setState({ query_tab: 'company_profile' })
     }
@@ -96,6 +96,7 @@ class App extends React.Component {
 
   async getResponse(url, data) {
     let out_data = [] // try to set this as a string instead
+    let decoder = new TextDecoder()
     const response = await fetch(url, {
       method: 'POST',
       mode: 'cors',
@@ -104,9 +105,9 @@ class App extends React.Component {
     })
       .then(response => response.body.getReader().read()) // response comes in as ReadableStream() from fetch, attach reader object and read
       .then(({ done, value }) => {                        // which yields done (boolean) and individual values as uint8
-        out_data.push(new TextDecoder().decode(value)) // push uint8 values to outdata
+        out_data.push(decoder.decode(value)) // push decoded uint8 values to outdata
       })
-    this.setState({ response_data: JSON.parse(out_data[0]) }) // instead of pushing to uint8, maybe do something like out_data = ''.join()
+      .then(() => this.setState({ response_data: JSON.parse(out_data[0]) })) // instead of pushing to uint8, maybe do something like out_data = ''.join()
     console.log("RESPONSE")
     console.log(this.state.response_data)
   }
