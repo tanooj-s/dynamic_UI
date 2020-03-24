@@ -108,6 +108,7 @@ class App extends React.Component {
         out_data.push(decoder.decode(value)) // push decoded uint8 values to outdata
       })
       .then(() => this.setState({ response_data: JSON.parse(out_data[0]) })) // instead of pushing to uint8, maybe do something like out_data = ''.join()
+      .catch(error => alert("Error parsing JSON due to size of data - refresh and try searching again after 10 seconds!"))
     console.log("RESPONSE")
     console.log(this.state.response_data)
   }
