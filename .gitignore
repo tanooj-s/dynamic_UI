@@ -2,3 +2,4 @@ client/node_modules/
 *.mp4
 *.xlsx
 *.json
+server/scheme_data_to_neo4j.py
