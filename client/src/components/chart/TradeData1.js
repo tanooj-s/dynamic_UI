@@ -1,5 +1,5 @@
 import React from 'react'
-import Highcharts, { color } from 'highcharts'
+import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import '../../App.css'
 require("highcharts/modules/accessibility")(Highcharts);

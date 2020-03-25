@@ -25,9 +25,6 @@ class D3GraphNeo extends React.Component {
         var linkForceSize = 150;
         var nodeItemMap = {};
         var linkItemMap = {};
-   
-    
-    
     }
 
 

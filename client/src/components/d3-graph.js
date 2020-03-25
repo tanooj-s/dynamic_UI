@@ -1,6 +1,43 @@
 import React from 'react';
 import * as d3 from 'd3';
 import './../App.css';
+var _ = require('lodash'); //https://www.quora.com/What-is-Lodash-in-Node-js
+
+var neo4j = require('neo4j-driver')
+
+var driver = neo4j.driver(
+	'bolt://localhost:7687',
+	neo4j.auth.basic('neo4j', '12345')
+)
+driver.verifyConnectivity()
+console.log('Driver Connected')
+var session = driver.session();
+session.run(
+	`MATCH (m:Client)-[:WORKS_FOR]->(a:Company) \
+    RETURN m.name AS client, collect(a.name) AS comp \
+    LIMIT {limit}`, { limit: 100 })
+	.then(results => {
+		session.close();
+		console.log(results)
+	})
+var nodes = [], rels = [], i = 0;
+results.records.forEach(res => {
+	nodes.push({ title: res.get('client'), label: 'Client' });
+	var target = i;
+	i++;
+
+	res.get('comp').forEach(name => {
+		var actor = { title: name, label: 'Company' };
+		var source = _.findIndex(nodes, actor);
+		if (source === -1) {
+			nodes.push(actor);
+			source = i;
+			i++;
+		}
+		rels.push({ source, target })
+	})
+});
+console.log(rels)
 
 
 class D3Graph extends React.Component {
@@ -56,11 +93,11 @@ class D3Graph extends React.Component {
 		// for (var i = 0; i < trades.length;i++) {
 		//   var is_present = false;
 		//   for (var j = 0; j < nodes.length;j++) {
-		//     if (nodes[j].id == trades[i].company) {
+		//     if (nodes[j].id === trades[i].company) {
 		//       is_present = true
 		//     }
 		//   }
-		//   if (is_present === false) {
+		//   if (is_present ==== false) {
 		//       nodes.push({ id: trades[i].company, type: 'company' })
 		//   }
 		// }
@@ -147,11 +184,11 @@ class D3Graph extends React.Component {
 			.attr("stroke-width", 1)
 			.attr("marker-end", "url(#arrowhead)")
 			.style("stroke", function (d) {
-				if (d.type == "works_for") {
+				if (d.type === "works_for") {
 					return "#8b0000"
-				} else if (d.type == "brokers_for") {
+				} else if (d.type === "brokers_for") {
 					return "#1d2d7e"
-				} else if (d.linkage == "Has_PAN") {
+				} else if (d.linkage === "Has_PAN") {
 					return "red"
 				}
 				else {
@@ -162,7 +199,7 @@ class D3Graph extends React.Component {
 		var linkText = svg.selectAll("line")
 			.append("text")
 			.data(links)
-			.text(function (d) { return d.linkage == "visible" ? "edge" : ""; })
+			.text(function (d) { return d.linkage === "visible" ? "edge" : ""; })
 			.attr("x", function (d) { return (d.source.x + (d.target.x - d.source.x) * 0.5); })
 			.attr("y", function (d) { return (d.source.y + (d.target.y - d.source.y) * 0.5); })
 			.attr("dy", ".25em")
@@ -201,16 +238,16 @@ class D3Graph extends React.Component {
 			.join("circle")
 			.attr("r", 5)
 			.style("fill", function (d) {
-				if (d.type == 'Client') {
+				if (d.type === 'Client') {
 					return '#2db660'
 				}
-				else if (d.type == 'PAN') {
+				else if (d.type === 'PAN') {
 					return '#1d2d7e'
 				}
-				else if (d.type == 'company') {
+				else if (d.type === 'company') {
 					return '#1b72b4'
 				}
-				else if (d.type == 'broker') {
+				else if (d.type === 'broker') {
 					return '#013220'
 				} else {
 					return "blue"
@@ -248,7 +285,7 @@ class D3Graph extends React.Component {
 		var setEvents = node
 			// Append hero text
 			.on('dblclick', function (d) {
-				if (d.type == "Client") {
+				if (d.type === "Client") {
 					d3.select("h1").html(d.type);
 					// d3.select("h2").html(d.name);
 					d3.select("p").html("<a href='#' > " + d.name + " </a>");

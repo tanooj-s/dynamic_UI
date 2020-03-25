@@ -1,19 +1,12 @@
 import React from 'react';
 import '../../App.css';
 import {
-    Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button
+    Card, CardText,
+    CardTitle
 } from 'reactstrap';
-import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
-import { MdEmail, MdPhone, MdLocationOn, MdDateRange, MdFlag } from 'react-icons/md'
+import { MdEmail, MdPhone, MdDateRange, MdFlag } from 'react-icons/md'
 import { FaAddressCard } from 'react-icons/fa'
-import Highcharts from 'highcharts'
-import HighchartsReact from 'highcharts-react-official'
 
-import HorizontalBarChart from '../chart/horizontal-barchart.js'
-import ClientPieChart from '../chart/client-piechart.js'
-import LineChart from '../chart/linechart.js'
-import TradeData from '../chart/tradedata';
 import NclAlerts from '../chart/alert';
 import M2MClient from '../chart/M2MChart';
 import SecurityBalance from '../chart/fundnsec';
@@ -25,9 +18,9 @@ import TradeDiscrepancy from "../chart/tradediscrepancy";
 
 class ClientProfile extends React.Component {
 
-    constructor(props) {
-        super(props)
-    }
+    // constructor(props) {
+    //     super(props)
+    // }
 
     render() {
         return (

@@ -1,16 +1,12 @@
 import React from 'react'
-import { Alert, Toast, ToastHeader, ToastBody, PaginationItem, Pagination, PaginationLink, Table } from 'reactstrap';
+import {  Toast, ToastHeader } from 'reactstrap';
 
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter, selectFilter, numberFilter, Comparator } from 'react-bootstrap-table2-filter';
-import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
+import filterFactory from 'react-bootstrap-table2-filter';
+import paginationFactory from 'react-bootstrap-table2-paginator';
 
 
 class TradeDiscrepancy extends React.Component {
-
-  constructor(props) {
-    super(props)
-  }
 
   render() {
 

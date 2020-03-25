@@ -1,7 +1,6 @@
 import React from 'react';
 import '../../App.css';
 import { Table } from 'reactstrap';
-import Logo from '../person.jpg'
 
 function BoardMeetings(props) {
     return (

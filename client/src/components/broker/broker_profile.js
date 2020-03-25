@@ -1,13 +1,12 @@
 import React from 'react';
 import '../../App.css';
-import { Toast } from 'reactstrap';
 import Logo from '../person.jpg'
 import {
-    Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button
+    Card, CardText, CardBody,
+    CardTitle
 } from 'reactstrap';
 import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
-import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md'
+import { MdEmail, MdLocationOn } from 'react-icons/md'
 
 
 function BProfile(props) {

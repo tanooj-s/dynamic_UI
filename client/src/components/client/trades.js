@@ -1,8 +1,7 @@
 import React from 'react';
 import '../../App.css';
-import { Table } from 'reactstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter, selectFilter, numberFilter,Comparator  } from 'react-bootstrap-table2-filter';
+import filterFactory, { textFilter, numberFilter,Comparator  } from 'react-bootstrap-table2-filter';
 
 function Trades(props) {
 

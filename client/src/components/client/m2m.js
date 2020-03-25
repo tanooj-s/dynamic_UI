@@ -1,22 +1,12 @@
 import React from 'react';
 import '../../m2m.css';
 import '../../App.css';
-import { Table } from 'reactstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter, selectFilter, numberFilter, Comparator } from 'react-bootstrap-table2-filter';
-import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
+import filterFactory, { textFilter, numberFilter, Comparator } from 'react-bootstrap-table2-filter';
+import paginationFactory from 'react-bootstrap-table2-paginator';
 
 
-class M2M extends React.Component {
-
-
-
-  constructor(props) {
-    super(props)
-
-  }
-
-  
+class M2M extends React.Component {  
   render() {
     // const customTotal = (from, to, size) => (
     //   <span className="react-bootstrap-table-pagination-total">

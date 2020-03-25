@@ -52,7 +52,7 @@ function Alerts(props) {
                 <tbody>
                   {props.data.map((item) =>
                     (<tr>
-                      <td><a href={"#"}>{item.Bhavcopy}</a></td>
+                      <td><a href={'/'}>{item.Bhavcopy}</a></td>
                       <td>{item.Date}</td>
                       <td>{item.Terms}</td>
                       <td>{item.ObligationQuantity}</td>

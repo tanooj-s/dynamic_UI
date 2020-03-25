@@ -1,11 +1,9 @@
 import React from 'react';
 import companylogo from './components/logo_white.png'
-import CompanyProfile from './components/company/company_profile'
 import Events from './components/company/events'
 import Complaints from './components/company/complaints'
 import BoardMeetings from './components/company/board_meetings'
 
-import BProfile from './components/broker/broker_profile'
 import AP from './components/broker/authorized_person'
 
 import ClientProfile from './components/client/client_profile'
@@ -16,11 +14,11 @@ import Alerts from './components/client/alerts'
 import M2M from './components/client/m2m'
 
 import PieChart from './components/chart/piechart'
-import Chart from './components/chart/chart'
-import HorizontalBarChart from './components/chart/horizontal-barchart'
+// import Chart from './components/chart/chart'
+// import HorizontalBarChart from './components/chart/horizontal-barchart'
 
 import KMP from './components/kmp'
-import PopotoGraph from './components/popoto-graph'
+// import PopotoGraph from './components/popoto-graph'
 import D3Graph from './components/d3-graph.js'
 
 import SebiAlerts from './components/chart/sebialerts';
@@ -29,25 +27,15 @@ import TradeDiscrepancy from './components/chart/tradediscrepancy'
 
 import './App.css';
 import {
-  Form,
-  Input,
-  Button,
-  Navbar,
   NavItem,
   Nav,
   NavLink,
-  NavbarBrand,
   UncontrolledDropdown,
-  Toast,
-  ToastBody,
   DropdownToggle,
   DropdownItem,
   DropdownMenu,
-  Table,
-  Card,
-  CardFooter
-} from 'reactstrap';
-import Highcharts from 'highcharts';
+  } from 'reactstrap';
+// import Highcharts from 'highcharts';
 
 class App extends React.Component {
 
@@ -128,7 +116,7 @@ class App extends React.Component {
 
         <div className="navbar" id="navbar" sticky="top">
           <div className="logo">
-            <a href={""} ><img src={companylogo}  className="small-logo" /></a>
+            <a href={''} ><img src={companylogo}  className="small-logo" /></a>
           </div>
 
           <Nav tabs>
@@ -144,7 +132,7 @@ class App extends React.Component {
                     )
                   }
                 </DropdownToggle>
-                <DropdownMenu left >
+                <DropdownMenu left="true" >
                   <DropdownItem onClick={(e) => this.setState({ query_type: "indi", search_term: "", query_tab: "", response_data: "", tab_display: 0 })}>
                     CLIENT
                   </DropdownItem>
