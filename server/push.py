@@ -28,7 +28,7 @@ def match_clients(tx,row):
 def process_shares(tx,row):
 	tx.run('MATCH (client:Client{name:$client_name}) WITH client OPTIONAL MATCH (company:Company{name:$company_name}) WITH client, company MERGE (client)-[o:OWNS_SHARES{volume:$trade_volume}]->(company)', client_name=row['TradingMember'], company_name=row['OwnsSymbol'], trade_volume=row['Volume'])
 
-driver = GraphDatabase.driver(uri="bolt://localhost:7687", auth=("neo4j","password"))
+driver = GraphDatabase.driver(uri="bolt://localhost:7687", auth=("neo4j","12345"))
 with driver.session() as session:
 	# flush db
 	session.run('MATCH (n) detach delete n') # don't need this line later on	

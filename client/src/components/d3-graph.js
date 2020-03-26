@@ -5,41 +5,6 @@ var _ = require('lodash'); //https://www.quora.com/What-is-Lodash-in-Node-js
 
 var neo4j = require('neo4j-driver')
 
-var driver = neo4j.driver(
-	'bolt://localhost:7687',
-	neo4j.auth.basic('neo4j', '12345')
-)
-driver.verifyConnectivity()
-console.log('Driver Connected')
-var session = driver.session();
-session.run(
-	`MATCH (m:Client)-[:WORKS_FOR]->(a:Company) \
-    RETURN m.name AS client, collect(a.name) AS comp \
-    LIMIT {limit}`, { limit: 100 })
-	.then(results => {
-		session.close();
-		console.log(results)
-	})
-var nodes = [], rels = [], i = 0;
-results.records.forEach(res => {
-	nodes.push({ title: res.get('client'), label: 'Client' });
-	var target = i;
-	i++;
-
-	res.get('comp').forEach(name => {
-		var actor = { title: name, label: 'Company' };
-		var source = _.findIndex(nodes, actor);
-		if (source === -1) {
-			nodes.push(actor);
-			source = i;
-			i++;
-		}
-		rels.push({ source, target })
-	})
-});
-console.log(rels)
-
-
 class D3Graph extends React.Component {
 	constructor(props) {
 		super(props)
@@ -47,27 +12,81 @@ class D3Graph extends React.Component {
 		this.drag = this.drag.bind(this)
 		this.color = this.color.bind(this)
 		// this.myConfig = this.myConfig.bind(this)
+		this.driver = neo4j.driver(
+			'bolt://localhost:7687',
+			neo4j.auth.basic('neo4j', '12345')
+		)
+		this.getData = this.getData.bind(this)
+		this.state = {
+			nodes_data: [],
+			relations: [],
+			loaded: true,
+		}
 	}
 
 
 	componentDidMount() {
 		this.createChart()
 		this.color()
+		this.getData()
 	}
 
+	getData() {
+		const session = this.driver.session();
+		session.run(`
+		Match(l:Brokerage)-[:BROKERS_FOR]->(m:Client)-[:WORKS_FOR]->(a:Company)\
+		return m.name as client, collect(a.name) as comp, l.name as bro\
+		Limit{limit}`,{ limit: 1000 })
+			.then(results => {
+				var nodes = [], rels = [], i = 0
+				console.log(results)
+				results.records.forEach(res => {
+					nodes.push({ title: res.get('bro'), label: 'Broker' })
+					nodes.push({ title: res.get('client'), label: "Client" })
+					var target = i
+					i++
+
+					res.get('comp').forEach(name => {
+						var comps = { title: name, label: 'Comapany' }
+						var source = _.findIndex(nodes, comps)
+						if (source === -1) {
+							nodes.push(comps);
+							source = i;
+							i++
+						}
+						rels.push({ source, target })
+					})
+				})
+				// set the nodes and links in the state
+				this.setState({
+					nodes_data: nodes,
+					relations: rels
+					, loaded: false
+				})
+				session.close()
+			}).catch(e => {
+				console.log(e);
+				session.close();
+			})
+	}
+
+	componentDidUpdate(){
+		this.createChart()
+	}
+	
 	createChart() {
-		const width = 400;
-		const height = 120;
+		const width = 500;
+		const height = 300;
+		console.log(this.state)
 
 
-
-		var trades = []
-		this.props.data.trades.forEach(trade => trades.push({ company: trade.OwnsSymbol, volume: trade.Volume }))
-		var colors = d3.scaleOrdinal(d3.schemeCategory10);
-		var radius = 15
-		var employer = this.props.data.securities[0].WorksFor;
-		var broker = this.props.data.securities[0].TradeMemberName;
-		var client = this.props.data.securities[0].ClientName
+		// var trades = []
+		// this.props.data.trades.forEach(trade => trades.push({ company: trade.OwnsSymbol, volume: trade.Volume }))
+		// var colors = d3.scaleOrdinal(d3.schemeCategory10);
+		// var radius = 15
+		// var employer = this.props.data.securities[0].WorksFor;
+		// var broker = this.props.data.securities[0].TradeMemberName;
+		// var client = this.props.data.securities[0].ClientName
 
 
 		// ------- NODES ------- uncomment to make it dynamic 
@@ -131,38 +150,39 @@ class D3Graph extends React.Component {
 		// console.log(links)
 
 		// static data if PAN will be a node
-		let nodes = [
-			{ id: 1, type: 'Trading Member', name: 'Zerodha', img: 'https://lh4.ggpht.com/Tr5sntMif9qOPrKV_UVl7K8A_V3xQDgA7Sw_qweLUFlg76d_vGFA7q1xIKZ6IcmeGqg=w300' },
-			{ id: 2, type: 'Client', name: 'Viral Sanghavi', img: 'pdf.jpg' },
-			{ id: 3, type: 'PAN', name: 'AMCPR8080R', img: 'pdf.jpg' },
-			{ id: 4, type: 'Client', name: 'Ravi Saxena', img: 'pdf.jpg' },
-			{ id: 5, type: 'Company', name: 'ITC', img: 'pdf.jpg' },
-			{ id: 6, type: 'DOB', name: '6-2-1998', img: 'pdf.jpg' },
-			{ id: 7, type: 'Mobile', name: '8080626605', img: 'pdf.jpg' },
-			{ id: 8, type: 'Email', name: 'vs@gmail.com', img: 'pdf.jpg' },
-			{ id: 9, type: 'Company', name: 'ITC', img: 'pdf.jpg' }
-		]
+		// let nodes = [
+		// 	{ id: 1, type: 'Trading Member', name: 'Zerodha', img: 'https://lh4.ggpht.com/Tr5sntMif9qOPrKV_UVl7K8A_V3xQDgA7Sw_qweLUFlg76d_vGFA7q1xIKZ6IcmeGqg=w300' },
+		// 	{ id: 2, type: 'Client', name: 'Viral Sanghavi', img: 'pdf.jpg' },
+		// 	{ id: 3, type: 'PAN', name: 'AMCPR8080R', img: 'pdf.jpg' },
+		// 	{ id: 4, type: 'Client', name: 'Ravi Saxena', img: 'pdf.jpg' },
+		// 	{ id: 5, type: 'Company', name: 'ITC', img: 'pdf.jpg' },
+		// 	{ id: 6, type: 'DOB', name: '6-2-1998', img: 'pdf.jpg' },
+		// 	{ id: 7, type: 'Mobile', name: '8080626605', img: 'pdf.jpg' },
+		// 	{ id: 8, type: 'Email', name: 'vs@gmail.com', img: 'pdf.jpg' },
+		// 	{ id: 9, type: 'Company', name: 'ITC', img: 'pdf.jpg' }
+		// ]
 
-		let links = [
-			{ source: 1, target: 2, linkage: "Is_Broker" },
-			{ source: 2, target: 3, linkage: "Has_PAN" },
-			{ source: 2, target: 6, linkage: "" },
-			{ source: 2, target: 7, linkage: "" },
-			{ source: 2, target: 8, linkage: "" },
-			{ source: 2, target: 9, linkage: "Employee_Of" },
-			{ source: 4, target: 3, linkage: "Has_PAN" },
-			{ source: 4, target: 5, linkage: "KMP_OF" },
-		]
+		// let links = [
+		// 	{ source: 1, target: 2, linkage: "Is_Broker" },
+		// 	{ source: 2, target: 3, linkage: "Has_PAN" },
+		// 	{ source: 2, target: 6, linkage: "" },
+		// 	{ source: 2, target: 7, linkage: "" },
+		// 	{ source: 2, target: 8, linkage: "" },
+		// 	{ source: 2, target: 9, linkage: "Employee_Of" },
+		// 	{ source: 4, target: 3, linkage: "Has_PAN" },
+		// 	{ source: 4, target: 5, linkage: "KMP_OF" },
+		// ]
 
-		// not using these two
-		// const links = this.props.data.links.map(d => Object.create(d));
-		// const nodes = this.props.data.nodes.map(d => Object.create(d));
+		// using these two
+		
+		const links = this.state.relations
+		const nodes = this.state.nodes_data
 
 		// ----------- D3 SVG SETUP -----------
 		const graph = d3.select(this.refs.graph)
 
 		const simulation = d3.forceSimulation(nodes)
-			.force("link", d3.forceLink(links).id(d => d.id))
+			.force("link", d3.forceLink(links).id(d => d.index))
 			.force("charge", d3.forceManyBody().strength(-150))
 
 			.force("x", d3.forceX())
@@ -238,16 +258,16 @@ class D3Graph extends React.Component {
 			.join("circle")
 			.attr("r", 5)
 			.style("fill", function (d) {
-				if (d.type === 'Client') {
+				if (d.label === 'Client') {
 					return '#2db660'
 				}
-				else if (d.type === 'PAN') {
+				else if (d.label === 'PAN') {
 					return '#1d2d7e'
 				}
-				else if (d.type === 'company') {
+				else if (d.label === 'Company') {
 					return '#1b72b4'
 				}
-				else if (d.type === 'broker') {
+				else if (d.label === 'broker') {
 					return '#013220'
 				} else {
 					return "blue"
@@ -259,7 +279,7 @@ class D3Graph extends React.Component {
 		// display when you hover 
 		node.append("svg:title")
 			.text(function (d) {
-				return d.name;
+				return d.label;
 			})
 			.style('text-anchor', 'middle')
 			.style("fill", "#555555")
@@ -275,25 +295,25 @@ class D3Graph extends React.Component {
 			.selectAll("text")
 			.data(nodes)
 			.enter().append("text")
-			.text(d => d.type + ": " + d.name)
+			.text(d => d.label + ": " + d.title)
 			.style('font-size', '3px')
 			.style("font-family", "Arial")
 			.style("fill", "#333333")
 
 
 		// make the image grow a little on mouse over and add the text details on click
-		var setEvents = node
+		 node
 			// Append hero text
 			.on('dblclick', function (d) {
 				if (d.type === "Client") {
-					d3.select("h1").html(d.type);
+					d3.select("h1").html(d.title);
 					// d3.select("h2").html(d.name);
-					d3.select("p").html("<a href='#' > " + d.name + " </a>");
+					d3.select("p").html("<a href='#' > " + d.label + " </a>");
 				}
 				else {
-					d3.select("h1").html(d.type);
+					d3.select("h1").html(d.title);
 					// d3.select("h2").html(d.name);
-					d3.select("p").html(" " + d.name);
+					d3.select("p").html(" " + d.title);
 				}
 			})
 
@@ -390,15 +410,15 @@ class D3Graph extends React.Component {
 
 	render() {
 		return (<div>
-			<h2 className="d3Graph-title">Client Linkage</h2>
-			<header className="info-tab">
-				<h1>Client Profile</h1>
-				<div className="info-tab-row-1">
-					<h5>Click to view their identity</h5>
-					<p></p>
-				</div>
-			</header>
-			<div ref='graph' className="d3-graph">
+			<div ref='graph' >
+				<h2 className="d3Graph-title">Client Linkage</h2>
+				<header className="info-tab">
+					<h1>Client Profile</h1>
+					<div className="info-tab-row-1">
+						<h5>Click to view their identity</h5>
+						<p></p>
+					</div>
+				</header>
 			</div>
 		</div>
 		)
