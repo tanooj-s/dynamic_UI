@@ -86,7 +86,27 @@ banks = ['State Bank of India', 'Karnataka Bank', 'Oriental Bank of Commerce', '
 
 cities = ['Mumbai','Delhi','Bangalore','Hyderabad','Ahmedabad','Chennai','Kolkata','Surat','Pune','Jaipur','Visakhapatnam','Kanpur','Nagpur','Lucknow','Thane','Bhopal','Indore','Patna','Vadodara']
 
-city_probabilities = [0.1495,0.1323,0.1014,0.0818,0.0669,0.0562,0.0539,0.0537,0.0375,0.0366,0.0361,0.0332,0.0289,0.0278,0.0221,0.0216,0.0200,0.0202,0.0201]
+city_probabilities = [
+0.1495034655959970,
+0.1322665283550740,
+0.1013723146386230,
+0.0818263618688147,
+0.0669343189516240,
+0.0562464032589577,
+0.0539104606104302,
+0.0536835807027644,
+0.0375424606792560,
+0.0366016936857863,
+0.0360961102796400,
+0.0332275129172673,
+0.0289056801755576,
+0.0278415723150087,
+0.0221267147234246,
+0.0216067966212797,
+0.0199951105829876,
+0.0202370581426084,
+0.0200758558948992
+]
 
 email_domains = ['@gmail.com','@yahoo.com','@protonmail.com','@hotmail.com']
 
