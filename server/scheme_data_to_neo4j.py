@@ -84,8 +84,9 @@ banks = ['State Bank of India', 'Karnataka Bank', 'Oriental Bank of Commerce', '
         'Axis Bank', 'Bank of Baroda', 'Punjab National Bank', 'HDFC', 'IDBI', 'IndusInd Bank', 'Kotak Mahindra Bank',
         'HSBC', 'Bank of America', 'BNP Paribas', 'Citibank', 'Standard Chartered Bank']
 
-cities = ['Delhi','Mumbai','Chennai','Kolkata','Bangalore','Hyderabad','Ahmedabad','Pune','Lucknow',
-          'Kochi','Surat','Jaipur','Visakhapatnam','Chandigarh','Kanpur','Nagpur','Bhopal','Indore']
+cities = ['Mumbai','Delhi','Bangalore','Hyderabad','Ahmedabad','Chennai','Kolkata','Surat','Pune','Jaipur','Visakhapatnam','Kanpur','Nagpur','Lucknow','Thane','Bhopal','Indore','Patna','Vadodara']
+
+city_probabilities = [0.1495,0.1323,0.1014,0.0818,0.0669,0.0562,0.0539,0.0537,0.0375,0.0366,0.0361,0.0332,0.0289,0.0278,0.0221,0.0216,0.0200,0.0202,0.0201]
 
 email_domains = ['@gmail.com','@yahoo.com','@protonmail.com','@hotmail.com']
 
@@ -111,7 +112,7 @@ class Client:
     self.name = names.get_full_name()
     first_name = self.name.split(' ')[0]
     last_name = self.name.split(' ')[1]
-    self.address = np.random.choice(a = cities) # only put cities for now, generating realistic addresses will be hard
+    self.address = np.random.choice(a = cities, p = city_probabilities) # only put cities for now, generating realistic addresses will be hard
     self.phone = StringGenerator('[7-9]{3}[\d]{7}').render()
     self.email = first_name.lower() + last_name.lower() + np.random.choice(a = email_domains)
     self.pan = StringGenerator('[A-Z]{5}[\d]{4}[A-Z]').render()
