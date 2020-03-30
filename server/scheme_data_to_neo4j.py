@@ -9,73 +9,73 @@ from faker import Faker
 
 from neo4j import GraphDatabase
 
-# 2-tuples of form (name, category)
+# 3-tuples of form (name, category, corporate address)
 company_tuples = [
-('TATA Motors','Automotive'),
-('GAIL', 'Oil & Gas'),
-('ITC Limited','Consumer Goods'),
-('Cadila','Pharmaceuticals'),
-('Mahindra & Mahindra', 'Automative'),
-('Hero MotoCorp','Automotive'),
-('ICICI Bank','Banking'),
-('Axis Bank','Banking'),
-('UltraTech Cement','Cement'),
-('Hindustan Unilever','Consumer Goods'),
-('TCS','Infotech'),
-('Infosys','Infotech'),
-('Wipro','Infotech'),
-('HDFC','Financials'),
-('Tata Steel', 'Iron and Steel'),
-('Steel Authority of India','Iron and Steel'),
-('JSW Steel Ltd','Iron and Steel'),
-('Coal India', 'Mining'),
-('Bharti Airtel','Telecom'),
-('Vodafone India', 'Telecom'),
-('Tata Power', 'Utilities'),
-('State Bank of India','Banking'),
-('Suzlon','Alternative Energy'),
-('ONGC','Oil & Gas'),
-('Indian Oil','Oil & Gas'),
-('Reliance','Conglomerate'),
-('Bharat Petroleum','Oil & Gas'),
-('Rajesh Exports','Gems'),
-('Bombay Dyeing','Textiles'),
-('Britannia','Food Products'),
-('DLF','Real Estate'),
-('Eureka Forbes','Consumer Goods'),
-('Flipkart','Ecommerce'),
-('Haldirams','Food Products'),
-('Sun Pharmaceuticals','Pharmaceuticals'),
-('Karnataka Bank','Banking'),
-('Larsen & Toubro','Engineering'),
-('MRF','Rubber Products'),
-('Maruti Suzuki','Automotive'),
-('Parle','Food Products'),
-('Royal Enfield','Automotive'),
-('SpiceJet','Aviation'),
-('Central Bank of India', 'Banking'),
-('Allahabad Bank', 'Banking'),
-('Andhra Bank', 'Banking'),
-('NTPC Limited','Utilities'),
-('Oriental Bank of Commerce', 'Banking'),
-('Indiabulls','Financial Services'),
-('Adani Ports & SEZ Limited','Shipping'),
-('Asian Paints','Chemicals'),
-('Zomato','Food Delivery'),
-('Dabur','FMCG')]
+('TATA Motors','Automotive','Bombay House, 24, Homi Modi Street, Fort, Mumbai - 400001'),
+('GAIL', 'Oil & Gas','GAIL Bhawan, 16 Bhikaji Cama Place, R K Puram, New Delhi - 110066'),
+('ITC Limited','Consumer Goods', '37, J.L. Nehru Road, Kolkata - 700071'),
+('Cadila','Pharmaceuticals','Sarkhej-Dholka Road, Bhat, Ahmedabad, India - 382210'),
+('Mahindra & Mahindra', 'Automotive','4th Floor, Mahindra Towers, Dr. G.M. Bhosale Marg, P.K. Kurne Chowk, Worli, Mumbai - 400018'),
+('Hero MotoCorp','Automotive', 'The Grand Plaza, Plot No. 2, Nelson Mandela Road, Vasant Kunj Phase II, New Delhi - 110070'),
+('ICICI Bank','Banking','ICICI Bank Tower, Near Chakli Circle, Old Padra Road, Vadodara - 390007'),
+('Axis Bank','Banking','Axis Bank Limited, ‘Axis House’, C2 Wadia International Centre, Pandurang Budhkar Marg, Worli, Mumbai - 400025'),
+('UltraTech Cement','Cement', 'Ahura Centre, Mahakali Caves Road, Near MIDC Office, Andheri (E), Mumbai - 400093'),
+('Hindustan Unilever','Consumer Goods', 'Unilever House, B. D. Sawant Marg, Chakala, Andheri East, Mumbai - 400099'),
+('TCS','Infotech','TCS House, 2nd Floor, Raveline Street, Fort, Mumbai - 400001'),
+('Infosys','Infotech','Electronics City, Hosur Road, Bengaluru - 560100'),
+('Wipro','Infotech','Doddakannelli, Sarjapur Road, Bengaluru - 560035'),
+('HDFC','Financials','HDFC House, H T Parekh Marg, 165-166, Backbay Reclamation, Churchgate, Mumbai - 400020'),
+('Tata Steel', 'Iron and Steel','2nd Floor, Bombay House, 24, Homi Mody Street, Fort, Mumbai - 400001'),
+('Steel Authority of India','Iron and Steel','Core I, 20th Floor, Scope Minar, Laxmi Nagar District Center, Delhi – 110092'),
+('JSW Steel Ltd','Iron and Steel','JSW Centre, Bandra Kurla Complex, Near MMRDA Grounds, Bandra East, Mumbai - 400051'),
+('Coal India', 'Mining', 'Coal Bhawan, Premise No-04 MAR,, Plot No-AF-III,Action Area-1A, Newtown, Rajarhat, Kolkata - 700156'),
+('Bharti Airtel','Telecom','Interface Building 7, 7th Floor, New Link Road, Malad West, Mumbai - 400064'),
+('Vodafone India', 'Telecom', 'Vodafone House, Peninsula Corporate Park, Ganpatrao Kadam Marg, Lower Parel, Mumbai - 400013'),
+('Tata Power', 'Utilities', 'B-12, 2nd Floor, Shatabdi Bhavan, Sector-04, Noida - 201301'),
+('State Bank of India','Banking', '18, Devdas Kamlleg Block, Synergy Building, Bandra Kurla Complex, Mumbai - 400051'),
+('Suzlon','Alternative Energy','Suzlon House, 5 Shrimali Society, Navrangpura, Ahmedabad - 380009'),
+('ONGC','Oil & Gas', 'Deendayal Urja Bhawan, 5A, Nelson Mandela Marg, Vasant Kunj, New Delhi - 110070'),
+('Indian Oil','Oil & Gas', '3079, J B Tito Marg, Sadiq Nagar, Delhi - 110049'),
+('Reliance','Conglomerate', 'Reliance Industries Limited, Maker Chambers - IV, Nariman Point, Mumbai - 400021'),
+('Bharat Petroleum','Oil & Gas', 'Bharat Bhavan, 4 and 6 Currimbhoy Road, Ballard Estate, Mumbai - 400001'),
+('Rajesh Exports','Gems', 'No 4, Batavia Chambers, Kumara Krupa Road, Kumara Park East, Bangalore - 560001'),
+('Bombay Dyeing','Textiles', 'Neville House, J.N. Heredia Marg, Ballard Estate, Mumbai - 400038'),
+('Britannia','Food Products', '5-1A Hungerford Street, Kolkata - 700017 '),
+('DLF','Real Estate', 'DLF Gateway Tower, R Block, DLF City Phase – III, Gurugram – 122002'),
+('Eureka Forbes','Consumer Goods', '701, 7th Floor, Marathon Innova Marathon NextGen, Off Ganpatrao Kadam Marg Lower Parel, Mumbai - 400013'),
+('Flipkart','Ecommerce', 'Vaishnavi Summit, Ground Floor, 7th Main, 80 Feet Road, 3rd Block, Koramangala, Bengaluru - 560034'),
+('Haldirams','Food Products', '145-146, Old Pardi Naka, Bhandara Road, Nagpur – 440032'),
+('Sun Pharmaceuticals','Pharmaceuticals', 'CTS No. 201 B/1, Western Express Highway, Goregaon (E), Mumbai - 400063'),
+('Karnataka Bank','Banking', 'Karnataka Bank Limited, Post Box No. 599, Mahaveera Circle, Kankanady, Mangalore - 575002'),
+('Larsen & Toubro','Engineering', 'L&T House, N.M. Marg, Ballard Estate, Mumbai, Maharashtra - 400001'),
+('MRF','Rubber Products', '826 Tarapore Towers 5th Floor, Mount Road, Chennai - 600002'),
+('Maruti Suzuki','Automotive', '1, Nelson Mandela Marg, Vasant Kunj, New Delhi - 110070'),
+('Parle','Food Products', 'V S Khandekar Marg, North Level Crossing Road, Vile Parle East, Mumbai - 400057'),
+('Royal Enfield','Automotive', '105, Kamala Gardens, Mount Poonamalle High Rd, Kattupakkam, Chennai, Tamil Nadu - 600056'),
+('SpiceJet','Aviation', '319, Udyog Vihar, Phase IV, Gurugram - 122016'),
+('Central Bank of India', 'Banking', '14th Floor, Chandermukhi Building, Nariman Point, Mumbai - 400001'),
+('Allahabad Bank', 'Banking', '2, N.S. Road, Kolkata - 700001'),
+('Andhra Bank', 'Banking', 'Dr.Pattabhi Bhavan 5-9-11 Saifabad, Hyderabad - 500004'),
+('NTPC Limited','Utilities', 'NTPC Bhawan, SCOPE Complex, Institutional Area, Lodhi Road, New Delhi - 110003'),
+('Oriental Bank of Commerce', 'Banking', '1st floor, Plot No 5, Sector 32, Institutional Area, Gurugram - 122001'),
+('Indiabulls','Financial Services', 'Indiabulls House, 448-451, Udyog Vihar, Phase V, Gurugram - 122001'),
+('Adani Ports & SEZ Limited','Shipping', 'Adani House, Mithakhali Six Roads, Navarangpura, Ahmedabad - 380009'),
+('Asian Paints','Chemicals', 'Asian Paints House 6A, Shantinagar, Santacruz (E), Mumbai - 400055'),
+('Zomato','Food Delivery', '139 P, Gurgaon Sector 44, Gurugram - 122003'),
+('Dabur','FMCG', '8/3, Asaf Ali Road, New Delhi – 110002')]
 
-# 3-tuples of form (name, segments, sebi_no)
+# 4-tuples of form (name, segments, sebi_no, registered office)
 brokerage_tuples = [
-('Airan Finstocks Private Limited','Capital Market, Currency Futures, Futures & Options, IPO','INZ000214031'),
-('Alacrity Securities Ltd','Capital Market, Futures & Options','INZ000215936'),
-('Beeline Broking Ltd','Capital Market, Currency Futures, Futures & Options','INZ000000638'),
-('CIL Securities Ltd','Capital Market, Currency Futures, Futures & Options, Mutual Funds, IPO','INZ000169535'),
-('Intellect Stock Broking Ltd','Capital Market, Commodity, Currency Futures, Debt Market, Futures & Options','INZ000191632'),
-('Karvy Stock Broking Ltd','Capital Market, Commodity, Currency Futures, Debt Market, Futures & Options, Mutual Funds, WDM, IPO','INZ000172733'),
-('Market Creators Ltd','Capital Market, Commodity, Currency Futures, Futures & Options, Mutual Funds, IPO','INZ000206338'),
-('Nariman Finvest Private Ltd','Capital Market, Currency Futures, Debt Market, Futures & Options, IPO','INZ000229936'),
-('Quantum Global Solutions Ltd','Capital Market, Currency Futures, Futures & Options, IPO','INB230825632'),
-('Saffron Equity Advisors Pvt Ltd','Capital Market','INZ000174937')]
+('Airan Finstocks Private Limited','Capital Market, Currency Futures, Futures & Options, IPO','INZ000214031', '407, The Grand Mall, Opp SBI Zonal Office, Ambawadi, Ahmedabad - 380015'),
+('Alacrity Securities Ltd','Capital Market, Futures & Options','INZ000215936', '1062, Hubtown Solaris, Prof NS Phadke Marg, Andheri (E), Mumbai - 400069'),
+('Beeline Broking Ltd','Capital Market, Currency Futures, Futures & Options','INZ000000638', 'Vishwa Complex, 1st Floor Opp. Jain Derasar, Navrangpura, Ahmedabad - 380009'),
+('CIL Securities Ltd','Capital Market, Currency Futures, Futures & Options, Mutual Funds, IPO','INZ000169535', '214 Raghava Ratna Towers, Chirag Ali Lane Abids, Hyderabad, Telangana - 500001'),
+('Intellect Stock Broking Ltd','Capital Market, Commodity, Currency Futures, Debt Market, Futures & Options','INZ000191632', '232 Chittaranjan Avenue, 7th Floor, Kolkata - 700006'),
+('Karvy Stock Broking Ltd','Capital Market, Commodity, Currency Futures, Debt Market, Futures & Options, Mutual Funds, WDM, IPO','INZ000172733', 'Avenue 4, Street No. 1 Banjara Hills, Hyderabad – 500034'),
+('Market Creators Ltd','Capital Market, Commodity, Currency Futures, Futures & Options, Mutual Funds, IPO','INZ000206338', '70, Sampatrao Colony, Opp. Masonic Hall, Productivity Road, Vadodara - 390007'),
+('Nariman Finvest Private Ltd','Capital Market, Currency Futures, Debt Market, Futures & Options, IPO','INZ000229936', '4, 1st Floor, Phoenix Building, 457, SVP Road, Prarthana Samaj, Mumbai - 400004'),
+('Quantum Global Solutions Ltd','Capital Market, Currency Futures, Futures & Options, IPO','INB230825632', 'Quantum Global Securities Ltd. 608, 6th Floor, Pragati Tower 26, Rajendra Place, Delhi - 110008'),
+('Saffron Equity Advisors Pvt Ltd','Capital Market','INZ000174937','H-130, Bhoomi Green, Raheja Estate, Kulupwadi, Borivali (E), Mumbai - 400066')]
 
 
 designations = ['CEO', 'CFO', 'Managing Director', 'President', 'Independent Director', 'Regular Employee']
@@ -126,7 +126,7 @@ class Company:
     self.id = StringGenerator('[\d]{5}').render() # 5 digit company code
     self.name = this_tuple[0]
     self.type = this_tuple[1]
-    self.address = np.random.choice(a = cities)
+    self.address = this_tuple[2]
     self.phone = StringGenerator('[7-9]{3}[\d]{7}').render()
 
 class Brokerage:
@@ -135,7 +135,7 @@ class Brokerage:
     self.name = this_tuple[0]
     self.segments = this_tuple[1]
     self.sebi_no = this_tuple[2]
-    self.address = np.random.choice(a = cities)
+    self.address = this_tuple[3]
     self.phone = StringGenerator('[7-9]{3}[\d]{7}').render()
 
 # look at NSE website for event types and whether all have broadcast dates
