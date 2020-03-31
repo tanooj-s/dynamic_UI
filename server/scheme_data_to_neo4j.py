@@ -182,7 +182,7 @@ company_objects = [Company(i) for i in range(len(company_tuples))]
 print("Generating brokerage objects...")
 brokerage_objects = [Brokerage(i) for i in range(len(brokerage_tuples))]
 print("Generating client objects...")
-client_objects = [Client() for _ in range(100)] # create 100 random clients
+client_objects = [Client() for _ in range(200)] # create 200 random clients
 
 
 #------------ Neo4j transaction functions to create nodes/relationships ---------
@@ -223,7 +223,7 @@ def create_and_match_trade(tx, trade, client, company):
   tx.run('''MATCH (trade:Trade{ISIN:$ISIN}) WITH trade
           OPTIONAL MATCH (client:Client{id:$client_id})-[:trades_through]->(brokerage) WITH trade, client, brokerage
           OPTIONAL MATCH (company:Company{id:$company_id}) WITH trade, client, brokerage, company
-          MERGE (client)-[:trades_through]->(brokerage)-[:executed]->(trade)-[:part_of]->(company)''', # needs to be surjective
+          MERGE (brokerage)<-[:trades_through]-(client)-[:executed]->(trade)-[:part_of]->(company)''', # changed this last marge so that clients explicitly associated with trades for companies
           ISIN=trade.ISIN, client_id=client.id, company_id=company.id)
 
 
@@ -259,7 +259,7 @@ with driver.session() as session:
   print("\n")
 
   # generate trades, match to existing client, company, brokerage objects
-  for i in range(500):
+  for i in range(1000):
     this_trade = Trade()
     this_client = np.random.choice(client_objects)
     trade_company = np.random.choice(company_objects)
@@ -283,12 +283,15 @@ RELATIONSHIPS FOR EACH NODE TYPE
 (CLIENT)-[:is_kmp]->(BROKERAGE)
 (CLIENT)-[:authorized_person]->(BROKERAGE)
 
-(CLIENT)-[:through]->(BROKERAGE)-[:executes]->(TRADE)-[:part_of]->(COMPANY)
+(BROKERAGE)<-[:through]-(CLIENT)-[:executes]->(TRADE)-[:part_of]->(COMPANY)
 '''
 # first generate companies and brokerages
 # then generate events, link to companies
 # then generate clients, match to companies and brokerages, but only works_for/is_kmp/is_independent_director etc
 # then generate trades and link back to companies, although this will take a bit of thought
+
+# CYPHER QUERY FOR KMP WHO TRADE IN THEIR OWN COMPANY (not necessarily fraudulent, that will depend on trade and event timestamps)
+# match(n:Client)-[:is_kmp_for]->(m:Company) with n,m match (n)-[:executed]-(t:Trade)-[:part_of]->(m) RETURN n.name as client, n.designation as designation, m.name as company, t.volume as volume, t.type as type, t.share_price as share_price, t.timestamp as timestamp
 
 # I guess just generate law abiders first then try and hard code fraud cases later
 # and then later on add some kind of history for share prices for each company - will need to associate share price at a timestamp and match to trade timestamps
