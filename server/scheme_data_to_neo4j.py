@@ -259,7 +259,7 @@ with driver.session() as session:
   print("\n")
 
   # generate trades, match to existing client, company, brokerage objects
-  for i in range(1000):
+  for i in range(10000):
     this_trade = Trade()
     this_client = np.random.choice(client_objects)
     trade_company = np.random.choice(company_objects)
