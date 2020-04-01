@@ -8,13 +8,14 @@ import SearchList from './search-list'
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NotFound from './404NotFound';
+import D3Neo from './components/d3graph/d3neo';
 
 
 const routing = (
 
     <Router>
       <div>
-        <Route path="/" component={App} />
+        <Route path="/" component={D3Neo} />
         <Route path="/search-form" component={SearchForm} />
         <Route path="/search-list" component={SearchList} />
         <Route path="/404NotFound" component={NotFound}/>
