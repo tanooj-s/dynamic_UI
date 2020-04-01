@@ -8,13 +8,14 @@ from strgen import StringGenerator
 from faker import Faker
 from tqdm import tqdm # progress bar
 
-from neo4j import GraphDatabase
+import neo4j
 
-# ------------- USING OFFICIAL NEO4J-PYTHON DRIVER THROUGH BOLT PROTOCOL -------------------
+# ------------- USING NEO4J-CONNECTOR OBJECT THROUGH HTTP  -------------------
+
 
 
 print("Connecting to graph db....")
-driver = neo4j.GraphDatabase.driver(uri="bolt://localhost:7687", auth=("neo4j","12345")) # potentially supposed to be faster, but no support for Bolt
+connector = neo4j.Connector('http://localhost:7474', ('neo4j','12345')) # alternate to official python driver, potentially supposed to be faster, but no support for Bolt
 
 # 3-tuples of form (name, category, corporate address)
 company_tuples = [
@@ -241,47 +242,69 @@ def create_and_match_trade(tx, trade, client, company, timestamp):
 
 
 
-with driver.session() as session:
-  session.run('MATCH (n) detach delete n') # flush db first
-  #first create all company nodes, then attach event nodes to each
-  for company in tqdm(company_objects):
-    #session.write_transaction(create_company_node, company)
-    connector.run('CREATE (c:Company{name:$name, id:$id, type:$type, address:$address, phone:$phone})',
-          parameters = {'name': company.name, 'id': company.id, 'type': company.type, 'address': company.address, 'phone': company.phone})
-    print("Created node for " + company.name)
-    for _ in range(np.random.randint(1,11)): # random number of events up to 10 per company
-      this_event = Event()
-      session.write_transaction(create_and_match_event, this_event, company)
-      print(company.name + " <------ " + this_event.type)
-    print("------------------------")
-    print("\n")
-
-  #then create all brokerage nodes
-  for brokerage in tqdm(brokerage_objects):
-    session.write_transaction(create_brokerage_node, brokerage)
-      print("Created brokerage node for " + brokerage.name)
+#with driver.session() as session:
+#session.run('MATCH (n) detach delete n') # flush db first
+connector.run('MATCH (n) detach delete n')
+#first create all company nodes, then attach event nodes to each
+for company in tqdm(company_objects):
+  #session.write_transaction(create_company_node, company)
+  connector.run('CREATE (c:Company{name:$name, id:$id, type:$type, address:$address, phone:$phone})',
+        parameters = {'name': company.name, 'id': company.id, 'type': company.type, 'address': company.address, 'phone': company.phone})
+  print("Created node for " + company.name)
+  for _ in range(np.random.randint(1,11)): # random number of events up to 10 per company
+    this_event = Event()
+    #session.write_transaction(create_and_match_event, this_event, company)
+    connector.run('MATCH (company:Company{name:$company_name}) WITH company MERGE (company)-[:had_event]->(e:Event{type:$type, broadcast_date:$broadcast_date, pdf_link:$pdf_link})',
+        parameters = {'company_name': company.name, 'type': this_event.type, 'broadcast_date': this_event.broadcast_date, 'pdf_link': this_event.pdf_link})
+    print(company.name + " <------ " + this_event.type)
   print("------------------------")
   print("\n")
 
-  # create unique works_for/is_kmp for all generated client nodes and unique brokerages they trade through
-  for client in tqdm(client_objects):
-    works_for_company = np.random.choice(company_objects)
-    trading_brokerage = np.random.choice(brokerage_objects)
-    session.write_transaction(create_client_match_to_company_and_brokerage, client, works_for_company, trading_brokerage)
-    print("Created client node: " + client.name + " works for " + works_for_company.name + ", trades through "  + trading_brokerage.name)
-  print("------------------------")
-  print("\n")
+#then create all brokerage nodes
+for brokerage in tqdm(brokerage_objects):
+  #session.write_transaction(create_brokerage_node, brokerage)
+  connector.run('CREATE (b:Brokerage{name:$name, sebi_no:$sebi_no, segments:$segments, address:$address, phone:$phone})',
+        parameters = {'name': brokerage.name, 'sebi_no': brokerage.sebi_no, 'segments': brokerage.segments, 'address': brokerage.address, 'phone': brokerage.phone})
+  print("Created brokerage node for " + brokerage.name)
+print("------------------------")
+print("\n")
 
-  # generate trades, match to existing client, company, brokerage objects
-  for timestamp in tqdm(generated_timestamps[:10000]):
-    this_trade = Trade()
-    this_client = np.random.choice(client_objects)
-    trade_company = np.random.choice(company_objects)
-    trade_company.update_price() # update this compay's share price at this timestamp
-    session.write_transaction(create_and_match_trade, this_trade, this_client, trade_company, timestamp)
-     print ("Executed trade at " + str(timestamp) + ": " + this_client.name + " --> " + trade_company.name)
-    print (this_trade.type + " " + str(this_trade.volume) + " shares at " + str(trade_company.share_price))
-    print("-------------")
+# create unique works_for/is_kmp for all generated client nodes and unique brokerages they trade through
+for client in tqdm(client_objects):
+  works_for_company = np.random.choice(company_objects)
+  trading_brokerage = np.random.choice(brokerage_objects)
+  #session.write_transaction(create_client_match_to_company_and_brokerage, client, works_for_company, trading_brokerage)
+  connector.run('''
+    CREATE (client:Client{name:$name, id:$client_id, address:$address, email:$email, designation:$designation, phone:$phone, bank:$bank, pan:$pan}) WITH client
+    MATCH (company:Company{id:$company_id}) WITH client, company
+    MERGE (client)-[:works_for{employed_as:$designation}]->(company) WITH client
+    MATCH (brokerage:Brokerage{sebi_no:$sebi_no}) WITH client, brokerage
+    MERGE (client)-[:trades_through]->(brokerage)
+    ''',
+    parameters = {'name':client.name, 'client_id': client.id, 'address': client.address, 'email': client.email, 'designation': client.designation, 'phone': client.phone, 'bank': client.bank, 'pan': client.pan,
+              'company_id': works_for_company.id,
+              'sebi_no': trading_brokerage.sebi_no})
+  print("Created client node: " + client.name + " works for " + works_for_company.name + ", trades through "  + trading_brokerage.name)
+print("------------------------")
+print("\n")
+
+# generate trades, match to existing client, company, brokerage objects
+for timestamp in tqdm(generated_timestamps[:10000]):
+  this_trade = Trade()
+  this_client = np.random.choice(client_objects)
+  trade_company = np.random.choice(company_objects)
+  trade_company.update_price() # update this compay's share price at this timestamp
+  #session.write_transaction(create_and_match_trade, this_trade, this_client, trade_company, timestamp)
+  connector.run('''
+    CREATE (trade:Trade{type:$type, exchange:$exchange, ISIN:$ISIN, volume:$volume, timestamp:$timestamp, share_price:$share_price}) WITH trade
+    OPTIONAL MATCH (client:Client{id:$client_id})-[:trades_through]->(brokerage) WITH trade, client, brokerage
+    OPTIONAL MATCH (company:Company{id:$company_id}) WITH trade, client, brokerage, company
+    MERGE (brokerage)<-[:trades_through]-(client)-[:executed]->(trade)-[:part_of]->(company)
+    ''',
+    parameters = {'type': this_trade.type, 'exchange': this_trade.exchange, 'ISIN': this_trade.ISIN, 'volume': this_trade.volume, 'timestamp': timestamp, 'share_price': trade_company.share_price, 'client_id': this_client.id, 'company_id': trade_company.id})
+  print ("Executed trade at " + str(timestamp) + ": " + this_client.name + " --> " + trade_company.name)
+  print (this_trade.type + " " + str(this_trade.volume) + " shares at " + str(trade_company.share_price))
+  print("-------------")
 
 
 
