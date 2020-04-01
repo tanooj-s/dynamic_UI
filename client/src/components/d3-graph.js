@@ -31,44 +31,46 @@ class D3Graph extends React.Component {
 		this.getData()
 	}
 
-	getData() {
-		const session = this.driver.session();
-		session.run(`
-		Match(l:Brokerage)-[:BROKERS_FOR]->(m:Client)-[:WORKS_FOR]->(a:Company)\
-		return m.name as client, collect(a.name) as comp, l.name as bro\
-		Limit{limit}`,{ limit: 1000 })
-			.then(results => {
-				var nodes = [], rels = [], i = 0
-				console.log(results)
-				results.records.forEach(res => {
-					nodes.push({ title: res.get('bro'), label: 'Broker' })
-					nodes.push({ title: res.get('client'), label: "Client" })
-					var target = i
-					i++
+	
+  getData = () => {
+    const session = this.driver.session();
+    session.run(
+      `MATCH (l)-[m]-(n)
 
-					res.get('comp').forEach(name => {
-						var comps = { title: name, label: 'Comapany' }
-						var source = _.findIndex(nodes, comps)
-						if (source === -1) {
-							nodes.push(comps);
-							source = i;
-							i++
-						}
-						rels.push({ source, target })
-					})
-				})
-				// set the nodes and links in the state
-				this.setState({
-					nodes_data: nodes,
-					relations: rels
-					, loaded: false
-				})
-				session.close()
-			}).catch(e => {
-				console.log(e);
-				session.close();
-			})
-	}
+      RETURN * Limit{limit}`, { limit: 10000 })
+      .then(results => {
+        const snodes = results.records.map(res => {
+          for(let i=0;i<3;i+=1){
+
+            return {
+              id: res._fields[i].identity['low'],
+              label: res._fields[i].labels[0],
+              prop: res._fields[i].properties            
+            } 
+          }
+        })
+        console.log(snodes);
+        
+        const links=results.records.map(res=>{
+          return{
+            source:res._fields[1].start.low,
+            target:res._fields[1].end.low,
+            labels:res._fields[1].type
+          }
+        })
+        this.setState({
+          nodes_data: snodes,
+          relations: links,
+          isLoaded: true,
+        })
+        session.close();
+      })
+
+    .catch(error => {
+      console.log(error);
+    });
+  }
+
 
 	componentDidUpdate(){
 		this.createChart()
