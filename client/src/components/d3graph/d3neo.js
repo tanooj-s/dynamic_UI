@@ -2,9 +2,10 @@ import { mapToArray, promptAlert, setupNeo4jLoginForAjax, removeAlert } from '..
 import React from 'react'
 import * as d3 from 'd3';
 import { Button } from 'reactstrap';
-import { InputGroup, InputGroupAddon, InputGroupText, Input } from 'reactstrap';
+// import { InputGroup, InputGroupAddon, InputGroupText, Input } from 'reactstrap';
 import $ from 'jquery';
 import './d3.css'
+
 
 
 class D3Neo extends React.Component {
@@ -245,7 +246,7 @@ class D3Neo extends React.Component {
 
             circles = d3.select('#circle-group').selectAll('circle')
                 .data(d3Simulation.nodes(), function (d) { return d.id; })
-                .attr('fill', function (d) { return getColorBrighter(getItemColor(d)); });
+                .attr('fill', function (d) { return getColorBrighter(getItemColor(d)) });
             circleText = d3.select('#text-group').selectAll('text')
                 .data(d3Simulation.nodes(), function (d) { return d.id; });
             lines = d3.select('#path-group').selectAll('path')
@@ -358,10 +359,76 @@ class D3Neo extends React.Component {
                 .on('tick', tick);
         }
 
+        function findbutton(nodeID) {
+            removeAlert();
+
+            var queryStr = "match p = (a:Client{name:'Alan Morris'})-[*]->(c:Company) return  p"
+
+
+            stopSimulation();
+
+            if (nodeID == null || !nodeID) {
+                nodeItemMap = {};
+                linkItemMap = {};
+            }
+
+            var jqxhr = $.post(neo4jAPIURL, '{"statements":[{"statement":"' + queryStr + '", "resultDataContents":["graph"]}]}',
+                function (data) {
+                    //console.log(JSON.stringify(data));
+                    if (data.errors != null && data.errors.length > 0) {
+                        promptAlert($('#graphContainer'), 'Error: ' + data.errors[0].message + '(' + data.errors[0].code + ')', true);
+                        return;
+                    }
+
+                    if (data.results != null && data.results.length > 0 && data.results[0].data != null && data.results[0].data.length > 0) {
+                        var neo4jDataItmArray = data.results[0].data;
+                        neo4jDataItmArray.forEach(function (dataItem) {
+                            //Node
+                            if (dataItem.graph.nodes != null && dataItem.graph.nodes.length > 0) {
+                                var neo4jNodeItmArray = dataItem.graph.nodes;
+                                neo4jNodeItmArray.forEach(function (nodeItm) {
+                                    if (!(nodeItm.id in nodeItemMap))
+                                        nodeItemMap[nodeItm.id] = nodeItm;
+                                });
+                            }
+                            //Link
+                            if (dataItem.graph.relationships != null && dataItem.graph.relationships.length > 0) {
+                                var neo4jLinkItmArray = dataItem.graph.relationships;
+                                neo4jLinkItmArray.forEach(function (linkItm) {
+                                    if (!(linkItm.id in linkItemMap)) {
+                                        linkItm.source = linkItm.startNode;
+                                        linkItm.target = linkItm.endNode;
+                                        linkItemMap[linkItm.id] = linkItm;
+                                    }
+                                });
+                            }
+                        });
+
+                        console.log('nodeItemMap.size:' + Object.keys(nodeItemMap).length);
+                        console.log('linkItemMap.size:' + Object.keys(linkItemMap).length);
+
+                        updateGraph();
+                        return;
+                    }
+
+                    //also update graph when empty
+                    updateGraph();
+                    promptAlert($('#graphContainer'), 'No record found !', false);
+                }, 'json');
+
+            jqxhr.fail(function (data) {
+                promptAlert($('#graphContainer'), 'Error: submitted query text but got error return (' + data + ')', true);
+            });
+            $("#btnall").click(function () {
+                alert("The paragraph was clicked.");
+            });
+        }
+
         function submitQuery(nodeID) {
             removeAlert();
 
             var queryStr = null;
+            var query = "match p = (a:Client{name:'Alan Morris'})-[*]->(c:Company) return  p"
             if (nodeID == null || !nodeID) {
                 queryStr = $.trim($('#queryText').val());
                 if (queryStr == '') {
@@ -370,8 +437,11 @@ class D3Neo extends React.Component {
                 }
                 if ($('#chkboxCypherQry:checked').val() != 1)
                     queryStr = 'match (n) where n.name =~ \'(?i).*' + queryStr + '.*\' return n';
-            } else
+            }
+
+            else
                 queryStr = 'match (n)-[j]-(k) where id(n) = ' + nodeID + ' return n,j,k';
+
 
             stopSimulation();
 
@@ -457,7 +527,7 @@ class D3Neo extends React.Component {
             });
 
             $('#btnSend').click(function () { submitQuery() });
-
+            $('#btnall').click(function () { findbutton() })
             $('#chkboxCypherQry').change(function () {
                 if (this.checked)
                     $('#queryText').prop('placeholder', 'Cypher');
@@ -481,8 +551,13 @@ class D3Neo extends React.Component {
 
                                 <i class="fa fa-check" aria-hidden="true"></i> Send &nbsp;
         </button> &nbsp;
+        <button type="button" class="btn btn-outline-primary btn-sm" id="btnall" value="1">
+
+                                <i class="fa fa-check" aria-hidden="true"></i> Stored query &nbsp;
+</button> &nbsp;
                             <input class="form-check-input" type="checkbox" id="chkboxCypherQry" value="1" />
                             <label class="form-check-label" for="chkboxCypherQry">Use Cypher Query</label>
+
                         </div>
                     </div>
                 </div>

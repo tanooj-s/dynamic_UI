@@ -35,6 +35,7 @@ import {
   DropdownItem,
   DropdownMenu,
   } from 'reactstrap';
+import D3Neo from './components/d3graph/d3neo';
 // import Highcharts from 'highcharts';
 
 class App extends React.Component {
@@ -274,7 +275,7 @@ class App extends React.Component {
                   case 'indi_m2m':
                     return <M2M data={this.state.response_data.all_m2m} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_graph':
-                    return <D3Graph data={this.state.response_data} />
+                    return <D3Neo />
                   case 'indi_sebialerts':
                     return <SebiAlerts data={this.state.response_data.sebialerts} client_name={this.state.response_data.profile[0].ClientName} />
                   case'indi_tradedesc':
