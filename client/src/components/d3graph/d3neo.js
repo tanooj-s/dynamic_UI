@@ -12,11 +12,21 @@ class D3Neo extends React.Component {
     constructor(props) {
         super(props)
         this.createChart = this.createChart.bind(this)
+        this.queries = {
+            // query for kmp who trade in company they work for
+            q1: "MATCH (n)-[r:works_for]-(m) WHERE n.designation <> 'Regular Employee' WITH n,r,m MATCH (n)-[e:executed]-(t)-[p:part_of]-(m) RETURN n,r,m,e,p,t",
+            // query for people who make trades in the same company, should be parameterized by company
+            q2: "MATCH (c1:Client)-[e1:executed]->(t1)-[p1:part_of]->(company:Company)<-[p2:part_of]-(t2)<-[e2:executed]-(c2:Client) WITH c1, c2, company MERGE (c1)-[cot1:cotrader]->(company)<-[cot2:cotrader]-(c2) RETURN c1, c2, cot1, cot2, company LIMIT 100",
+            // query for people who trade through the same brokerage
+            q3: "MATCH (c1:Client)-[:trades_through]->(b:Brokerage)<-[:trades_through]-(c2:Client) RETURN c1, c2, b"
+        }
     }
 
     componentDidMount() {
         this.createChart()
     }
+
+
 
 
     createChart() {
@@ -359,88 +369,21 @@ class D3Neo extends React.Component {
                 .on('tick', tick);
         }
 
-        function findbutton(nodeID) {
-            removeAlert();
-
-            var queryStr = "match p = (a:Client{name:'Alan Morris'})-[*]->(c:Company) return  p"
-
-
-            stopSimulation();
-
-            if (nodeID == null || !nodeID) {
-                nodeItemMap = {};
-                linkItemMap = {};
-            }
-
-            var jqxhr = $.post(neo4jAPIURL, '{"statements":[{"statement":"' + queryStr + '", "resultDataContents":["graph"]}]}',
-                function (data) {
-                    //console.log(JSON.stringify(data));
-                    if (data.errors != null && data.errors.length > 0) {
-                        promptAlert($('#graphContainer'), 'Error: ' + data.errors[0].message + '(' + data.errors[0].code + ')', true);
-                        return;
-                    }
-
-                    if (data.results != null && data.results.length > 0 && data.results[0].data != null && data.results[0].data.length > 0) {
-                        var neo4jDataItmArray = data.results[0].data;
-                        neo4jDataItmArray.forEach(function (dataItem) {
-                            //Node
-                            if (dataItem.graph.nodes != null && dataItem.graph.nodes.length > 0) {
-                                var neo4jNodeItmArray = dataItem.graph.nodes;
-                                neo4jNodeItmArray.forEach(function (nodeItm) {
-                                    if (!(nodeItm.id in nodeItemMap))
-                                        nodeItemMap[nodeItm.id] = nodeItm;
-                                });
-                            }
-                            //Link
-                            if (dataItem.graph.relationships != null && dataItem.graph.relationships.length > 0) {
-                                var neo4jLinkItmArray = dataItem.graph.relationships;
-                                neo4jLinkItmArray.forEach(function (linkItm) {
-                                    if (!(linkItm.id in linkItemMap)) {
-                                        linkItm.source = linkItm.startNode;
-                                        linkItm.target = linkItm.endNode;
-                                        linkItemMap[linkItm.id] = linkItm;
-                                    }
-                                });
-                            }
-                        });
-
-                        console.log('nodeItemMap.size:' + Object.keys(nodeItemMap).length);
-                        console.log('linkItemMap.size:' + Object.keys(linkItemMap).length);
-
-                        updateGraph();
-                        return;
-                    }
-
-                    //also update graph when empty
-                    updateGraph();
-                    promptAlert($('#graphContainer'), 'No record found !', false);
-                }, 'json');
-
-            jqxhr.fail(function (data) {
-                promptAlert($('#graphContainer'), 'Error: submitted query text but got error return (' + data + ')', true);
-            });
-            $("#btnall").click(function () {
-                alert("The paragraph was clicked.");
-            });
-        }
-
-        function submitQuery(nodeID) {
+        function submitQuery(nodeID,query) {
             removeAlert();
 
             var queryStr = null;
-            var query = "match p = (a:Client{name:'Alan Morris'})-[*]->(c:Company) return  p"
+            var query = 'match (n)-[j]-(k) where n.name = "${this.props.client_name}" return n,j,k'
             if (nodeID == null || !nodeID) {
                 queryStr = $.trim($('#queryText').val());
                 if (queryStr == '') {
                     promptAlert($('#graphContainer'), 'Error: query text cannot be empty !', true);
                     return;
                 }
-                if ($('#chkboxCypherQry:checked').val() != 1)
-                    queryStr = 'match (n) where n.name =~ \'(?i).*' + queryStr + '.*\' return n';
             }
 
             else
-                queryStr = 'match (n)-[j]-(k) where id(n) = ' + nodeID + ' return n,j,k';
+                queryStr = 'match (n)-[j]-(k) where n.name =~ \'(?i).*' + this.props.client_name + '.*\' return n,j,k';;
 
 
             stopSimulation();
@@ -527,7 +470,6 @@ class D3Neo extends React.Component {
             });
 
             $('#btnSend').click(function () { submitQuery() });
-            $('#btnall').click(function () { findbutton() })
             $('#chkboxCypherQry').change(function () {
                 if (this.checked)
                     $('#queryText').prop('placeholder', 'Cypher');
@@ -545,19 +487,18 @@ class D3Neo extends React.Component {
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col col-12 col-md-12 form-inline">
-
-                            <input type="text" class="form-control form-control-sm" size="40px" id="queryText" placeholder="Search Field" />
+                            <input type="text" class="form-control form-control-sm" size="40px" id="queryText" />
                             <button type="button" class="btn btn-outline-primary btn-sm" id="btnSend">
-
                                 <i class="fa fa-check" aria-hidden="true"></i> Send &nbsp;
-        </button> &nbsp;
-        <button type="button" class="btn btn-outline-primary btn-sm" id="btnall" value="1">
-
+                            </button> &nbsp;
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnall" value="1">
                                 <i class="fa fa-check" aria-hidden="true"></i> Stored query &nbsp;
-</button> &nbsp;
-                            <input class="form-check-input" type="checkbox" id="chkboxCypherQry" value="1" />
+                            </button> &nbsp;
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnkmptrades" value="1">
+                                <i class="fa fa-check" aria-hidden="true"></i> Stored query &nbsp;
+                            </button> &nbsp;
+                            <input class="form-check-input" type="checkbox" id="chkboxCypherQry" checked />
                             <label class="form-check-label" for="chkboxCypherQry">Use Cypher Query</label>
-
                         </div>
                     </div>
                 </div>

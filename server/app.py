@@ -4,8 +4,6 @@ import json
 import numpy as np
 import pandas as pd
 import ast
-from neo4j import GraphDatabase
-import networkx
 import json
 
 
