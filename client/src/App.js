@@ -34,7 +34,7 @@ import {
   DropdownToggle,
   DropdownItem,
   DropdownMenu,
-  } from 'reactstrap';
+} from 'reactstrap';
 import D3Neo from './components/d3graph/d3neo';
 // import Highcharts from 'highcharts';
 
@@ -81,7 +81,9 @@ class App extends React.Component {
     this.setState({ tab_display: this.state.tab_display + 1 })
 
   }
-
+  async componentDidMount(event) {
+    this.getResponse()
+  }
 
   async getResponse(url, data) {
     let out_data = [] // try to set this as a string instead
@@ -117,7 +119,7 @@ class App extends React.Component {
 
         <div className="navbar" id="navbar" sticky="top">
           <div className="logo">
-            <a href={''} ><img src={companylogo}  className="small-logo" /></a>
+            <a href={''} ><img src={companylogo} className="small-logo" /></a>
           </div>
 
           <Nav tabs>
@@ -153,8 +155,8 @@ class App extends React.Component {
               <button className="fbutton">Search</button>
             </form>
           </div>
-          {this.state.tab_display >0?
-          <div className="vl" ></div>:<div></div>
+          {this.state.tab_display > 0 ?
+            <div className="vl" ></div> : <div></div>
           }
           {this.state.tab_display === 0 ? (<Nav></Nav>)
             : (this.state.query_type === "indi" ?
@@ -278,9 +280,9 @@ class App extends React.Component {
                     return <D3Neo client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_sebialerts':
                     return <SebiAlerts data={this.state.response_data.sebialerts} client_name={this.state.response_data.profile[0].ClientName} />
-                  case'indi_tradedesc':
+                  case 'indi_tradedesc':
                     return <TradeDiscrepancy data={this.state.response_data.tradedesc} client_name={this.state.response_data.profile[0].ClientName} />
-                    case 'indi_dashboard':
+                  case 'indi_dashboard':
                     return <ClientProfile data={this.state.response_data} />;
                   default:
                     return <ClientProfile data={this.state.response_data} />;

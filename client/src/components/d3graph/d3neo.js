@@ -455,6 +455,8 @@ class D3Neo extends React.Component {
                 queryStr = que.q1
             else if ($('#q2').val() != 0)
                 queryStr = que.q2;
+            else if ($('#q3').val() != 0)
+                queryStr = que.q3;
 
 
             stopSimulation();
@@ -542,15 +544,24 @@ class D3Neo extends React.Component {
 
             $('#btnSend').click(function () { submitQuery() });
             // select the query depending on the button need to push it to the submit query
-            $('#q1, #q2').click(function () {
+            $('#q1, #q2,#q3').click(function () {
                 if (this.id == 'q1') {
                     $('#q2').val(0)
+                    $('#q3').val(0)
                     $('#q1').val(1)
 
                 }
                 else if (this.id == 'q2') {
                     $('#q1').val(0)
                     $('#q2').val(1)
+                    $('#q3').val(0)
+
+
+                }
+                else if (this.id == 'q3') {
+                    $('#q1').val(0)
+                    $('#q2').val(0)
+                    $('#q3').val(1)
 
                 }
                 storedQuery()
@@ -590,6 +601,10 @@ class D3Neo extends React.Component {
 
                                 <i className="fa fa-check" aria-hidden="true"></i> Employee Traders&nbsp;
                             </button> &nbsp;
+                            <button type="button" className="btn btn-outline-primary btn-sm" id="q3" value="0">
+
+                                <i className="fa fa-check" aria-hidden="true"></i> Same Brokerage&nbsp;
+</button> &nbsp;
                             <input className="form-check-input" type="checkbox" id="chkboxCypherQry" value="1" />
                             <label className="form-check-label" htmlFor="chkboxCypherQry">Use Cypher Query</label>
 

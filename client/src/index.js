@@ -15,7 +15,7 @@ const routing = (
 
     <Router>
       <div>
-        <Route path="/" component={D3Neo} />
+        <Route path="/" component={App} />
         <Route path="/search-form" component={SearchForm} />
         <Route path="/search-list" component={SearchList} />
         <Route path="/404NotFound" component={NotFound}/>
