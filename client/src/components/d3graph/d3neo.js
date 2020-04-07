@@ -23,21 +23,11 @@ class D3Neo extends React.Component {
             q3: "MATCH (c1:Client)-[r:trades_through]->(b:Brokerage)<-[r1:trades_through]-(c2:Client) RETURN c1, c2, r,r1,b limit 1000 "
         }
         this.createChart = this.createChart.bind(this)
-        this.queries = {
-            // query for kmp who trade in company they work for
-            q1: "MATCH (n)-[r:works_for]-(m) WHERE n.designation <> 'Regular Employee' WITH n,r,m MATCH (n)-[e:executed]-(t)-[p:part_of]-(m) RETURN n,r,m,e,p,t",
-            // query for people who make trades in the same company, should be parameterized by company
-            q2: "MATCH (c1:Client)-[e1:executed]->(t1)-[p1:part_of]->(company:Company)<-[p2:part_of]-(t2)<-[e2:executed]-(c2:Client) WITH c1, c2, company MERGE (c1)-[cot1:cotrader]->(company)<-[cot2:cotrader]-(c2) RETURN c1, c2, cot1, cot2, company LIMIT 100",
-            // query for people who trade through the same brokerage
-            q3: "MATCH (c1:Client)-[:trades_through]->(b:Brokerage)<-[:trades_through]-(c2:Client) RETURN c1, c2, b"
-        }
     }
 
     componentDidMount() {
         this.createChart()
     }
-
-
 
 
     createChart() {
@@ -380,7 +370,6 @@ class D3Neo extends React.Component {
             d3Simulation
                 .on('tick', tick);
         }
-<<<<<<< HEAD
         function submitQuery(nodeID) {
             removeAlert();
 
@@ -466,24 +455,6 @@ class D3Neo extends React.Component {
                 queryStr = que.q1
             else if ($('#q2').val() != 0)
                 queryStr = que.q2;
-=======
-
-        function submitQuery(nodeID,query) {
-            removeAlert();
-
-            var queryStr = null;
-            var query = 'match (n)-[j]-(k) where n.name = "${this.props.client_name}" return n,j,k'
-            if (nodeID == null || !nodeID) {
-                queryStr = $.trim($('#queryText').val());
-                if (queryStr == '') {
-                    promptAlert($('#graphContainer'), 'Error: query text cannot be empty !', true);
-                    return;
-                }
-            }
-
-            else
-                queryStr = 'match (n)-[j]-(k) where n.name =~ \'(?i).*' + this.props.client_name + '.*\' return n,j,k';;
->>>>>>> c7388e41930c1462a2a3a7367a77d56fcf87e442
 
 
             stopSimulation();
@@ -570,7 +541,6 @@ class D3Neo extends React.Component {
             });
 
             $('#btnSend').click(function () { submitQuery() });
-<<<<<<< HEAD
             // select the query depending on the button need to push it to the submit query
             $('#q1, #q2').click(function () {
                 if (this.id == 'q1') {
@@ -589,8 +559,6 @@ class D3Neo extends React.Component {
 
 
 
-=======
->>>>>>> c7388e41930c1462a2a3a7367a77d56fcf87e442
             $('#chkboxCypherQry').change(function () {
                 if (this.checked)
                     $('#queryText').prop('placeholder', 'Cypher');
@@ -605,7 +573,6 @@ class D3Neo extends React.Component {
         return (
             <div>
 
-<<<<<<< HEAD
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col col-12 col-md-12 form-inline">
@@ -626,23 +593,6 @@ class D3Neo extends React.Component {
                             <input className="form-check-input" type="checkbox" id="chkboxCypherQry" value="1" />
                             <label className="form-check-label" htmlFor="chkboxCypherQry">Use Cypher Query</label>
 
-=======
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col col-12 col-md-12 form-inline">
-                            <input type="text" class="form-control form-control-sm" size="40px" id="queryText" />
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnSend">
-                                <i class="fa fa-check" aria-hidden="true"></i> Send &nbsp;
-                            </button> &nbsp;
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnall" value="1">
-                                <i class="fa fa-check" aria-hidden="true"></i> Stored query &nbsp;
-                            </button> &nbsp;
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnkmptrades" value="1">
-                                <i class="fa fa-check" aria-hidden="true"></i> Stored query &nbsp;
-                            </button> &nbsp;
-                            <input class="form-check-input" type="checkbox" id="chkboxCypherQry" checked />
-                            <label class="form-check-label" for="chkboxCypherQry">Use Cypher Query</label>
->>>>>>> c7388e41930c1462a2a3a7367a77d56fcf87e442
                         </div>
                     </div>
                 </div>
