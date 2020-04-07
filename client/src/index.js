@@ -21,7 +21,7 @@ const routing = (
         <Route path="/404NotFound" component={NotFound}/>
       </div>
     </Router>
-  )
+  ) 
 
 ReactDOM.render(routing, document.getElementById('root'));
 
