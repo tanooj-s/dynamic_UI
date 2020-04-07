@@ -4,6 +4,7 @@ import datetime
 import string
 import random
 import names
+import time
 from strgen import StringGenerator
 from faker import Faker
 from tqdm import tqdm # progress bar
@@ -13,9 +14,11 @@ import neo4j
 # ------------- USING NEO4J-CONNECTOR OBJECT THROUGH HTTP  -------------------
 
 
-
-print("Connecting to graph db....")
+start = time.time()
+print("Connecting to graph db at http localhost through port 7474...")
 connector = neo4j.Connector('http://localhost:7474', ('neo4j','12345')) # alternate to official python driver, potentially supposed to be faster, but no support for Bolt
+
+np.random.seed(32) # --> so that repeat simulations yield the same results
 
 # 3-tuples of form (name, category, corporate address)
 company_tuples = [
@@ -87,6 +90,7 @@ brokerage_tuples = [
 
 
 designations = ['Executive Management', 'Director', 'Managing Director', 'President', 'Independent Director', 'Regular Employee']
+designation_probabilities = [0.03, 0.02, 0.02, 0.02, 0.01, 0.9]
 
 banks = ['State Bank of India', 'Karnataka Bank', 'Oriental Bank of Commerce', 'Allahabad Bank', 'ICICI Bank', 'Yes Bank',
         'Axis Bank', 'Bank of Baroda', 'Punjab National Bank', 'HDFC', 'IDBI', 'IndusInd Bank', 'Kotak Mahindra Bank',
@@ -118,9 +122,10 @@ city_probabilities = [
 
 email_domains = ['@gmail.com','@yahoo.com','@protonmail.com','@hotmail.com']
 
-event_types = ['Board Meeting', 'Financial Report', 'Dividend', 'Bonus', 'Buyback', 'Consolidation',
-              'Reduction in Capital', 'Investor Call', 'Credit Rating Change', 'Change in Directors',
-              'Capital Restructuring', 'Raising of Funds'] # see whatever else there is, assign probabilities based on real events reported to NSE
+event_types = ['Board Meeting', 'Financial Report', 'Dividend', 'Bonus', 'Investor Call', 'Consolidation',
+              'Reduction in Capital',  'Credit Rating Change', 'Change in Directors', 'Raising of Funds']
+              # see whatever else there is, assign probabilities based on real events reported to NSE
+event_probabilities = [0.2, 0.3, 0.05, 0.05, 0.15, 0.05, 0.05, 0.05, 0.05, 0.05]
 
 print("Generating timestamps at seconds resolution for two month interval....")
 start_timestamp = datetime.datetime.strptime("01-02-2020 00:00:00", "%d-%m-%Y %H:%M:%S")
@@ -144,7 +149,7 @@ class Client:
     self.phone = StringGenerator('[7-9]{3}[\d]{7}').render()
     self.email = first_name.lower() + last_name.lower() + np.random.choice(a = email_domains)
     self.pan = StringGenerator('[A-Z]{5}[\d]{4}[A-Z]').render()
-    self.designation = np.random.choice(a = designations, p = [0.02, 0.02, 0.02, 0.02, 0.02, 0.9]) # change p per number of designations
+    self.designation = np.random.choice(a = designations, p = designation_probabilities) # change p per number of designations
     self.bank = np.random.choice(a = banks) # - technically these banks are also companies but can worry about that later
     #self.appointment_date = add this later, only applicable for KMP (which is iff designation =/= regular employee)
 
@@ -157,6 +162,7 @@ class Company:
     self.address = this_tuple[2]
     self.phone = StringGenerator('[7-9]{3}[\d]{7}').render()
     self.share_price = np.random.uniform(10.0,100.0) # initialize all share prices between 10 and 100
+    self.total_shares = int(np.random.choice(np.arange(10000,100000,100))) # create fixed number of shares for each company (that would technically change only after share split/buyback sorts of events)
 
   def update_price(self):
     up_down = np.random.choice(a = [-1,1])
@@ -165,7 +171,6 @@ class Company:
     if self.share_price < 0.0000:
       self.share_price = 0.0000
     # don't let share prices be negative!
-
 
 
 class Brokerage:
@@ -180,7 +185,7 @@ class Brokerage:
 # look at NSE website for event types and whether all have broadcast dates
 class Event:
   def __init__(self):
-    self.type = np.random.choice(a = event_types)
+    self.type = np.random.choice(a = event_types, p = event_probabilities)
     self.broadcast_date = np.random.choice(a = generated_timestamps)
     self.pdf_link = 'www.nseindia.com/corporates/' + StringGenerator('[\w]{15}').render() + '.pdf' # not real links but will look pretty real
 
@@ -189,7 +194,13 @@ class Trade:
     self.type = np.random.choice(a = ['buy', 'sell'])
     self.exchange = np.random.choice(a = ['NSE', 'BSE'])
     self.ISIN = StringGenerator('[\d]{12}').render() # 12 digit ISIN code
-    self.volume = str(100*np.random.random_integers(100)) # random share volumes up to 10000 in intervals of 100
+    self.volume = str(100*np.random.random_integers(100)) # random share volumes up to 20000 in intervals of 100
+    self.timestamp = np.random.choice(generated_timestamps)
+
+
+class Alert:
+  def __init__(self):
+    self.type = np.random.choice(a = ['Uniform KYC','AML-CFT Circulars'])
     self.timestamp = np.random.choice(generated_timestamps)
 
 
@@ -248,17 +259,19 @@ connector.run('MATCH (n) detach delete n')
 #first create all company nodes, then attach event nodes to each
 for company in tqdm(company_objects):
   #session.write_transaction(create_company_node, company)
-  connector.run('CREATE (c:Company{name:$name, id:$id, type:$type, address:$address, phone:$phone})',
-        parameters = {'name': company.name, 'id': company.id, 'type': company.type, 'address': company.address, 'phone': company.phone})
-  print("Created node for " + company.name)
+  connector.run('CREATE (c:Company{name:$name, id:$id, type:$type, address:$address, phone:$phone, total_shares:$total_shares})',
+        parameters = {'name': company.name, 'id': company.id, 'type': company.type, 'address': company.address, 'phone': company.phone, 'total_shares':company.total_shares})
+  print("Created node for " + company.name + " with " + str(company.total_shares) + " total floating shares")
   for _ in range(np.random.randint(1,11)): # random number of events up to 10 per company
     this_event = Event()
     #session.write_transaction(create_and_match_event, this_event, company)
     connector.run('MATCH (company:Company{name:$company_name}) WITH company MERGE (company)-[:had_event]->(e:Event{type:$type, broadcast_date:$broadcast_date, pdf_link:$pdf_link})',
         parameters = {'company_name': company.name, 'type': this_event.type, 'broadcast_date': this_event.broadcast_date, 'pdf_link': this_event.pdf_link})
-    print(company.name + " <------ " + this_event.type)
+    print(company.name + " <------ " + this_event.type + " on " + this_event.broadcast_date)
   print("------------------------")
   print("\n")
+
+
 
 #then create all brokerage nodes
 for brokerage in tqdm(brokerage_objects):
@@ -269,24 +282,35 @@ for brokerage in tqdm(brokerage_objects):
 print("------------------------")
 print("\n")
 
-# create unique works_for/is_kmp for all generated client nodes and unique brokerages they trade through
+
+
+# create unique works_for/is_kmp for all generated client nodes
 for client in tqdm(client_objects):
   works_for_company = np.random.choice(company_objects)
-  trading_brokerage = np.random.choice(brokerage_objects)
   #session.write_transaction(create_client_match_to_company_and_brokerage, client, works_for_company, trading_brokerage)
   connector.run('''
     CREATE (client:Client{name:$name, id:$client_id, address:$address, email:$email, designation:$designation, phone:$phone, bank:$bank, pan:$pan}) WITH client
     MATCH (company:Company{id:$company_id}) WITH client, company
-    MERGE (client)-[:works_for{employed_as:$designation}]->(company) WITH client
-    MATCH (brokerage:Brokerage{sebi_no:$sebi_no}) WITH client, brokerage
-    MERGE (client)-[:trades_through]->(brokerage)
+    MERGE (client)-[:works_for{employed_as:$designation}]->(company)
     ''',
     parameters = {'name':client.name, 'client_id': client.id, 'address': client.address, 'email': client.email, 'designation': client.designation, 'phone': client.phone, 'bank': client.bank, 'pan': client.pan,
-              'company_id': works_for_company.id,
-              'sebi_no': trading_brokerage.sebi_no})
-  print("Created client node: " + client.name + " works for " + works_for_company.name + ", trades through "  + trading_brokerage.name)
+              'company_id': works_for_company.id})
+  print("Created client node: " + client.name + " works for " + works_for_company.name)
 print("------------------------")
 print("\n")
+
+
+# attach alerts to 50 random clients
+for client in tqdm(np.random.choice(a = client_objects, size = 50)):
+  this_alert = Alert()
+  connector.run('''
+    CREATE (a:Alert{type:$alert_type,timestamp:$alert_timestamp}) WITH a
+    MATCH (client:Client{id:$client_id}) WITH a, client
+    MERGE (client)-[:had_alert]->(a)
+    ''',
+    parameters={'alert_type': this_alert.type, 'alert_timestamp': this_alert.timestamp, 'client_id': client.id})
+  print ("Client " + client.name + " had SEBI alert for " + this_alert.type + " on " + this_alert.timestamp)
+
 
 # generate trades, match to existing client, company, brokerage objects
 for timestamp in tqdm(generated_timestamps[:10000]):
@@ -294,31 +318,35 @@ for timestamp in tqdm(generated_timestamps[:10000]):
   this_client = np.random.choice(client_objects)
   trade_company = np.random.choice(company_objects)
   trade_company.update_price() # update this compay's share price at this timestamp
+  this_brokerage = np.random.choice(brokerage_objects) # since a client can apparently trade through multiple brokerages
+  trade_volume_percentage = 100*float(this_trade.volume)/float(trade_company.total_shares)
   #session.write_transaction(create_and_match_trade, this_trade, this_client, trade_company, timestamp)
   connector.run('''
     CREATE (trade:Trade{type:$type, exchange:$exchange, ISIN:$ISIN, volume:$volume, timestamp:$timestamp, share_price:$share_price}) WITH trade
-    OPTIONAL MATCH (client:Client{id:$client_id})-[:trades_through]->(brokerage) WITH trade, client, brokerage
-    OPTIONAL MATCH (company:Company{id:$company_id}) WITH trade, client, brokerage, company
-    MERGE (brokerage)<-[:trades_through]-(client)-[:executed]->(trade)-[:part_of]->(company)
+    OPTIONAL MATCH (company:Company{id:$company_id}) WITH trade, company
+    OPTIONAL MATCH (brokerage:Brokerage{sebi_no:$sebi_no}) WITH trade, company, brokerage
+    OPTIONAL MATCH (client:Client{id:$client_id}) WITH trade, company, brokerage, client
+    MERGE (brokerage)<-[:trades_through]-(client)
+    MERGE (client)-[:executed]->(trade)-[:part_of]->(company)
     ''',
-    parameters = {'type': this_trade.type, 'exchange': this_trade.exchange, 'ISIN': this_trade.ISIN, 'volume': this_trade.volume, 'timestamp': timestamp, 'share_price': trade_company.share_price, 'client_id': this_client.id, 'company_id': trade_company.id})
+    parameters = {'type': this_trade.type, 'exchange': this_trade.exchange, 'ISIN': this_trade.ISIN, 'volume': this_trade.volume, 'timestamp': timestamp, 'share_price': trade_company.share_price,
+                  'client_id': this_client.id, 'company_id': trade_company.id, 'sebi_no': this_brokerage.sebi_no})
   print ("Executed trade at " + str(timestamp) + ": " + this_client.name + " --> " + trade_company.name)
-  print (this_trade.type + " " + str(this_trade.volume) + " shares at " + str(trade_company.share_price))
+  print (this_trade.type + " " + str(this_trade.volume) + " shares at " + str(trade_company.share_price), " through " + this_brokerage.name + ", " + str(trade_volume_percentage) + "% " + " of total shares of " + trade_company.name)
   print("-------------")
 
+end = time.time()
+print ("TOOK " + str(end-start) + " SECONDS TO COMPLETE SIMULATING DATA AND PUSHING TO NEO4J DATA")
 
 
 
-
-  '''
+'''
 RELATIONSHIPS FOR EACH NODE TYPE
 (COMPANY)-[:had_event]->(EVENT)
 
-(CLIENT)-[:works_for]->(COMPANY)
-(CLIENT)-[:is_kmp]->(COMPANY)
-(CLIENT)-[:independent_director]->(COMPANY)
+(CLIENT)-[:works_for {is/is_not kmp}]->(COMPANY)
 
-(CLIENT)-[:is_kmp]->(BROKERAGE)
+(CLIENT)-[:is_kmp]->(BROKERAGE) - still need to add this
 (CLIENT)-[:authorized_person]->(BROKERAGE)
 
 (BROKERAGE)<-[:through]-(CLIENT)-[:executes]->(TRADE)-[:part_of]->(COMPANY)

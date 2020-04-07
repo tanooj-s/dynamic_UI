@@ -275,7 +275,7 @@ class App extends React.Component {
                   case 'indi_m2m':
                     return <M2M data={this.state.response_data.all_m2m} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_graph':
-                    return <D3Neo />
+                    return <D3Neo client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_sebialerts':
                     return <SebiAlerts data={this.state.response_data.sebialerts} client_name={this.state.response_data.profile[0].ClientName} />
                   case'indi_tradedesc':
