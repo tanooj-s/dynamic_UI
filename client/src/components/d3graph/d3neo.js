@@ -129,7 +129,8 @@ class D3Neo extends React.Component {
             var centerY = graphHeight / 2;
 
             svg.attr('width', graphWidth)
-                .attr('height', graphHeight);
+                .attr('height', graphHeight)
+                .attr("class","svg");
 
 
             zoomGLayer.append('g').attr('id', 'circle-group').attr('transform', 'translate(' + centerX + ',' + centerY + ')');
