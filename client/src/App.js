@@ -81,9 +81,10 @@ class App extends React.Component {
     this.setState({ tab_display: this.state.tab_display + 1 })
 
   }
-  async componentDidMount(event) {
+  componentDidMount(event) {
     this.getResponse()
   }
+  
 
   async getResponse(url, data) {
     let out_data = [] // try to set this as a string instead
@@ -99,7 +100,7 @@ class App extends React.Component {
         out_data.push(decoder.decode(value)) // push decoded uint8 values to outdata
       })
       .then(() => this.setState({ response_data: JSON.parse(out_data[0]) })) // instead of pushing to uint8, maybe do something like out_data = ''.join()
-      .catch(error => alert("Error parsing JSON due to size of data - refresh and try searching again after 10 seconds!"))
+      .catch(error => console.log(error))
     console.log("RESPONSE")
     console.log(this.state.response_data)
   }
@@ -152,7 +153,7 @@ class App extends React.Component {
           <div className="searchform">
             <form onSubmit={this.handleSubmit} encType="multipart/form-data" >
               <input type="text" name="search_term" value={this.state.search_term} placeholder="  Search by Name" onChange={this.handleChange} className="finput" />
-              <button className="fbutton">Search</button>
+              <button className="fbutton" >Search</button>
             </form>
           </div>
           {this.state.tab_display > 0 ?

@@ -16,11 +16,12 @@ class D3Neo extends React.Component {
         this.queries = {
             // query for kmp who trade in company they work for
             q1: "MATCH (n)-[r:works_for]-(m) WHERE n.designation <> 'Regular Employee' WITH n,r,m MATCH (n)-[e:executed]-(t)-[p:part_of]-(m) RETURN n,r,m,e,p,t",
+
             // query for people who make trades in the same company, should be parameterized by company
             q2: "MATCH (c1:Client)-[e1:executed]->(t1)-[p1:part_of]->(company:Company)<-[p2:part_of]-(t2)<-[e2:executed]-(c2:Client) WITH c1, c2, company MERGE (c1)-[cot1:cotrader]->(company)<-[cot2:cotrader]-(c2) RETURN c1, c2, cot1, cot2, company LIMIT 100",
             // query for people who trade through the same brokerage
             // Fixed this query | adding variables for rels and adding limit worked, removing the limit it throws error
-            q3: "MATCH (c1:Client)-[r:trades_through]->(b:Brokerage)<-[r1:trades_through]-(c2:Client) RETURN c1, c2, r,r1,b limit 1000 "
+            q3: "MATCH (c1:Client)-[r:trades_through]->(b:Brokerage)<-[r1:trades_through]-(c2:Client) RETURN c1, c2, r,r1,b limit 100 "
         }
         this.createChart = this.createChart.bind(this)
     }
@@ -130,8 +131,12 @@ class D3Neo extends React.Component {
 
             svg.attr('width', graphWidth)
                 .attr('height', graphHeight)
-                .attr("class","svg");
-
+                .attr("class", "svg");
+            d3.select("#download").on("click", function () {
+                d3.select(this)
+                    .attr("href", 'data:application/octet-stream;base64,' + btoa(d3.select("#dl").html()))
+                    .attr("download", "viz.svg")
+            })
 
             zoomGLayer.append('g').attr('id', 'circle-group').attr('transform', 'translate(' + centerX + ',' + centerY + ')');
             zoomGLayer.append('g').attr('id', 'text-group').attr('transform', 'translate(' + centerX + ',' + centerY + ')');
@@ -385,8 +390,7 @@ class D3Neo extends React.Component {
                 if ($('#chkboxCypherQry:checked').val() != 1)
                     queryStr = 'match (n) where n.name =~ \'(?i).*' + queryStr + '.*\' return n';
             }
-            else if ($('#q1').click() == true)
-                queryStr = que.q2
+
             else
                 queryStr = 'match (n)-[j]-(k) where id(n) = ' + nodeID + ' return n,j,k';
 
@@ -452,12 +456,22 @@ class D3Neo extends React.Component {
             removeAlert();
 
             var queryStr = null;
+
             if ($('#q1').val() != 0)
-                queryStr = que.q1
-            else if ($('#q2').val() != 0)
-                queryStr = que.q2;
-            else if ($('#q3').val() != 0)
-                queryStr = que.q3;
+                if (nodeID == null || !nodeID) {
+                    queryStr = $.trim($('#queryText').val());
+                    if (queryStr == '') {
+                        queryStr = que.q1
+                    }
+                    else
+                        queryStr = 'match (n)-[r:works_for]-(m) where n.name =~ \'(?i).*' + queryStr + '.*\' and n.designation<> '+"'Regular Employee'"+' WITH n,r,m MATCH (n)-[e:executed]-(t)-[p:part_of]-(m) RETURN n,r,m,e,p,t limit 10';
+                        // var x = "Regular Employee"
+                    // queryStr = 'MATCH (n)-[r:works_for]-(m) n.name =~ \'(?i).*' + queryStr + '.*\' WITH n,r,m MATCH (n)-[e:executed]-(t)-[p:part_of]-(m) RETURN n,r,m,e,p,t limit 10'
+                }
+                else if ($('#q2').val() != 0)
+                    queryStr = que.q2;
+                else if ($('#q3').val() != 0)
+                    queryStr = que.q3;
 
 
             stopSimulation();
@@ -577,6 +591,7 @@ class D3Neo extends React.Component {
                 else
                     $('#queryText').prop('placeholder', 'Node Name');
             });
+
         });
 
 
@@ -609,6 +624,7 @@ class D3Neo extends React.Component {
                             <input className="form-check-input" type="checkbox" id="chkboxCypherQry" value="1" />
                             <label className="form-check-label" htmlFor="chkboxCypherQry">Use Cypher Query</label>
 
+
                         </div>
                     </div>
                 </div>
@@ -616,7 +632,7 @@ class D3Neo extends React.Component {
                 <hr />
 
                 <div className="container-fluid">
-                    <div className="row">
+                    <div className="row" id='dl'>
                         <div className="col col-12 col-md-12" id="graphContainer">
                             <svg id="resultSvg"></svg>
                         </div>
