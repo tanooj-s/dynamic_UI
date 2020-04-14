@@ -1,13 +1,16 @@
   #btnSend {
       margin-left: 10px;
-      margin-top: 5px;
   }
 
   #propertiesBox {
-      overflow: auto;
-      height: 100px;
-      width: 1024px;
+      /* overflow: auto; */
+      display: block;
+      height: 100%;
+      color: black;
+      text-transform: capitalize;
+      width: 100%;
       border: 1px solid #CCCCCC;
+      object-fit: contain;
   }
 
   .svg {
@@ -107,7 +110,7 @@
       stroke-dasharray: 2, 2;
   }
 
-  text {
+  #path-label-group {
       text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
   }
 

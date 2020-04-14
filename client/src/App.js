@@ -9,7 +9,7 @@ import AP from './components/broker/authorized_person'
 import ClientProfile from './components/client/client_profile'
 import Securities from './components/client/securities'
 import Holdings from './components/client/holdings'
-import Trades from './components/client/trades'
+import Trades from './components/neo4j/trades'
 import Alerts from './components/client/alerts'
 import M2M from './components/client/m2m'
 
@@ -43,7 +43,7 @@ class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      query_type: "", // indi by default, or broker, or company, change navbar as appropriate
+      query_type: "indi", // indi by default, or broker, or company, change navbar as appropriate
       search_term: "", // should take on value on input
       query_tab: "", // value taken on by navbar
       response_data: "", // take in response from flask server, should be json records
@@ -152,7 +152,7 @@ class App extends React.Component {
           </Nav>
           <div className="searchform">
             <form onSubmit={this.handleSubmit} encType="multipart/form-data" >
-              <input type="text" name="search_term" value={this.state.search_term} placeholder="  Search by Name" onChange={this.handleChange} className="finput" />
+              <input type="text" name="search_term" value={this.state.search_term} placeholder=" &nbsp;Search by Name" onChange={this.handleChange} className="finput" />
               <button className="fbutton" >Search</button>
             </form>
           </div>
@@ -167,6 +167,7 @@ class App extends React.Component {
                     Dashboard
                   </NavLink>
                 </NavItem>
+                
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "indi_trades", graph_display: 0 })}>
                     Trade Data
@@ -268,7 +269,7 @@ class App extends React.Component {
                   case 'company_complaints':
                     return <Complaints data={this.state.response_data.complaints} company_name={this.state.response_data.profile[0].Name} />
                   case 'indi_trades':
-                    return <Trades data={this.state.response_data.trades} client_name={this.state.response_data.profile[0].ClientName} />
+                    return <Trades data={this.state.response_data.trades} client_name={this.state.search_term} />
                   case 'indi_alerts':
                     return <Alerts data={this.state.response_data.alerts} client_name={this.state.response_data.profile[0].ClientName} />
                   case 'indi_securities':

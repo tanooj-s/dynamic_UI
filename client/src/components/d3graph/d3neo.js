@@ -216,17 +216,18 @@ class D3Neo extends React.Component {
 
             var propertiesText = 'id: ' + d.id;
             //For nodes
+            var label;
             if (d.labels != null)
-                propertiesText += ', labels: ' + d.labels.join(', ');
+                label = 'label: ' + d.labels.join(', ');
             //For links
             if (d.type != null)
-                propertiesText += ', type: ' + d.type;
-
+                label = ' Type: ' + d.type;
+            var prop = "";
             $.map(d.properties, function (value, key) {
-                propertiesText += ', ' + key + ': ' + value;
+                prop += ' ' + key + ': ' + value;
             });
-
-            $('#propertiesBox').append($('<h4></h4>').text(propertiesText));
+            $('#propertiesBox').append($('<p></p>').text(propertiesText + " " + label));
+            $('#propertiesBox').append($('<p></p>').text(prop));
         }
 
         function replaceLinkTypeName(d) {
@@ -270,6 +271,7 @@ class D3Neo extends React.Component {
             lines = d3.select('#path-group').selectAll('path')
                 .data(d3LinkForce.links(), function (d) { return d.id; });
             lineText = d3.select('#path-label-group').selectAll('text')
+            
                 .data(d3LinkForce.links(), function (d) { return d.id; });
 
             iconLock = d3.select('#control-icon-group').selectAll('g.lockIcon')
@@ -297,6 +299,11 @@ class D3Neo extends React.Component {
                     submitQuery(d.id);
                 })
                 .on('click', function (d) {
+
+                    // d3.select("h1").html(d.id);
+                    // d3.select("p").html(d.id);
+                    // d3.select("p").html("<a href='#' > " + d.id + " </a>");
+
                     iconLock = d3.select('#control-icon-group').selectAll('g.lockIcon')
                         .data([d], function (d) { return d.id; });
                     iconCross = d3.select('#control-icon-group').selectAll('g.crossIcon')
@@ -457,21 +464,22 @@ class D3Neo extends React.Component {
 
             var queryStr = null;
 
-            if ($('#q1').val() != 0)
+            if ($('#q1').val() != 0) {
                 if (nodeID == null || !nodeID) {
                     queryStr = $.trim($('#queryText').val());
                     if (queryStr == '') {
                         queryStr = que.q1
                     }
                     else
-                        queryStr = 'match (n)-[r:works_for]-(m) where n.name =~ \'(?i).*' + queryStr + '.*\' and n.designation<> '+"'Regular Employee'"+' WITH n,r,m MATCH (n)-[e:executed]-(t)-[p:part_of]-(m) RETURN n,r,m,e,p,t limit 10';
-                        // var x = "Regular Employee"
+                        queryStr = 'match (n)-[r:works_for]-(m) where n.name =~ \'(?i).*' + queryStr + '.*\' and n.designation<> ' + "'Regular Employee'" + ' WITH n,r,m MATCH (n)-[e:executed]-(t)-[p:part_of]-(m) RETURN n,r,m,e,p,t limit 10';
+                    // var x = "Regular Employee"
                     // queryStr = 'MATCH (n)-[r:works_for]-(m) n.name =~ \'(?i).*' + queryStr + '.*\' WITH n,r,m MATCH (n)-[e:executed]-(t)-[p:part_of]-(m) RETURN n,r,m,e,p,t limit 10'
                 }
-                else if ($('#q2').val() != 0)
-                    queryStr = que.q2;
-                else if ($('#q3').val() != 0)
-                    queryStr = que.q3;
+            }
+            else if ($('#q2').val() != 0)
+                queryStr = que.q2;
+            else if ($('#q3').val() != 0)
+                queryStr = que.q3;
 
 
             stopSimulation();
@@ -599,7 +607,7 @@ class D3Neo extends React.Component {
     render() {
         return (
             <div>
-
+                <p></p>
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col col-12 col-md-12 form-inline">

@@ -2,7 +2,7 @@ import React from 'react';
 import '../../m2m.css';
 import '../../App.css';
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter, numberFilter, Comparator } from 'react-bootstrap-table2-filter';
+import filterFactory, { textFilter, numberFilter, Comparator, dateFilter  } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 
@@ -61,6 +61,7 @@ class M2M extends React.Component {
       {
         dataField: 'Date',
         text: 'Date',
+        filter: dateFilter(),
         sort: true
       },
       {
