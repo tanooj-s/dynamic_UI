@@ -25,6 +25,8 @@ import SebiAlerts from './components/chart/sebialerts';
 import TradeDiscrepancy from './components/chart/tradediscrepancy'
 
 
+
+
 import './App.css';
 import {
   NavItem,
@@ -47,6 +49,7 @@ class App extends React.Component {
       search_term: "", // should take on value on input
       query_tab: "", // value taken on by navbar
       response_data: "", // take in response from flask server, should be json records
+      neo4j_response_data: "", // should replace the above
       tab_display: 0,
       graph_display: 0,
       // only render navbar for display options if this is true
@@ -55,6 +58,10 @@ class App extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this)
     this.getResponse = this.getResponse.bind(this)
     this.cleanStringandJsonify = this.cleanStringandJsonify.bind(this)
+    this.queryNeo4j = this.queryNeo4j.bind(this)
+    this.neo4j = require('neo4j-driver')
+    this.driver = this.neo4j.driver('bolt://localhost:7687', this.neo4j.auth.basic('neo4j','12345'))
+    this.session = this.driver.session()
   }
 
   handleChange(event) {
@@ -69,6 +76,7 @@ class App extends React.Component {
     console.log("REQUEST")
     console.log(this.state)
     this.getResponse("http://127.0.0.1:5000/", this.state)
+    this.queryNeo4j(this.state)
     if (this.state.query_type === 'company') {
       this.setState({ query_tab: 'company_profile' })
     }
@@ -81,10 +89,36 @@ class App extends React.Component {
     this.setState({ tab_display: this.state.tab_display + 1 })
 
   }
+
   componentDidMount(event) {
     this.getResponse()
   }
-  
+
+
+  async queryNeo4j(state_data) {
+    let out_data = {
+      'client_data': [],
+      'trade_data': []
+    }
+    let txc = this.session.beginTransaction()
+    try {
+      let result1 = await txc.run(`MATCH (n:Client) WHERE n.name CONTAINS '${this.state.search_term}' RETURN n as client`)
+      result1.records.forEach((record) => out_data.client_data.push(record.get('client').properties))
+
+      let result2 = await txc.run(`MATCH (n:Client)-[:executed]->(t:Trade)-[:part_of]->(c:Company) WHERE n.name CONTAINS '${this.state.search_term}' SET t.company = c.name RETURN t`)
+      result2.records.forEach((record) => out_data.trade_data.push(record.get('t').properties))
+      this.setState({neo4j_response_data: out_data})
+      await txc.commit()
+    } catch (error) {
+      console.log(error)
+      await txc.rollback()
+      console.log('transaction rolled back')
+    } finally {
+      console.log('NEO4J RESPONSE')
+      console.log(this.state.neo4j_response_data)
+    }
+  }
+
 
   async getResponse(url, data) {
     let out_data = [] // try to set this as a string instead
@@ -104,6 +138,9 @@ class App extends React.Component {
     console.log("RESPONSE")
     console.log(this.state.response_data)
   }
+
+
+
 
 
   cleanStringandJsonify(s) {
@@ -167,7 +204,7 @@ class App extends React.Component {
                     Dashboard
                   </NavLink>
                 </NavItem>
-                
+
                 <NavItem>
                   <NavLink onClick={(e) => this.setState({ query_tab: "indi_trades", graph_display: 0 })}>
                     Trade Data
