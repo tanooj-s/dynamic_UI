@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Route, BrowserRouter as Router } from 'react-router-dom'
 import './index.css';
 import App from './App';
+import App2 from './App2'
 import SearchForm from './search-form'
 import SearchList from './search-list'
 import * as serviceWorker from './serviceWorker';
@@ -21,9 +22,9 @@ const routing = (
         <Route path="/404NotFound" component={NotFound}/>
       </div>
     </Router>
-  ) 
+  )
 
-ReactDOM.render(<App/>, document.getElementById('root'));
+ReactDOM.render(<App2/>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

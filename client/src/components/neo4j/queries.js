@@ -25,3 +25,11 @@ RETURN u {
   averageStars
 } AS userInfo
 `;
+
+export const TRADE_QUERY = 
+`
+MATCH (c:Brokerage)<-[*]-(a:Client)-[*]-(b:Trade)-[]->(l:Company)
+WHERE tolower(a.name) CONTAINS tolower("Theodore") 
+WITH *, b.type as tra, b.volume as bol, b.share_price as sp, l.name as tradeof
+LIMIT 500 RETURN DISTINCT COLLECT(a{tra,vol,sp,tradeof} AS client
+`;

@@ -16,6 +16,7 @@ import M2M from './components/client/m2m'
 import PieChart from './components/chart/piechart'
 // import Chart from './components/chart/chart'
 // import HorizontalBarChart from './components/chart/horizontal-barchart'
+import ShareholdingVolume from './components/chart/shareholding_volume'
 
 import KMP from './components/kmp'
 // import PopotoGraph from './components/popoto-graph'
@@ -96,18 +97,18 @@ class App extends React.Component {
 
 
   async queryNeo4j(state_data) {
-    let out_data = {
+    let neo4j_out_data = {
       'client_data': [],
       'trade_data': []
     }
     let txc = this.session.beginTransaction()
     try {
       let result1 = await txc.run(`MATCH (n:Client) WHERE n.name CONTAINS '${this.state.search_term}' RETURN n as client`)
-      result1.records.forEach((record) => out_data.client_data.push(record.get('client').properties))
+      result1.records.forEach((record) => neo4j_out_data.client_data.push(record.get('client').properties))
 
       let result2 = await txc.run(`MATCH (n:Client)-[:executed]->(t:Trade)-[:part_of]->(c:Company) WHERE n.name CONTAINS '${this.state.search_term}' SET t.company = c.name RETURN t`)
-      result2.records.forEach((record) => out_data.trade_data.push(record.get('t').properties))
-      this.setState({neo4j_response_data: out_data})
+      result2.records.forEach((record) => neo4j_out_data.trade_data.push(record.get('t').properties))
+      this.setState({neo4j_response_data: neo4j_out_data})
       await txc.commit()
     } catch (error) {
       console.log(error)
@@ -141,6 +142,7 @@ class App extends React.Component {
 
 
 
+  // create functions to slice and dice this.state.neo4j_response_data as appropriate
 
 
   cleanStringandJsonify(s) {

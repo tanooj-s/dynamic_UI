@@ -359,6 +359,3 @@ RELATIONSHIPS FOR EACH NODE TYPE
 # CYPHER QUERY FOR KMP WHO TRADE IN THEIR OWN COMPANY (not necessarily fraudulent, that will depend on trade and event timestamps)
 # match(n:Client)-[:is_kmp_for]->(m:Company) with n,m match (n)-[:executed]-(t:Trade)-[:part_of]->(m) RETURN n.name as client, n.designation as designation, m.name as company, t.volume as volume, t.type as type, t.share_price as share_price, t.timestamp as timestamp
 
-# I guess just generate law abiders first then try and hard code fraud cases later
-# and then later on add some kind of history for share prices for each company - will need to associate share price at a timestamp and match to trade timestamps
-
