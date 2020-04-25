@@ -33,7 +33,10 @@ class ShareholdingVolume extends React.Component {
 			},
 
 			xAxis: {
-				categories: this.companies
+				categories: this.companies,
+				title: {
+					text: 'Shares'
+				}
 			},
 			yAxis: {
 				min: 0,
@@ -89,14 +92,15 @@ class ShareholdingVolume extends React.Component {
 			.finally(() => {
 				session.close();
 			});
-		console.log(this.companies)
-	};
-	render() {
-		this.state.client.map(record => this.companies.push(record.tradeof))
-		this.state.client.map(record => this.volumes.push(record.vol))
+		};
+		render() {
+			this.state.client.map(record => this.volumes.push(record.vol))
+			this.state.client.map(record => this.companies.push(record.tradeof))
+			console.log(this.companies)
+			console.log(this.volumes)
 		return (
 
-			< div >
+			<div>
 				<HighchartsReact Highcharts={Highcharts} options={this.options} />
 			</div >
 		)

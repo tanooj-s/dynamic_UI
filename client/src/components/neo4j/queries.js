@@ -1,9 +1,9 @@
-export const FETCH_CATEGORIES_QUERY = 
-`match (c:Brokerage)<-[*]-(a:Client)-[*]->(b:Trade)-[]->(l:Company) where tolower(a.name) contains tolower($userName) with *, c.name as bro, c.sebi_no as sebino, c.phone as phone,a.name as cliname,  a.designation as desig,a.pan as pan,b.type as tra,b.volume as vol,b.share_price as sp , b.timestamp as tim,l.name as tradeof limit 50000  return distinct collect(a{bro,sebino,phone,cliname,desig,tra,vol,sp,tim,tradeof,pan}) as client
+export const FETCH_CATEGORIES_QUERY =
+    `match (c:Brokerage)<-[*]-(a:Client)-[*]->(b:Trade)-[]->(l:Company) where tolower(a.name) contains tolower($userName) with *, c.name as bro, c.sebi_no as sebino, c.phone as phone,a.name as cliname,  a.designation as desig,a.pan as pan,b.type as tra,b.volume as vol,b.share_price as sp , b.timestamp as tim,l.name as tradeof limit 50000  return distinct collect(a{bro,sebino,phone,cliname,desig,tra,vol,sp,tim,tradeof,pan}) as client
 `;
 
-export const FETCH_BUSINESSES_QUERY = 
-`
+export const FETCH_BUSINESSES_QUERY =
+    `
 MATCH (b:Business)-[:IN_CATEGORY]->(c:Category {name: $category})
 WHERE toLower(b.name) CONTAINS toLower($searchText)
 OPTIONAL MATCH (b)-[:HAS_PHOTO]->(p:Photo)
@@ -25,3 +25,13 @@ RETURN u {
   averageStars
 } AS userInfo
 `;
+
+export const TRADE_QUERY =
+    `match (c:Brokerage)<-[]-(a:Client)-[]->(b:Trade)-[]->(l:Company) where tolower(a.name) contains tolower("Jo") with *,b.type as tra,b.volume as vol,b.share_price as sp ,l.name as tradeof limit 5000  return distinct collect(a{tra,vol,sp,tradeof}) as client
+`;
+
+export const TOP_TRADERS=
+`
+match p= (n:Client)-[r]-(o:Trade)
+return n.name, count(p) as trades order by trades desc limit 5
+`
